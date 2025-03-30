@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"usa_main.h": "c",
+		"g_local.h": "c",
+		"q_shared.h": "c",
+		"g_dll.h": "c"
+	}
+}

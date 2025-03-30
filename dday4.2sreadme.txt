@@ -1,0 +1,132 @@
+                D-Day: Normandy  ©1999-2003
+                      By ViperSoft
+                
+
+
+   If you are new to D-Day, please read the user manual.
+The manual lists all setup info, gameplay info, F.A.Q, and much
+more. To play the game use your favorite server browser or visit the
+servers page at: http://www.planetquake.com/dday
+
+ This is released under the GNU GPL. Please see the attached gnu.txt
+for more information on the license. The source code may be found at 
+D-Day: Normandy's website:
+
+        http://www.planetquake.com/dday/
+
+
+This version of D-Day 4.2s is by SHAEF
+(Supreme Headquarters, Allied Expeditionary Forces)
+SHAEF team:
+Team Coordinator/Leader
+Col Piron
+
+Coders
+Fafner
+Cpt. Bill Stokes
+Kermit
+
+Modeller
+Mjr. Parts
+
+======================================================================
+Whats new/fixed in D-Day: Normandy 4.2s:
+-stopped 2 copies of same v_ weapon model being used for each team to
+reduce model load.
+-added jump motion effect to 1st person view weapon when jumping
+-new commands for selecting weapons:
+use sniper, use pistol, use rifle, use smg, use lmg, use hmg, use
+rocket, use flamer.  Works for all teams.
+-increased range on medics when healing to make it easier to heal
+-player can press fire button to bring up team or class menu when they
+need it when dead
+-Footsteps play correctly for slower classes now
+-new option for passwording teams:  allied_password, axis_password  for
+open squad practices.  For example if the servers sets axis_password
+"abcd", the player has to set password "abcd" to be able to join axis.
+axis_password/allied_password "none" turns it off.
+-worked on auto select.  Team kill count now considered when selecting
+team.
+-throwing grenade through floor when prone fixed
+-fixed server crashing on passworded servers
+-disabled shouting when dead
+-players can only shout once every 1/2 second
+-stopped nades exploding after map ends
+-"force_auto_select" cvar.  player can only use auto select to join when
+set.
+-bug with airborne landing in water and jumping high after spawning
+fixed
+-support for animated misc_md2's added.  Mapper adds a setting for
+"frames" to the misc_md2 entity for the number of frames in the model.
+Also works for sprites.
+-fix for maplist crashing
+-players can join teams and pick classes at countdown at start of map
+-fixed random respawn intervals and added respawn timer
+-Fixed flamethrower making sound under water
+-new command "objectives" for player to use to bring up objective pic
+-standing corpse when changing teams bug fixed
+-fixed delay on player model going into truesight frame
+-fixed delay on player model going from prone to standing
+-players can use variables in chat messages to print various info:
+%L prints nearest objective or map location (map location requires
+mapper to add "map_location" entity to their map with "message" field
+filled out)
+%T prints the name of any nearby teammates
+%M prints the name of nearest team medic
+example : say_team "%M, I need a medic near the %L!" = "Wade, I need a
+medic near the Right Pillbox!"
+%C prints the name of the player's class
+-fixed 2 death sounds playing on falling death
+-raised fist/helmet damage
+-death messages indicate who last wounded a player when he
+suicides/falls to death/gets himself killed.
+-victory song blasting fixed
+-all level sounds turned off when victory song plays.
+-pistol no ammo animation bug fixed (Nick)
+-flame sound playing on flamethrower with no fuel fixed (Nick)
+-fixed mauser not playing bolt animation when changing truesight (Nick)
+-fixed fast swimming exploit
+-changed truesight frame for player model to frame1 so firing looks
+better
+-attempted fix for dead usa player models appearing on gbr/rus maps
+-attempted fix for gbr map crashes
+-flamethrower slowed down when firing
+-1 second delay put on player id so name stays on screen longer
+-helmet death message added
+-punching causes knockback
+-nade on slope bug fixed
+-fixed popping out of true-sight on slopes, replaced with better anti-dive code
+-put hmg bullets back to normal from last version
+-new cvar  "max_gibs"  sets the amount of gibs & debris to be on server
+at once.  This will stop lockups from a lot of players dying in an
+explosion at once and cut down on lag in general.  Default setting is
+max_gibs 20.
+-team icons now appear in the corner correctly in software mode
+-removed pulsing light from dropped items
+-quake 2 3.21 password code implemented
+-artillery changes:  death messages added, stopped horizontal artillery
+bug, artillery can be cancelled without having to look through
+binoculars
+-team kill messages announced as "(Friendly fire)"
+-hmgers can rest their gun on sandbags/objects to shoot while standing
+-getting stuck in teleporter fix
+-fix for counting players per team.  Should fix auto-joining and
+scoreboard showing players count per team incorrectly.
+-stamina meter bug fix.   Non-jumps no longer lower stamina.
+-tweaked player stance_view heights to line up with player models' eyes
+better
+-tweaked timing on grenade pin pull noises to line up with the animation
+correctly
+-tweaked weapon bolt/reload sounds timing
+-allied hmg first bullet delayed firing fix
+-campaign_mode cvar added.  Set campaign_mode 0 to have maps always move
+forward.  Default is campaign_mode 1
+-dday5 goes to dday1 when allies win
+-tweaked where sniper bullets & rockets originate to match with player's
+eye better
+-changed "hyper3" references in code workspace to "usa"
+-aim bug fix implemented.
+-scoreboard changes implemented.
+-"player_scores 1"  enables individual player scores (disabled by
+default)
+-explosions screwing up smg kick fixed.
