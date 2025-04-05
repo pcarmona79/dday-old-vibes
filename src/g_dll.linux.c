@@ -79,7 +79,7 @@ userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team)
     strcat(unode->libname,ent->pathtarget);
 
 #if defined __linux__
-	strcat(unode->libname,"x86_64.so"); //follow suit with gamex86_64.dll
+	strcat(unode->libname, ARCH); //kernel: this should resolve like gamex86_64.so or gameaarch64.so
 #else
 	strcat(unode->libname,"x86_64"); //follow suit with gamex86.dll
 #endif
