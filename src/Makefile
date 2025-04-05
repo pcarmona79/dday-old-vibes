@@ -28,7 +28,7 @@
 ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)
 
 CC=gcc -fcommon
-BASE_CFLAGS=-Dstricmp=strcasecmp -DARCH="$(ARCH)"
+BASE_CFLAGS=-Dstricmp=strcasecmp
 
 CFLAGS_RELEASE=$(BASE_CFLAGS) -march=native -O3 -ffast-math -funroll-loops \
 	-fomit-frame-pointer -fexpensive-optimizations
