@@ -29,11 +29,13 @@ ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/ar
 
 CC=gcc -fcommon
 BASE_CFLAGS=-Dstricmp=strcasecmp
-
-CFLAGS_RELEASE=$(BASE_CFLAGS) -march=native -O3 -ffast-math -funroll-loops \
-	-fomit-frame-pointer -fexpensive-optimizations
-
+CFLAGS_RELEASE=$(BASE_CFLAGS) -march=native -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 CFLAGS_DEBUG=$(BASE_CFLAGS) -g -DDEBUG
+
+# uncomment for ARM64 cross-compilation
+#ARCH=aarch64
+#CC=aarch64-linux-gnu-gcc -fcommon
+#CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 
 # Always uncommented
 LDFLAGS=-ldl -lm
