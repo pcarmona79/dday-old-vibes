@@ -261,7 +261,7 @@ void Weapon_Bren (edict_t *ent)
 		69, 69, 73,
 		76, 78, 89,
 		
-		pause_frames, fire_frames, Weapon_Bren_Fire);
+		pause_frames, fire_frames, Weapon_LMG_Fire);
 }
 
 

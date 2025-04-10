@@ -208,7 +208,7 @@ void Weapon_pps43 (edict_t *ent)
 		78, 80, 92, 
 
 		
-		pause_frames, fire_frames, Weapon_Pps43_Fire);
+		pause_frames, fire_frames, Weapon_LMG_Fire);
 }
 
 
