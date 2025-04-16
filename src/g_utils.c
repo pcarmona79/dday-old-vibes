@@ -678,8 +678,12 @@ qboolean WeighPlayer(edict_t *ent)
 	if(ent->stanceflags==STANCE_DUCK)
 		ent->client->speedmod *= 0.60;
 	if(ent->stanceflags==STANCE_CRAWL)
-		ent->client->speedmod *= 0.45;		
-	
+	{
+		if (ent->waterlevel ==3)//swimming
+			ent->client->speedmod *= 1.1;		
+		else
+			ent->client->speedmod *= 0.45;		
+	}	
 
 	if( (ent->wound_location & LEG_WOUND) /*&& (!ent->arty_time)*/ )
 		ent->client->speedmod *= 0.75;

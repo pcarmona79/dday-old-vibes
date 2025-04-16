@@ -177,10 +177,18 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		if(ent->item->ammo)
 		{
 			ammo = FindItem (ent->item->ammo);
-			if ( (int)dmflags->value & DF_INFINITE_AMMO )
-				Add_Ammo (other, ammo, 1000);
-			else
-				Add_Ammo (other, ammo, ammo->quantity);
+//			if ( (int)dmflags->value & DF_INFINITE_AMMO )
+//				Add_Ammo (other, ammo, 1000);
+//			else
+//				Add_Ammo (other, ammo, ammo->quantity);
+			if (ent->item->guninfo && ent->item->guninfo->rnd_count)
+			ent->item->guninfo->rnd_count = ammo->quantity;
+
+
+			//faf: put bullets in map spawned guns
+			if (other->client)
+				Load_Weapon (other, item);
+
 /*
 			if (ent->item->guninfo &&
 				ent->item->guninfo->rnd_count)

@@ -768,9 +768,9 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (ent->item->guninfo && other->client->pers.inventory[ITEM_INDEX(ent->item)])
 		return;
 
-	if (ent->item->position != LOC_GRENADES && ent->count > 1 &&
-		other->client->pers.inventory[ITEM_INDEX(ent->item)] ) // dont pick up if ammo already
-		return;
+//faf	if (ent->item->position != LOC_GRENADES && ent->count > 1 &&
+//faf		other->client->pers.inventory[ITEM_INDEX(ent->item)] ) // dont pick up if ammo already
+//faf		return;
 
 	taken = ent->item->pickup(ent, other);
 
