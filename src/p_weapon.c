@@ -1089,8 +1089,35 @@ void Weapon_Grenade (edict_t *ent)
 		}
 	}
 
+	//animation for pulling pin
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
+
+		if (ent->client->ps.gunframe == 3)
+		{
+			//faf:  play part of wave animation when pulling pin
+			if (ent->client && ent->stanceflags == STANCE_STAND) 
+			{
+				ent->client->anim_priority = ANIM_WAVE;
+				ent->s.frame = 61;//(FRAME_wave05);
+				ent->client->anim_end = 65;// (FRAME_wave10);
+			} //end faf
+			else if (ent->stanceflags == STANCE_DUCK) 
+			{
+				ent->client->anim_priority = ANIM_WAVE;
+				ent->s.frame = 169;//(FRAME_crpain1);
+				ent->client->anim_end = 172;// (FRAME_crpain4);
+			} //end faf
+			else if (ent->stanceflags == STANCE_CRAWL) 
+			{
+				ent->client->anim_priority = ANIM_WAVE;
+				ent->s.frame = 222;//(FRAME_crawlattck02);
+				ent->client->anim_end = 225;// (FRAME_crawlattck05);
+			} //end faf
+		}
+
+
+
 		// Pull the pin, and prime the grenade
 //faf		if (ent->client->ps.gunframe == 5 && !ent->client->grenade)
 		//faf:  time pin pull sound better
@@ -1131,7 +1158,7 @@ void Weapon_Grenade (edict_t *ent)
 //			ent->client->grenade = NULL;
 		}
 
-		if (ent->client->ps.gunframe == 15) // throw the grenade
+		if (ent->client->ps.gunframe == 14) // throw the grenade
 			gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/throw.wav"), 1, ATTN_NORM, 0);
 		
 //		if ((ent->client->ps.gunframe == 17))
