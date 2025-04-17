@@ -310,13 +310,25 @@ void Cmd_Scope_f(edict_t *ent)
 {
 
 	if (!ent->client->pers.weapon ||
- 		 ent->client->pers.weapon->position== LOC_GRENADES ||
+ 	//	 ent->client->pers.weapon->position== LOC_GRENADES ||
 		//bcass start - TNT
 		 ent->client->pers.weapon->position== LOC_TNT)
 		//bcass end
 		 return;
 
-
+	// kernel: copied from 5.x source
+	if (ent->client->pers.weapon->position == LOC_GRENADES)
+	{
+		if (!ent->client->aim) {
+			ent->client->aim = true;
+			gi.centerprintf(ent, "Long range throw!\n");
+		} else {
+			ent->client->aim = false;
+			gi.centerprintf(ent, "Short range throw!\n");
+		}
+		return;
+	}
+		 
 	// Nick - Hack to allow a bolt action Enfield reload animation to play the entirety.
 	if (!strcmp(ent->client->pers.weapon->classname, "weapon_Enfield") &&
 	(ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15 ||

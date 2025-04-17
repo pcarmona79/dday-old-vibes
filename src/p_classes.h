@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+void Load_Weapon (edict_t *ent, gitem_t	*item);
 
 // This is imported from the team DLL's
 

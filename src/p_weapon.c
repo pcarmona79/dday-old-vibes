@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
+#include "p_classes.h"
 
 /*-----/ PM /-----/ NEW:  Include new header files. /-----*/
 #include "x_fbomb.h"
@@ -887,9 +888,15 @@ void weapon_grenade_fire (edict_t *ent)
 
 	if (ent->client->ps.pmove.pm_type == PM_DEAD)
 		speed = 5; // drop the grenade
-	else
-		speed = GRENADE_MINSPEED + (int)(-(ent->client->grenade->nextthink - level.time) + 2.75) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
-	//gi.dprintf("speed: %i\n", speed);
+	else {
+		//speed = GRENADE_MINSPEED + (int)(-(ent->client->grenade->nextthink - level.time) + 2.75) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
+		//gi.dprintf("speed: %i\n", speed);
+		speed = 500;
+	}
+	if (ent->client->aim)
+		speed *=1.4;
+
+	ent->client->aim = false;
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -998,8 +1005,8 @@ void Weapon_Grenade (edict_t *ent)
 
 	ent->client->crosshair = false;
 
-	if (ent->client->aim)
-		ent->client->aim = false;
+//	if (ent->client->aim)
+//		ent->client->aim = false;
 
 	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
 	{
