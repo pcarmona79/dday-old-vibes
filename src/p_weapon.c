@@ -876,7 +876,8 @@ void weapon_grenade_fire (edict_t *ent)
 		VectorCopy(ent->s.origin, ent->client->grenade->s.origin);
 		ent->client->grenade->s.modelindex = 0; // set model to null
 		//client->grenade_caught->touch = NULL;
-		ent->client->grenade->s.origin[2]+= 100;//faf:  this fixes nade slope bug (not)
+//		ent->client->grenade->s.origin[2]+= 100;//faf
+
 	}
 
 

@@ -1142,6 +1142,8 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 		return; // just get out of here
 
 
+	grenade->oldenemy = self;// last person to throw for obituary//faf
+
 
 
 	VectorCopy (start, grenade->s.origin);
@@ -1150,6 +1152,16 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 	VectorMA (grenade->velocity, crandom() * 10.0, right, grenade->velocity);
 	VectorSet (grenade->avelocity, 300, 300, 300);
  
+
+	if (grenade->item && grenade->item->ammo && !strcmp(grenade->item->ammo, "Potato Masher"))
+	{
+		VectorCopy(self->s.angles, grenade->s.angles);
+		grenade->s.angles[YAW]-=90;
+		VectorSet (grenade->avelocity, crandom()*20 -20, 0, 1000);
+	}
+	else
+		VectorSet (grenade->avelocity, 300, 300, 300);
+
 
 	//faf
 	if (self->client &&
@@ -1160,6 +1172,25 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 
 
 
+	//faf:  play part of wave animation when throwing nade
+	if (self->client && self->stanceflags == STANCE_STAND) 
+	{
+		self->client->anim_priority = ANIM_WAVE;
+		self->s.frame = 116;//(FRAME_wave05);
+		self->client->anim_end = 121;// (FRAME_wave10);
+	} //end faf
+	else if (self->stanceflags == STANCE_DUCK) 
+	{
+		self->client->anim_priority = ANIM_WAVE;
+		self->s.frame = 169;//(FRAME_crpain1);
+		self->client->anim_end = 172;// (FRAME_crpain4);
+	} //end faf
+	else if (self->stanceflags == STANCE_CRAWL) 
+	{
+		self->client->anim_priority = ANIM_WAVE;
+		self->s.frame = 222;//(FRAME_crawlattck02);
+		self->client->anim_end = 225;// (FRAME_crawlattck05);
+	} //end faf
 
 
 
