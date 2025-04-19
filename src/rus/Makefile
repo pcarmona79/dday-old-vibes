@@ -46,6 +46,8 @@ SHLIBLDFLAGS=-shared
 
 DO_CC=$(CC) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
 
+all: build_release
+
 build_debug:
 	$(MAKE) rus$(ARCH).$(SHLIBEXT) CFLAGS="$(CFLAGS_DEBUG)"
 
