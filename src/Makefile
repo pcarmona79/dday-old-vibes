@@ -111,7 +111,8 @@ game$(ARCH).$(SHLIBEXT): $(GAME_OBJS) \
 		usa$(ARCH).$(SHLIBEXT) \
 		grm$(ARCH).$(SHLIBEXT) \
 		rus$(ARCH).$(SHLIBEXT) \
-		gbr$(ARCH).$(SHLIBEXT)
+		gbr$(ARCH).$(SHLIBEXT) \
+		ita$(ARCH).$(SHLIBEXT)
 	$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(GAME_OBJS) $(LDFLAGS)
 
 usa$(ARCH).$(SHLIBEXT):
@@ -126,6 +127,9 @@ rus$(ARCH).$(SHLIBEXT):
 gbr$(ARCH).$(SHLIBEXT):
 	$(MAKE) gbr$(ARCH).$(SHLIBEXT) -C gbr
 
+ita$(ARCH).$(SHLIBEXT):
+	$(MAKE) ita$(ARCH).$(SHLIBEXT) -C ita
+
 #############################################################################
 # MISC
 #############################################################################
@@ -137,6 +141,7 @@ clean:
 	$(MAKE) clean -C grm
 	$(MAKE) clean -C rus
 	$(MAKE) clean -C gbr
+	$(MAKE) clean -C ita
 
 depend:
 	gcc -MM $(GAME_OBJS:.o=.c)
