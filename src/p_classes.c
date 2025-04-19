@@ -103,6 +103,8 @@ void Load_Weapon (edict_t *ent, gitem_t	*item)
 	
 }
 
+gitem_t *FindTeamItem (char *dllname, int position);
+
 void Give_Class_Weapon(edict_t *ent)
 {
 	gitem_t		*item;
@@ -170,7 +172,8 @@ void Give_Class_Weapon(edict_t *ent)
 	//}
 	//if(client->resp.team_on->mos[client->resp.mos]->grenades)
 	//{
-		if(item=FindItem(client->resp.team_on->mos[client->resp.mos]->grenades) )
+	// kernel: this forces team id when assigns grenades (italians has potato masher like germans)
+	if (item = FindTeamItem(team_list[client->resp.team_on->index]->teamid, LOC_GRENADES))
 			client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->grenadenum;
 	//}
 	//if(client->resp.team_on->mos[client->resp.mos]->special)
