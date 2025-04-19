@@ -142,10 +142,7 @@ vec3_t vec3_origin = {0,0,0};
 
 /*this is a security function and supposed to return an MD5 hash of the code in radix64*/
 
-void
-
-UserDLLMD5(char *buf)
-
+void UserDLLMD5(char *buf)
 {
 
     buf[0]='\0';  /*do nothing for now*/

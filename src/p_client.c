@@ -972,6 +972,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		self->client->mags[i].sniper_rnd	= 0;
 		self->client->mags[i].submg_fract	= 0;
 		self->client->mags[i].submg_rnd		= 0;		
+		self->client->mags[i].submg2_rnd		= 0;		
+		self->client->mags[i].shotgun_rnd		= 0;		
 	}
 
 	self->client->last_wound_inflictor = NULL;//faf

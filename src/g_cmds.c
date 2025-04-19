@@ -948,6 +948,8 @@ void Cmd_Use_f (edict_t *ent)
 
 		else if (Q_stricmp(s,"smg")==0) 
 		{
+			it = FindNextPickup(ent, LOC_SUBMACHINEGUN2);
+			strcpy(s, it->pickup_name);
 			it = FindNextPickup(ent, LOC_SUBMACHINEGUN);
 			strcpy(s, it->pickup_name);
 		}	

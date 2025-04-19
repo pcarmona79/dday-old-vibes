@@ -147,6 +147,90 @@ int calcVspread(edict_t *ent,trace_t *tr)
 	return ( (max_y*( (tr->endpos[PITCH]<half_max)?tr->endpos[PITCH]:ent->client->pers.weapon->max_range-tr->endpos[PITCH] ))/half_max);
 }
 
+qboolean Surface(char *name, int type);
+
+int Play_Bullet_Hit(edict_t *ent, char *surface, vec3_t endpos, edict_t *impact_ent)
+{
+	int sound;
+	int soundtype;
+
+
+	if (!surface)
+		surface = "concrete";
+
+	//	false;// .02 faf
+
+	// safe_bprintf(PRINT_HIGH, "%s\n", surface);
+	if (Surface(surface, SURF_WOOD)) // wood
+	{
+		if (random() < 0.33)
+			sound = gi.soundindex("bullet/wood1.wav");
+		else if (random() < 0.50)
+			sound = gi.soundindex("bullet/wood2.wav");
+		else
+			sound = gi.soundindex("bullet/wood3.wav");
+
+		soundtype = SOUND_WOOD;
+
+		//			safe_bprintf (PRINT_HIGH, "wood\n");
+	}
+	else if (Surface(surface, SURF_METAL)) // metal
+	{
+		if (random() < 0.33)
+			sound = gi.soundindex("bullet/metal1.wav");
+		else if (random() < 0.50)
+			sound = gi.soundindex("bullet/metal2.wav");
+		else
+			sound = gi.soundindex("bullet/metal3.wav");
+		//			safe_bprintf (PRINT_HIGH, "metal\n");
+
+		soundtype = SOUND_METAL;
+	}
+	else if (Surface(surface, SURF_GLASS)) // metal
+	{
+		if (random() < 0.50)
+			sound = gi.soundindex("bullet/glass1.wav");
+		else
+			sound = gi.soundindex("bullet/glass2.wav");
+		//			safe_bprintf (PRINT_HIGH, "glass\n");
+		soundtype = SOUND_GLASS;
+	}
+	else if (//(impact_ent && impact_ent->classnameb == SANDBAGS) || // kernel: no sandbags yet
+			 (Surface(surface, SURF_SAND) || Surface(surface, SURF_GRASS))) // sand (beach)
+	{
+		if (random() < 0.33)
+			sound = gi.soundindex("bullet/sand1.wav");
+		else if (random() < 0.50)
+			sound = gi.soundindex("bullet/sand2.wav");
+		else
+			sound = gi.soundindex("bullet/sand3.wav");
+		//			safe_bprintf (PRINT_HIGH, "sand\n");
+
+		soundtype = SOUND_SAND;
+	}
+	else
+	{
+		if (random() < 0.33)
+			sound = gi.soundindex("bullet/concrete1.wav");
+		else if (random() < 0.50)
+			sound = gi.soundindex("bullet/concrete2.wav");
+		else
+			sound = gi.soundindex("bullet/concrete3.wav");
+		//			safe_bprintf (PRINT_HIGH, "default\n");
+
+		soundtype = SOUND_CONCRETE;
+	}
+
+	// gi.positioned_sound (endpos, g_edicts, CHAN_AUTO, sound, .75, ATTN_NORM, 0);
+	gi.sound(ent, CHAN_ITEM, sound, .5, ATTN_NORM, 0);
+
+	return soundtype;
+
+	// if (loud)
+	// gi.positioned_sound (endpos, g_edicts, CHAN_AUTO, sound, 1, ATTN_NORM, 0);
+}
+
+
 // rezmoth - tool function to display vector contents
 void showvector(char* namevector, vec3_t showvector)
 {
@@ -807,8 +891,133 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 }	
 
 
+//add view whiteness simulating smoke to players within certain radius of blast
+void Smoke_Effect (vec3_t origin, float strength)
+{
+	edict_t	*e;
+	int i;
+	vec3_t distvector;
+	float	distance;
+
+    
+	for (i=0 ; i<game.maxclients ; i++)
+	{	
+		e = g_edicts + 1 + i;
+	
+		if (!e->inuse)
+			continue;
+		if (!e->client)
+			continue;
+		if (!e->s.origin)
+			continue;
+		//if (e->ai)
+		//	continue;
+		if (e->deadflag)
+			continue;
+		if (e->health <= 0)
+			continue;
+
+		VectorSubtract(e->s.origin, origin, distvector);
+		distance = VectorLength( distvector);
+
+		if (distance < 1000)
+		{
+			e->client->smoke_effect_goal += (strength * (1000-distance))/1000;
+		}
+		if (e->client->smoke_effect_goal > .10)
+			e->client->smoke_effect_goal = .10;
+
+	}
 
 
+}
+
+
+//faf: play bullet hit noises for nades/tnt/ etc.
+void Play_Ricochet_Noise (edict_t *ent, vec3_t origin)
+{
+    vec3_t offset, end;
+	trace_t tr;
+	vec3_t mins, maxs;
+
+	qboolean gotwood, gotmetal;
+
+	gotwood = false;
+	gotmetal = false;
+
+
+	VectorSet (mins, -10,-10,-10);
+	VectorSet (maxs, 10,10,10);
+
+
+	VectorCopy (origin, offset);
+	VectorCopy (origin, end);
+	offset[2]+=30;
+
+
+	end[2]+=100; //up
+	tr = gi.trace (offset, mins, maxs, end, ent, MASK_SHOT);
+	if (tr.fraction < 1.0 && tr.surface){
+		if (tr.surface && Surface2(tr.surface->name) == SURF_WOOD)
+			gotwood = true;
+		else if (tr.surface && Surface2(tr.surface->name) == SURF_METAL)
+			gotmetal = true;
+	}
+			
+
+	VectorCopy (offset, end);
+	end[2]-=100;//down
+	tr = gi.trace (offset, mins, maxs, end, ent, MASK_SHOT);
+	if ((!gotwood || !gotmetal) && tr.fraction < 1.0 && tr.surface){
+		if (!gotwood && tr.surface && Surface2(tr.surface->name) == SURF_WOOD)
+			gotwood = true;
+		else if (!gotmetal && tr.surface && Surface2(tr.surface->name) == SURF_METAL)
+			gotmetal = true;
+	}
+	VectorCopy (offset, end);
+	end[0]+=100;//left
+	tr = gi.trace (offset, mins, maxs, end, ent, MASK_SHOT);
+	if ((!gotwood || !gotmetal) && tr.fraction < 1.0 && tr.surface){
+		if (!gotwood && tr.surface && Surface2(tr.surface->name) == SURF_WOOD)
+			gotwood = true;
+		else if (!gotmetal && tr.surface && Surface2(tr.surface->name) == SURF_METAL)
+			gotmetal = true;
+	}
+	VectorCopy (offset, end);
+	end[0]-=100;//right
+	tr = gi.trace (offset, mins, maxs, end, ent, MASK_SHOT);
+	if ((!gotwood || !gotmetal) && tr.fraction < 1.0 && tr.surface){
+		if (!gotwood && tr.surface && Surface2(tr.surface->name) == SURF_WOOD)
+			gotwood = true;
+		else if (!gotmetal && tr.surface && Surface2(tr.surface->name) == SURF_METAL)
+			gotmetal = true;
+	}
+	VectorCopy (offset, end);
+	end[1]+=100;//forward
+	tr = gi.trace (offset, mins, maxs, end, ent, MASK_SHOT);
+	if ((!gotwood || !gotmetal) && tr.fraction < 1.0 && tr.surface){
+		if (!gotwood && tr.surface && Surface2(tr.surface->name) == SURF_WOOD)
+			gotwood = true;
+		else if (!gotmetal && tr.surface && Surface2(tr.surface->name) == SURF_METAL)
+			gotmetal = true;
+	}
+	VectorCopy (offset, end);
+	end[1]-=100;//back
+	tr = gi.trace (offset, mins, maxs, end, ent, MASK_SHOT);
+	if ((!gotwood || !gotmetal) && tr.fraction < 1.0 && tr.surface){
+		if (!gotwood && tr.surface && Surface2(tr.surface->name) == SURF_WOOD)
+			gotwood = true;
+		else if (!gotmetal && tr.surface && Surface2(tr.surface->name) == SURF_METAL)
+			gotmetal = true;
+	}
+	
+	if (gotwood)
+		Play_Bullet_Hit(ent, "wood", origin, ent);
+	if (gotmetal)
+		Play_Bullet_Hit(ent, "metal", origin, ent);
+
+
+}
 
 /*
 =================
@@ -1841,7 +2050,7 @@ void Weapon_Rifle_Fire (edict_t *ent)
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	// rezmoth - changed for new firing system
 	//VectorSet(offset, 0, (ent->client->aim)?0:7,  ent->viewheight-8);
-	if (ent->client->pers.weapon->position = LOC_RIFLE)
+	if (ent->client->pers.weapon->position == LOC_RIFLE)
 		VectorSet(offset, 0, 0, ent->viewheight - 0);	//2
 	else
 		gi.dprintf("*** Firing System Error\n");

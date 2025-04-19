@@ -134,6 +134,8 @@ implemented it yet? */
 #define LOC_FLAME			11
 #define LOC_GRENADES		12
 #define LOC_TNT				13
+#define LOC_SHOTGUN			14
+#define LOC_SUBMACHINEGUN2	15
 
 #define OBDELAY				1.5
 
@@ -162,7 +164,8 @@ implemented it yet? */
 #define CMD_DELAY			2	// seconds
 
 // #define JUMP_TH				60  faf:  renaming this to jump_minimum for clarity
-#define JUMP_MINIMUM		60
+// hans JUMP_MINIMUN 40, default 60 -- salta a los 50 de stamina 
+#define JUMP_MINIMUM		50
 #define JUMP_TAKE			20
 #define JUMP_MAX			100
 #define JUMP_REGEN			0.09
@@ -177,6 +180,8 @@ implemented it yet? */
 #define SURF_GRASS			2
 #define SURF_WOOD			3
 #define SURF_METAL			4
+#define SURF_GLASS			5
+
 
 //pbowens: easier to modify
 #define HEALTH_MAX			100 

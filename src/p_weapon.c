@@ -719,10 +719,20 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
                         item_rounds = ent->client->mags[1].antitank_rnd;
                         ent->client->mags[1].antitank_rnd = 0;
                 }
+				else if (item->position == LOC_SHOTGUN)
+				{
+					item_rounds = ent->client->mags[1].shotgun_rnd;
+					ent->client->mags[1].shotgun_rnd = 0;
+				}
 
-        }
-        else if (!strcmp(item->dllname, team_list[0]->teamid))  //faf:  if team 0 weap...usually allied
-        {
+				else if (item->position == LOC_SUBMACHINEGUN2)
+				{
+					item_rounds = ent->client->mags[1].submg_rnd;
+					ent->client->mags[1].submg2_rnd = 0;
+				}
+		}
+		else if (!strcmp(item->dllname, team_list[0]->teamid)) // faf:  if team 0 weap...usually allied
+		{
                 if (item->position == LOC_PISTOL)
                 {
                 item_rounds = ent->client->mags[0].pistol_rnd;
@@ -759,7 +769,17 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
                         item_rounds = ent->client->mags[0].rifle_rnd + ent->client->mags[0].sniper_rnd;
                         ent->client->mags[0].rifle_rnd = 0;
                 }
-        }
+				else if (item->position == LOC_SHOTGUN)
+				{
+					item_rounds = ent->client->mags[0].shotgun_rnd;
+					ent->client->mags[0].shotgun_rnd = 0;
+				}
+				else if (item->position == LOC_SUBMACHINEGUN2)
+				{
+					item_rounds = ent->client->mags[0].submg2_rnd;
+					ent->client->mags[0].submg2_rnd = 0;
+				}
+		}
         else if (!strcmp(item->ammo, "flame_mag"))
         {
                 item_rounds = ent->client->flame_rnd;

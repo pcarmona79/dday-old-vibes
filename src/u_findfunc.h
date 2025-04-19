@@ -40,4 +40,4 @@ struct FuncArrayStruct
     void    (*func)();
 };
 
-void (*FindGameFunction(char *t));
+void *FindGameFunction(char *t);

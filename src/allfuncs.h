@@ -561,9 +561,13 @@ void Shrapnel_Explode(edict_t * ent );   // found @ line:486
 //bcass start - TNT
 void TNT_Explode(edict_t * ent );
 //bcass end
+void Play_Ricochet_Noise (edict_t *ent, vec3_t origin);
+void Play_WepSound(edict_t *ent, char *sound);
+void Smoke_Effect (vec3_t origin, float strength);
 // static void Shrapnel_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:559
 //void fire_grenade(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius );   // found @ line:605
 void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float time , float damage_radius , int team );   // found @ line:639
+void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 void rocket_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:693
 void fire_rocket(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:744
 void fire_shell(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:776

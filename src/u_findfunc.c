@@ -43,7 +43,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "allfuncs.h"
 #include "funcarry.h"  //this defines structures.
 
-void (*FindGameFunction(char *t))
+void *FindGameFunction(char *t)
 {
     int mid, hi, lo;
     int found;
@@ -72,8 +72,10 @@ void (*FindGameFunction(char *t))
         mid = (hi + lo)/2;
     }
 
-    if (found != -1)
+    if (found != -1) {
         return GlobalGameFunctionArray[found].func;
-    else
+    } else {
+        gi.dprintf("FindGameFunction: not found %s\n", t);
         return NULL;
+    }
 }

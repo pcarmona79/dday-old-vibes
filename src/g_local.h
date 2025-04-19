@@ -1264,7 +1264,14 @@ typedef struct
 
 		hmg_rnd,
 
-		antitank_rnd;		
+		antitank_rnd,	
+	
+		shotgun_rnd,
+		shotgun_fract,
+		
+		submg2_rnd,
+		submg2_fract
+;
 
 } mags_t;
 
@@ -1458,9 +1465,11 @@ struct gclient_s
 	float		last_shout_time;
 	float       footstep_framenum;
 
+	float 		crosshair_offset_x;
+	float 		crosshair_offset_y;
 
-
-
+	float		smoke_effect_goal;
+	float		smoke_effect_actual;
 };
 
 
@@ -1684,3 +1693,15 @@ extern qboolean	frame_output;
 #define DIZZYTIME 6 //seconds
 #define	flame_normal 0
 #define flame_gib 1
+
+typedef enum
+{
+	SOUND_WOOD,
+	SOUND_METAL,
+	SOUND_GLASS,
+	SOUND_SAND,
+	SOUND_CONCRETE
+} soundtype_t;
+
+int Surface2(char *name);
+
