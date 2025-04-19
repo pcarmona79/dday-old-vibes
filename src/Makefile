@@ -107,12 +107,24 @@ GAME_OBJS =	\
 
 #	g_so.o # this file is a shared library thingie needed for Solaris
 
-game$(ARCH).$(SHLIBEXT) : $(GAME_OBJS)
-	$(MAKE) usa$(ARCH).$(SHLIBEXT) -C usa
-	$(MAKE) grm$(ARCH).$(SHLIBEXT) -C grm
-	$(MAKE) rus$(ARCH).$(SHLIBEXT) -C rus
-	$(MAKE) gbr$(ARCH).$(SHLIBEXT) -C gbr
+game$(ARCH).$(SHLIBEXT): $(GAME_OBJS) \
+		usa$(ARCH).$(SHLIBEXT) \
+		grm$(ARCH).$(SHLIBEXT) \
+		rus$(ARCH).$(SHLIBEXT) \
+		gbr$(ARCH).$(SHLIBEXT)
 	$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(GAME_OBJS) $(LDFLAGS)
+
+usa$(ARCH).$(SHLIBEXT):
+	$(MAKE) usa$(ARCH).$(SHLIBEXT) -C usa
+
+grm$(ARCH).$(SHLIBEXT):
+	$(MAKE) grm$(ARCH).$(SHLIBEXT) -C grm
+
+rus$(ARCH).$(SHLIBEXT):
+	$(MAKE) rus$(ARCH).$(SHLIBEXT) -C rus
+
+gbr$(ARCH).$(SHLIBEXT):
+	$(MAKE) gbr$(ARCH).$(SHLIBEXT) -C gbr
 
 #############################################################################
 # MISC
