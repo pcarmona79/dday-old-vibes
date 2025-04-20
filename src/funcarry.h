@@ -569,12 +569,15 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Weapon_Knife", (void (*))Weapon_Knife,   // void Weapon_Knife(edict_t * ent )  \dday\source/p_weapon.c:725
 "Weapon_Knife_Fire", (void (*))Weapon_Knife_Fire,   // void Weapon_Knife_Fire(edict_t * ent )  \dday\source/p_weapon.c:682
 "Weapon_LMG_Fire", (void (*))Weapon_LMG_Fire,   // void Weapon_LMG_Fire(edict_t * ent )  \dday\source/g_weapon.c:1213
+"Weapon_MG34_Fire", (void (*))Weapon_MG34_Fire, // void Weapon_MG34_Fire (edict_t *ent)
 "Weapon_Mine", (void (*))Weapon_Mine,   // void Weapon_Mine(edict_t * ent )  \dday\source/p_weapon.c:535
 "Weapon_Morphine", (void (*))Weapon_Morphine,   // void Weapon_Morphine(edict_t * ent )  \dday\source/p_weapon.c:817
 "Weapon_Morphine_Use", (void (*))Weapon_Morphine_Use,   // void Weapon_Morphine_Use(edict_t * ent )  \dday\source/p_weapon.c:790
+"Weapon_PIAT_Fire", (void (*))Weapon_PIAT_Fire, // void Weapon_PIAT_Fire (edict_t *ent)
 "Weapon_Pistol_Fire", (void (*))Weapon_Pistol_Fire,   // void Weapon_Pistol_Fire(edict_t * ent )  \dday\source/g_weapon.c:982
 "Weapon_Rifle_Fire", (void (*))Weapon_Rifle_Fire,   // void Weapon_Rifle_Fire(edict_t * ent )  \dday\source/g_weapon.c:1067
 "Weapon_Rocket_Fire", (void (*))Weapon_Rocket_Fire,   // void Weapon_Rocket_Fire(edict_t * ent )  \dday\source/g_weapon.c:1421
+"Weapon_Sabre_Fire", (void (*))Weapon_Sabre_Fire, // void Weapon_Sabre_Fire (edict_t *ent)
 "Weapon_Sniper_Fire", (void (*))Weapon_Sniper_Fire,   // void Weapon_Sniper_Fire(edict_t * ent )  \dday\source/g_weapon.c:1465
 "Weapon_Submachinegun_Fire", (void (*))Weapon_Submachinegun_Fire,   // void Weapon_Submachinegun_Fire(edict_t * ent )  \dday\source/g_weapon.c:1127
 "WriteClient", (void (*))WriteClient,   // void WriteClient(FILE * f , gclient_t * client )  \dday\source/g_save.c:374
@@ -823,4 +826,4 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   726
+#define  FUNARRAYLEN   729

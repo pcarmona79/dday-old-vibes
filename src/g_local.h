@@ -1468,6 +1468,8 @@ struct gclient_s
 	float 		crosshair_offset_x;
 	float 		crosshair_offset_y;
 
+	float		gunwarntime;//stop warning spam
+
 	float		smoke_effect_goal;
 	float		smoke_effect_actual;
 };
