@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "u_findfunc.h"
 #include "u_entmgr.h"
 
+#include <ctype.h>
+
 // g_dll.linux.c
 // D-Day: Normandy DLL interaction code
 // LINUX
@@ -66,7 +68,13 @@ userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team)
 		if(!(ent->pathtarget=gi.TagMalloc(sizeof("usa\0"), TAG_LEVEL))) return NULL;
 		strcpy(ent->pathtarget,"usa\0");
 		IsDLLName=true;
-	}
+	} else {
+        // forces to use lowercase
+        char *p = ent->pathtarget;
+        for ( ; *p; ++p)
+            *p = tolower(*p);
+    }
+
 	if(!(unode = (userdll_list_node_t*)
 		//gi.TagMalloc(sizeof(userdll_list_node_t), TAG_LEVEL)))
 		gi.TagMalloc(508000, 0)))
