@@ -1023,7 +1023,12 @@ void G_SetStats (edict_t *ent)
 	//
 	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo)
 	{
-		item	= FindItem(ent->client->pers.weapon->ammo);
+		//item	= FindItem(ent->client->pers.weapon->ammo);
+		// kernel: this will force to search in team's items first
+		item = FindItemInTeam(ent->client->pers.weapon->ammo,
+				ent->client->resp.team_on->teamid);
+		if (!item)
+			item = FindItem(ent->client->pers.weapon->ammo);
 		
 		if (item) 
 		{

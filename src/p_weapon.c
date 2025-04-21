@@ -446,10 +446,21 @@ void ChangeWeapon (edict_t *ent)
 	ent->client->machinegun_shots = 0;
 	ent->client->ps.fov = STANDARD_FOV;
 
-	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo)
-		ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
-	else
+	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo) {
+		//ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
+		// kernel: this will force to search in team's items first
+		gitem_t* item = FindItemInTeam(ent->client->pers.weapon->ammo,
+				ent->client->resp.team_on->teamid);
+		if (!item)
+			item = FindItem(ent->client->pers.weapon->ammo);
+
+		if (item)
+			ent->client->ammo_index = ITEM_INDEX(item);
+		else
+			ent->client->ammo_index = 0;
+	} else {
 		ent->client->ammo_index = 0;
+	}
 	//gi.dprintf("ammo_index: %i\n", ent->client->ammo_index);
 
 	if (!ent->client->pers.weapon || ent->s.modelindex != 255) //pbowens: v_wep

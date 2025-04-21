@@ -122,6 +122,25 @@ gitem_t	*FindItem (char *pickup_name)
 	return NULL;
 }
 
+// kernel: like FindItem but filtering by team
+gitem_t	*FindItemInTeam(char *pickup_name, char *dllname)
+{
+	int		i;
+	gitem_t	*it;
+
+	it = itemlist;
+	for (i=0 ; i<game.num_items ; i++, it++)
+	{
+		if (!it->pickup_name)
+			continue;
+		if (!Q_stricmp(it->pickup_name, pickup_name)
+			&& !Q_stricmp(it->dllname, dllname))
+			return it;
+	}
+
+	return NULL;
+}
+
 gitem_t *FindTeamItem (char *dllname, int position)  //faf:  added for team dll support.  Finds item by dll name and 'position'.  Not 100% sure if it works yet...
 {
         int             i;
