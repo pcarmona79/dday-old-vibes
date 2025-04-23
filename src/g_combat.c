@@ -746,6 +746,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 						(mod == MOD_HMG) || 
 						(mod == MOD_SUBMG) || 
 						(mod == MOD_SNIPER) ||
+						(mod == MOD_BAYONET) ||
 						(mod == MOD_KNIFE)) ) 
 	{ 
 			
@@ -788,7 +789,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	}
 
 	//Wheaty: Per Darwin's request... SMG/LMG can no longer inflict headshots
-	if ((mod == MOD_LMG || mod == MOD_SUBMG) && result == HEAD_WOUND)
+	if ((mod == MOD_LMG || mod == MOD_SHOTGUN2 || mod == MOD_SUBMG) && result == HEAD_WOUND)
 		result = CHEST_WOUND;
 			
 	switch(result)

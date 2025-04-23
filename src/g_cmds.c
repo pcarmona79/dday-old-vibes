@@ -132,6 +132,7 @@ g_cmds_t id_GameCmds[NUM_ID_CMDS] = // remember to set back to NUM_ID_COMDS
 	"stance",		1,	Cmd_Stance,
 //	"airstrike",	1,	Cmd_Airstrike_f,
 	"arty",			1,	Cmd_Arty_f,
+	"attack2",			1,	Cmd_Arty_f,
 	"class",		1,	Cmd_Menu_Class_f, //Cmd_MOS,
 //	"create_team",	1,	Cmd_Create_Team,
 	"join_team",	1,	Cmd_Menu_Team_f,//Cmd_Join_team,
@@ -273,10 +274,10 @@ void Cmd_DDHelp_f(edict_t *ent)
 		"\n\n\n -- DDAY NORMANDY HELPFUL HINTS --\n\n"
 
 		"Useful binds:\n"
-		" arty        -- Call for artillery (officer class only).\n"
 		" autopickup  -- Toggle if you pickup items.\n"
 		" binds	      -- You are here.\n"
 		" drop ammo   -- Drop ammo for currently selected weapon.\n"
+		" arty/attack2- Use turret, use bayonet, cancel arty\n"
 		" drop gun    -- Drop your current weapon ONLY.\n"
 		" drop weapon -- Drop your current weapon AND all of its ammo.\n"
 		" id          -- Toggle player ID display.\n"

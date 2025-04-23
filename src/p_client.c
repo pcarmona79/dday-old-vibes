@@ -466,6 +466,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
 				break;
+			case MOD_SHOTGUN2:
+				message = "was shotgunned by";
+				break;
 			case MOD_RIFLE:
 				message = "was shot down by";
 				message2 = "'s rifle";
@@ -566,7 +569,12 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				break;
 /*-----------------------------------------------------------------*/
 			case MOD_KNIFE:
-				message = "was castrated by";
+				if (attacker->client->pers.weapon &&
+						(!Q_strcasecmp(attacker->client->pers.weapon->classname, "weapon_katana")
+						|| !Q_strcasecmp(attacker->client->pers.weapon->classname, "weapon_sabre")))
+					message = "was sliced in half by";
+				else
+					message = "was castrated by";
 				break;
 			case MOD_FISTS:
 				message = "was punched out by";
@@ -577,6 +585,12 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_BAYONET:
 				message = "was bayoneted by";
 				break;//faf
+			case MOD_BOTTLE:
+				message = "was molotoved by";
+				break;//faf
+			case MOD_TANKHIT:
+				message = "got blown up by";
+				break;
 
 
 
@@ -872,6 +886,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		|| (meansOfDeath == MOD_G_SPLASH) 
 		|| (meansOfDeath == MOD_HG_SPLASH)		
 		|| (meansOfDeath == MOD_EXPLOSIVE)
+		|| (meansOfDeath == MOD_TANKHIT)
 		|| (meansOfDeath == MOD_TNT)
 		|| (meansOfDeath == MOD_TNT1)
 		|| (meansOfDeath == MOD_HELD_TNT)

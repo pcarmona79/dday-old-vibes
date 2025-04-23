@@ -626,6 +626,9 @@ extern	int	body_armor_index;
 #define MOD_AIRSTRIKE_SPLASH  48//
 #define MOD_BAYONET			49//faf
 #define MOD_FRIENDLY_FIRE	0x8000000
+#define	MOD_BOTTLE			53
+#define	MOD_TANKHIT			54
+#define	MOD_SHOTGUN2		55
 
 extern	int	meansOfDeath;
 
@@ -1672,6 +1675,7 @@ struct edict_s
 //	qboolean		ident;
 	
 	float			leave_limbo_time;//faf
+	int				oldstance;//faf
 
 };
 

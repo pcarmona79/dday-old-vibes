@@ -1262,7 +1262,7 @@ void Weapon_Mine (edict_t *ent)
 fire_knife
 =============
 */
-
+qboolean Cmd_Scope_f(edict_t *ent);
 void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, char *wav, qboolean fists)
 {    
     trace_t tr; //detect whats in front of you up to range "vec3_t end"
@@ -1284,9 +1284,26 @@ void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
             if (tr.ent->takedamage)            
             {
                 //This tells us to damage the thing that in our path...hehe
-                T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage,  (fists)?200:0   , 0,(fists)?MOD_FISTS:MOD_KNIFE);//faf:  adding knockback for fists
-                gi.sound (self, CHAN_AUTO, gi.soundindex((fists)?wav:"brain/melee3.wav") , 1, ATTN_NORM, 0); 
-
+				if (self->client && self->client->pers.weapon &&
+					(!Q_strcasecmp(self->client->pers.weapon->classname, "weapon_enfield")
+						|| !Q_strcasecmp(self->client->pers.weapon->classname, "weapon_svt")
+						|| !Q_strcasecmp(self->client->pers.weapon->classname, "weapon_carcano")))
+				{
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, 75, 50, 0,MOD_BAYONET);//faf
+				}
+				else //if (!OnSameTeam(tr.ent, self))
+				{
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage,  (fists)?200:0   , 0,(fists)?MOD_FISTS:MOD_KNIFE);//faf:  adding knockback for fists
+					if (tr.ent->client &&
+						tr.ent->client->aim)
+					{
+						//knock em out of truesight
+						Cmd_Scope_f(tr.ent);
+					}
+				}
+			//	else
+			//		T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_NO_KNOCKBACK,(fists)?MOD_FISTS:MOD_KNIFE);
+                //gi.sound (self, CHAN_AUTO, gi.soundindex((fists)?wav:"brain/melee3.wav") , 1, ATTN_NORM, 0); 
             }        
             else        
             {                
