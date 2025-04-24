@@ -147,7 +147,8 @@ typedef enum
 	AMMO_HMG,
 	AMMO_RIFLE,
 	AMMO_SNIPER,
-	AMMO_FLAME
+	AMMO_FLAME,
+	AMMO_SHOTGUN
 } ammo_t;
 
 typedef enum
@@ -1481,6 +1482,9 @@ struct gclient_s
 
 	float		smoke_effect_goal;
 	float		smoke_effect_actual;
+
+	edict_t		*sandbag_preview;
+	vec3_t		sandbag_pos;
 };
 
 
@@ -1714,6 +1718,9 @@ typedef enum
 	SOUND_SAND,
 	SOUND_CONCRETE
 } soundtype_t;
+
+int	allied_sandbags;
+int axis_sandbags;
 
 int Surface2(char *name);
 

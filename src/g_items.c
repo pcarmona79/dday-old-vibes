@@ -43,6 +43,11 @@ void Weapon_Antidote(edict_t *ent);
 void Weapon_Morphine(edict_t *ent);
 void Weapon_Bandage(edict_t *ent);
 void Weapon_Flamethrower(edict_t *ent);
+void Weapon_Sandbag(edict_t *ent);
+
+void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_LFIRE_LAST, int FRAME_LIDLE_LAST, int FRAME_RELOAD_LAST, int FRAME_LASTRD_LAST,
+	int FRAME_DEACTIVATE_LAST, int FRAME_RAISE_LAST,int FRAME_AFIRE_LAST, int FRAME_AIDLE_LAST,
+	int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent));
 
 //gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -511,6 +516,9 @@ qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count)
 		max = ent->client->pers.max_slugs;
 	else if (item->tag == AMMO_FLAME)
 		max = ent->client->pers.max_flame;
+	else if (item->tag == AMMO_SHOTGUN)
+		max = 20;//ent->client->pers.max_bullets;
+
 	else
 		return false;
 
@@ -1331,7 +1339,30 @@ gitem_t	itemlist[MAX_ITEMS] =
        "misc/fhit3.wav fists/fire.wav fists/hit.wav"
 
 	   },
-
+	{ 
+		"weapon_sandbag", 
+		Pickup_Weapon,
+		Use_Weapon,                             //How to use
+		NULL,
+		Weapon_Sandbag,                           //What the function is
+		"misc/w_pkup.wav",
+		"models/objects/sandbag/tris.md2", 0, 
+		"models/weapons/v_sandbag/tris.md2",      //The models stuff
+		"w_sandbags",                                    //Icon to be used
+		"Sandbags",                                        //Pickup name
+		0,
+		1,
+		"sandbags",
+		IT_WEAPON,
+		NULL,
+		0,
+		LOC_KNIFE,
+		0,
+		0,
+		0,
+		0,
+		"faf/woodbreak.wav"
+	},
 /*QUAKED item_helmet (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -1935,6 +1966,315 @@ void SP_item_armor_shard(edict_t *self)
 void SP_item_ammo_grenades(edict_t *self)
 {
     SpawnItem(self,FindItemByClassname("ammo_grenades"));
+}
+
+void sandbag_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
+{
+	vec3_t org;
+
+	org[0] = self->s.origin[0] + crandom() * self->size[0];
+	org[1] = self->s.origin[1] + crandom() * self->size[1];
+	org[2] = self->s.origin[2] + crandom() * self->size[2];
+	ThrowDebris(self, "models/objects/debris1/tris.md2", 1, org);
+	org[0] = self->s.origin[0] + crandom() * self->size[0];
+	org[1] = self->s.origin[1] + crandom() * self->size[1];
+	org[2] = self->s.origin[2] + crandom() * self->size[2];
+	ThrowDebris(self, "models/objects/debris1/tris.md2", 1, org);
+	org[0] = self->s.origin[0] + crandom() * self->size[0];
+	org[1] = self->s.origin[1] + crandom() * self->size[1];
+	org[2] = self->s.origin[2] + crandom() * self->size[2];
+	ThrowDebris(self, "models/objects/debris1/tris.md2", 1, org);
+	org[0] = self->s.origin[0] + crandom() * self->size[0];
+	org[1] = self->s.origin[1] + crandom() * self->size[1];
+	org[2] = self->s.origin[2] + crandom() * self->size[2];
+	ThrowDebris(self, "models/objects/debris1/tris.md2", 1, org);
+
+	gi.positioned_sound(self->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/woodbreak.wav"), .7, ATTN_NORM, 0);
+
+	if (self->obj_owner == 0)
+		allied_sandbags--;
+	else if (self->obj_owner == 1)
+		axis_sandbags--;
+
+	G_FreeEdict(self);
+}
+
+void sandbag_touch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	if (surf && (surf->flags & SURF_SKY))
+	{
+		return;
+	}
+}
+
+void sandbag_think(edict_t *ent)
+{
+/*	if (ent->movetype != MOVETYPE_NONE && ent->groundentity &&
+		!strcmp(ent->groundentity->classname, "worldspawn"))
+	{
+		ent->movetype = MOVETYPE_NONE;
+		//ent->think = G_FreeEdict;
+		//ent->nextthink = level.time + 300;
+		
+		gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/tnt/wall.wav"), .7, ATTN_NORM, 0);	
+		return;
+	}*/
+	if (ent->groundentity)
+	{
+		gi.positioned_sound(ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/tnt/wall.wav"), .7, ATTN_NORM, 0);
+		return;
+	}
+	else if (ent->obj_time < level.time - 5)
+	{
+		if (ent->obj_owner == 0)
+			allied_sandbags--;
+		else if (ent->obj_owner == 1)
+			axis_sandbags--;
+
+		ent->think = G_FreeEdict;
+	}
+
+	// VectorCopy (ent->s.origin, ent->obj_origin);
+	// ent->obj_origin[2]-=4;
+
+	ent->nextthink = level.time + .1;
+}
+
+void Weapon_Sandbag_Fire(edict_t *ent)
+{
+	edict_t *sandbag;
+
+	ent->client->ps.gunframe++;
+
+	if (ent->client->resp.team_on->index == 0)
+	{
+		if (allied_sandbags >= 12)
+		{
+			gi.centerprintf(ent, "Your team is at the sandbag limit!\n");
+			return;
+		}
+	}
+	else if (ent->client->resp.team_on->index == 1)
+	{
+		if (axis_sandbags >= 12)
+		{
+			gi.centerprintf(ent, "Your team is at the sandbag limit!\n");
+			return;
+		}
+	}
+
+	if (VectorCompare(ent->client->sandbag_pos, vec3_origin))
+	{
+		gi.centerprintf(ent, "There's no space for sandbags there!\n");
+		return;
+	}
+
+	ent->client->pers.inventory[ITEM_INDEX(FindItem("Sandbags"))]--;
+
+	sandbag = G_Spawn();
+
+	VectorCopy(ent->client->sandbag_preview->mins, sandbag->mins);
+	VectorCopy(ent->client->sandbag_preview->maxs, sandbag->maxs);
+	VectorCopy(ent->client->sandbag_preview->s.angles, sandbag->s.angles);
+
+	sandbag->classname = "sandbags";
+
+	sandbag->movetype = MOVETYPE_TOSS;
+	sandbag->solid = SOLID_BBOX;
+	sandbag->s.modelindex = gi.modelindex("models/objects/sandbag/tris.md2");
+	sandbag->think = sandbag_think;
+	sandbag->nextthink = level.time + .1;
+	//ent->s.frame = rand() % 16;
+	//ent->s.frame = 1;
+
+	sandbag->mass = 300;
+
+	sandbag->touch = sandbag_touch;
+
+	sandbag->health = 2000;
+	sandbag->takedamage = DAMAGE_YES;
+	sandbag->die = sandbag_die;
+	sandbag->s.skinnum = 0;
+
+	sandbag->s.frame = 0;
+	//VectorSet (sandbag->mins, -19, -9, -10);
+	//VectorSet (sandbag->maxs, 19, 9, 8);
+
+	VectorCopy(ent->client->sandbag_pos, sandbag->s.origin);
+
+	sandbag->clipmask = MASK_SHOT;
+
+	sandbag->spawnflags = 1;
+	if (ent->client->resp.team_on)
+		sandbag->obj_owner = ent->client->resp.team_on->index;
+
+	if (ent->client->resp.team_on->index == 0)
+		allied_sandbags++;
+	else if (ent->client->resp.team_on->index == 1)
+		axis_sandbags++;
+
+	sandbag->obj_time = level.time;
+
+	gi.linkentity(sandbag);
+
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("Sandbags"))] == 0)
+	{
+		ent->client->weaponstate = WEAPON_LOWER;
+		ent->client->ps.gunframe = 20;
+		Use_Weapon(ent, FindItem("fists"));
+		return;
+	}
+
+	G_FreeEdict(ent->client->sandbag_preview);
+	ent->client->sandbag_preview = NULL;
+}
+
+void sandbag_prev_think(edict_t *ent)
+{
+	if (!ent->owner || !ent->owner->client ||
+		!ent->owner->client->pers.weapon ||
+		Q_strcasecmp(ent->owner->client->pers.weapon->classname, "weapon_sandbags") ||
+		ent->owner->health < 1)
+	{
+		ent->think = G_FreeEdict;
+		if (ent->owner && ent->owner->client &&
+			ent->owner->client->sandbag_preview)
+			ent->owner->client->sandbag_preview = NULL;
+	}
+
+	// gi.dprintf("%s\n",vtos(ent->owner->s.angles));
+
+	ent->nextthink = level.time + .1;
+}
+
+void Weapon_Sandbag(edict_t *ent)
+{
+	static int pause_frames[] = {0}; //{19, 32, 0};
+	int fire_frames[] = {7};
+	vec3_t mins, maxs;
+
+	edict_t *sandbag;
+	trace_t tr;
+	vec3_t end, forward, right, offset, start;
+	float ang;
+
+	if (ent->client->aim)
+	{
+		ent->client->aim = false;
+		return;
+	}
+
+	ent->client->crosshair = false;
+
+	if (!ent->client->sandbag_preview)
+	{
+		sandbag = G_Spawn();
+		sandbag->s.skinnum = 0;
+		VectorCopy(ent->s.origin, sandbag->s.origin);
+		sandbag->s.frame = 0;
+		gi.setmodel(sandbag, "models/objects/sandbag/tris.md2");
+		sandbag->takedamage = DAMAGE_NO;
+		sandbag->solid = SOLID_NOT;
+		sandbag->s.sound = 0;
+		sandbag->flags |= FL_NO_KNOCKBACK;
+		sandbag->movetype = MOVETYPE_NONE;
+		sandbag->think = sandbag_prev_think;
+		sandbag->nextthink = level.time + .1;
+		sandbag->s.renderfx = RF_TRANSLUCENT;
+		gi.linkentity(sandbag);
+		ent->client->sandbag_preview = sandbag;
+		sandbag->owner = ent;
+	}
+
+	sandbag = ent->client->sandbag_preview;
+
+	ang = ent->s.angles[1];
+
+	if (ang > 45 && ang < 135)
+	{
+		sandbag->s.angles[1] = 90;
+		VectorSet(sandbag->mins, -19, -9, -10);
+		VectorSet(sandbag->maxs, 19, 9, 8);
+	}
+	else if (ang >= 135 || ang <= -135)
+	{
+		sandbag->s.angles[1] = 180;
+		VectorSet(sandbag->mins, -9, -19, -10);
+		VectorSet(sandbag->maxs, 9, 19, 8);
+	}
+	else if (ang < -35)
+	{
+		sandbag->s.angles[1] = 270;
+		VectorSet(sandbag->mins, -19, -9, -10);
+		VectorSet(sandbag->maxs, 19, 9, 8);
+	}
+	else
+	{
+		sandbag->s.angles[1] = 0;
+		VectorSet(sandbag->mins, -9, -19, -10);
+		VectorSet(sandbag->maxs, 9, 19, 8);
+	}
+
+	VectorSet(mins, -20, -20, -10);
+	VectorSet(maxs, 20, 20, 10);
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 0, 0, ent->viewheight);
+	VectorAdd(ent->s.origin, offset, start);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+
+	VectorMA(start, 55, forward, end);
+	tr = gi.trace(start, sandbag->mins, sandbag->maxs, end, ent, MASK_SHOT);
+	if (tr.startsolid || tr.fraction < 1)
+	{
+		VectorClear(ent->client->sandbag_pos);
+		sandbag->svflags = SVF_NOCLIENT;
+	}
+	else
+	{
+		//VectorMA(start, 55, forward, end);
+
+		tr = gi.trace(tr.endpos, sandbag->mins, sandbag->maxs, tr.endpos, ent, MASK_SHOT);
+
+		if (tr.fraction < 1)
+		{
+			gi.dprintf("blah\n");
+			VectorClear(ent->client->sandbag_pos);
+			sandbag->svflags = SVF_NOCLIENT;
+		}
+		else
+		{
+
+			VectorCopy(tr.endpos, sandbag->s.origin);
+			sandbag->svflags &= ~SVF_NOCLIENT;
+			VectorCopy(tr.endpos, ent->client->sandbag_pos);
+
+			if (ent->client->movement
+				|| ent->client->last_jump_time > level.time - 2
+				|| ent->client->ps.gunframe < 8
+				|| ent->client->ps.gunframe > 17)
+				sandbag->svflags = SVF_NOCLIENT;
+		}
+	}
+
+	gi.linkentity(sandbag);
+
+	//ent->client->aim=false;
+	//fire_frames[0]=(ent->client->aim)?54:4;
+	ent->client->p_rnd = NULL;
+
+	// faf
+	fire_frames[0] = 7;
+
+	Weapon_Generic(ent,
+				   4, 7, 17,
+				   17, 17, 20,
+				   20, 20, 20,
+				   pause_frames, fire_frames, Weapon_Sandbag_Fire);
 }
 
 void SP_item_weapon_mine(edict_t *self)

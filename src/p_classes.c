@@ -111,6 +111,13 @@ void Give_Class_Weapon(edict_t *ent)
 
 	client=ent->client;
 
+	if (client->resp.mos == ENGINEER)
+	{
+		item = FindItem("Sandbags");
+		client->pers.inventory[ITEM_INDEX(item)]= 2;
+
+	}
+
 	//give everyone a knife & fists & helmet
 	// UNLESS invuln_medic
 	if (client->resp.mos == MEDIC && invuln_medic->value == 1)

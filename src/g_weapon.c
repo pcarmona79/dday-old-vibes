@@ -213,8 +213,8 @@ int Play_Bullet_Hit(edict_t *ent, char *surface, vec3_t endpos, edict_t *impact_
 		//			safe_bprintf (PRINT_HIGH, "glass\n");
 		soundtype = SOUND_GLASS;
 	}
-	else if (//(impact_ent && impact_ent->classnameb == SANDBAGS) || // kernel: no sandbags yet
-			 (Surface(surface, SURF_SAND) || Surface(surface, SURF_GRASS))) // sand (beach)
+	else if ((impact_ent && !Q_strcasecmp(impact_ent->classname, "sandbags") ||
+			 (Surface(surface, SURF_SAND) || Surface(surface, SURF_GRASS)))) // sand (beach)
 	{
 		if (random() < 0.33)
 			sound = gi.soundindex("bullet/sand1.wav");

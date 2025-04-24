@@ -705,6 +705,7 @@ void TossClientWeapon (edict_t *self)
 		((Q_stricmp (item->pickup_name, "Morphine")   == 0) ||
 		 (Q_stricmp (item->pickup_name, "Fists")      == 0) ||
 		 (Q_stricmp (item->pickup_name, "TNT")      == 0) ||
+		 (Q_stricmp (item->pickup_name, "Sandbags")      == 0) ||
 		 (Q_stricmp (item->pickup_name, "Binoculars") == 0) ))
 		item = NULL;
 
