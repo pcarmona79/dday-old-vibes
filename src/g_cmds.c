@@ -329,14 +329,29 @@ void Cmd_Scope_f(edict_t *ent)
 		}
 		return;
 	}
+	
+	if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
+	{
+		if (ent->client->aim == true)
+		{
+			ent->client->aim = false;
+			ent->client->ps.gunframe = 8;
+		}
+		else
+		{
+			ent->client->aim = true;
+		}
+		//return true;
+		return;
+	}
 		 
 	// Nick - Hack to allow a bolt action Enfield reload animation to play the entirety.
-	if (!strcmp(ent->client->pers.weapon->classname, "weapon_Enfield") &&
+	/*if (!strcmp(ent->client->pers.weapon->classname, "weapon_Enfield") &&
 	(ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15 ||
 	ent->client->ps.gunframe >=88 && ent->client->ps.gunframe <=100))
 	{
 		return;
-	}
+	}*/
 		// End Nick
 
 

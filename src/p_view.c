@@ -603,6 +603,17 @@ void SV_CalcGunOffset (edict_t *ent)
 	int		i;
 	float	delta;
 
+
+	if (ent->client && 
+		ent->client->pers.weapon &&
+		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
+	{
+		VectorClear(ent->client->ps.gunangles);
+		return;
+	}
+	//stops binocular aim being messed up
+
+
 	// gun angles from bobbing
 	ent->client->ps.gunangles[ROLL] = xyspeed * bobfracsin * 0.005;
 	ent->client->ps.gunangles[YAW] = xyspeed * bobfracsin * 0.01;

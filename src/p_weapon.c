@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "m_player.h"
 #include "p_classes.h"
+#include "g_cmds.h"
 
 /*-----/ PM /-----/ NEW:  Include new header files. /-----*/
 #include "x_fbomb.h"
@@ -43,7 +44,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define MEDICH		100
 //bcass end
 
-void Cmd_WeapNext_f (edict_t *ent);
 void weapon_grenade_fire (edict_t *ent);
 //bcass start - TNT
 void weapon_tnt_fire (edict_t *ent);
@@ -61,6 +61,7 @@ void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 //bcass end
 void Shrapnel_Dud (edict_t *ent);
 void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
+void check_unscope (edict_t *ent);//faf
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
@@ -1688,7 +1689,7 @@ void Weapon_Binoculars_Look(edict_t *ent)
 
 
 
-void Weapon_Binoculars(edict_t *ent)
+void Weapon_Binoculars0(edict_t *ent)
 {
 	static int		pause_frames[] = {19,32,0};
 	static int		fire_frames[] = {6};
@@ -1698,6 +1699,104 @@ void Weapon_Binoculars(edict_t *ent)
 	ent->client->crosshair = false;
 
 	Weapon_Generic(ent,3,8,48,48,48,51,0,0,0,pause_frames,fire_frames,Weapon_Binoculars_Look);
+}
+
+
+void Weapon_Binoculars(edict_t *ent)
+{
+	if (ent->client->weaponstate == WEAPON_ACTIVATING)
+	{
+		if (ent->client->ps.gunframe< 3)
+		{
+			ent->client->ps.gunframe++;
+			return;
+		}
+		else 
+		{
+			ent->client->ps.gunframe = 8;
+			ent->client->weaponstate = WEAPON_READY;
+			return;
+		}
+	}
+
+	if (ent->client->weaponstate != WEAPON_DROPPING)
+	{
+		if ((ent->client->newweapon) && (ent->client->weaponstate != WEAPON_FIRING))
+		{
+			ent->client->weaponstate = WEAPON_DROPPING;
+			ent->client->ps.gunframe = 47;
+		}
+	}
+
+	if (ent->client->weaponstate == WEAPON_DROPPING)
+	{
+		if (ent->client->drop || ent->client->ps.gunframe == 51)
+		{
+			ent->client->drop = false;
+			ent->client->aim  = false;
+			ChangeWeapon (ent);
+			return;
+		}		
+		ent->client->ps.gunframe++;
+		return;
+	}
+	
+	//idle
+	if (ent->client->ps.gunframe >7 &&
+		ent->client->ps.gunframe < 48)
+		ent->client->ps.gunframe++;
+	
+	if (ent->client->ps.gunframe == 48)
+	{
+		ent->client->ps.gunframe = 8;
+	}
+
+	if (ent->client->aim == true)
+	{
+		ent->client->crosshair = true;
+		ent->client->ps.fov = SCOPE_FOV;
+		ent->client->ps.gunframe = 6;
+		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
+		{
+			if (ent->client->last_fire_time < level.time - .5)
+				Cmd_Arty_f(ent);
+			ent->client->last_fire_time = level.time;
+		}
+	}
+	else
+	{
+		ent->client->crosshair = false;
+
+		if (((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK)
+				&& 	(ent->client->last_fire_time < level.time -.5))
+		{
+			ent->client->last_fire_time = level.time;
+			if ( ent->client->arty_called )
+			{
+				if (ent->client->arty_fired)
+				{
+					gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
+					return;
+				}
+				else
+				{
+					gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
+					ent->client->arty_called = 0;
+					ent->client->arty_num--;
+					return;
+				}
+			}
+			else
+			{
+				gi.cprintf(ent, PRINT_HIGH, "Press the aim button to aim the binoculars!\n");
+				ent->client->latched_buttons = 0;
+			}
+		}
+
+		check_unscope(ent);//faf
+
+		ent->client->ps.fov = STANDARD_FOV;
+	}
 }
 
 

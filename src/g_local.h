@@ -1469,6 +1469,11 @@ struct gclient_s
 	float		last_shout_time;
 	float       footstep_framenum;
 
+	float		scopetime;//faf
+	float		unscopetime;//faf
+
+	float       last_fire_time;//faf
+
 	float 		crosshair_offset_x;
 	float 		crosshair_offset_y;
 

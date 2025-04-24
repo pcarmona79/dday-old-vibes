@@ -175,8 +175,9 @@ void Cmd_Arty_f (edict_t *ent)
 
 	//faf:  moving this up so you dont have to look through binocs to cancel arty
 	// make sure artillary hasn't already been called
-	if ( ent->client->arty_called )
+	if (ent->client->arty_called && (ent->client->last_fire_time < level.time -.5))
 	{
+		ent->client->last_fire_time = level.time;
 		if (ent->client->arty_fired)
 		{
 			gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
@@ -190,11 +191,12 @@ void Cmd_Arty_f (edict_t *ent)
 			return;
 		}
 	}
-
-
-
-
-
+	else if (ent->client->pers.weapon &&
+			!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars") &&
+			!ent->client->aim)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Aim and then press fire to call an airstrike!\n");
+	}
 
 
 //	if (ent->client->resp.mos != OFFICER) {
@@ -210,7 +212,7 @@ void Cmd_Arty_f (edict_t *ent)
 
 
 
-	/* Wheaty: Officers can only call airstrikes with binoculars! */
+	/* Wheaty: Officers can only call airstrikes with binoculars!
 	if (strcmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 	{
 		gi.cprintf(ent, PRINT_HIGH, "What the hell are you aiming at? Use your binoculars!\n");
@@ -222,7 +224,7 @@ void Cmd_Arty_f (edict_t *ent)
 			gi.cprintf(ent, PRINT_HIGH, "Aim at the location, sir.\n");
 			return;
 		}
-	}
+	}*/
 
 
 
@@ -352,22 +354,23 @@ void Think_Arty (edict_t *ent)
     fire_rocket(ent, start, targetdir, 600, 240, 320, 480);
     */
 
-	fire_airstrike(ent, start, targetdir, 700, 250, 300, 450);
-	VectorSet(tempvec, 8, 8, 0);
-	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 450, 200, 430);
-	VectorSet(tempvec, 16, 16, 0);
-	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 400, 150, 400, 500);
-	VectorSet(tempvec, 24, 24, 0);
-	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 210, 250, 500);
+	// kernel: spread out and empower the airstrike
+	fire_airstrike(ent, start, targetdir, 700, 250, 400, 550);
 	VectorSet(tempvec, 32, 32, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 300, 430, 200, 450);
-	VectorSet(tempvec, 40, 40, 0);
+    fire_airstrike(ent, tempvec, targetdir, 600, 450, 300, 530);
+	VectorSet(tempvec, 64, 64, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 240, 320, 480);
+    fire_airstrike(ent, tempvec, targetdir, 400, 150, 500, 600);
+	VectorSet(tempvec, 96, 96, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 600, 210, 350, 600);
+	VectorSet(tempvec, 128, 128, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 300, 430, 300, 550);
+	VectorSet(tempvec, 160, 160, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 600, 240, 420, 580);
 
 	//fire_shell(ent, start, targetdir, 250, ((rand()%500)+900), 300, 75); 	
 	

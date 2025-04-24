@@ -46,6 +46,7 @@ void change_stance(edict_t *self, int stance);
 void Cmd_Scope_f(edict_t *ent);
 void Drop_Weapon (edict_t *ent, gitem_t *item);
 void weapon_grenade_fire (edict_t *ent);
+void check_unscope (edict_t *ent);
 
 //kernel: to kick teamkillers
 void DropClient (edict_t *ent);
@@ -1781,6 +1782,8 @@ void PutClientInServer (edict_t *ent)
 
 	ent->client->jump_stamina = JUMP_MAX;
 	ent->flyingnun = false;
+
+	ent->client->last_fire_time = 0;
 }
 
 /*
@@ -2775,9 +2778,13 @@ you can get the motd by typing MOTD at the console too
 		//faf
 		if (ent->client->aim == true &&
 			ent->client->pers.weapon->position != LOC_KNIFE  &&
-			ent->client->pers.weapon->position != LOC_HELMET)
+			ent->client->pers.weapon->position != LOC_HELMET &&
+			Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 		{
 			ent->client->aim = false;
+
+			check_unscope(ent);//faf
+
 			ent->client->ps.fov = STANDARD_FOV;
 		}
 
