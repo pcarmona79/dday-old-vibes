@@ -2649,6 +2649,263 @@ void Weapon_HMG_Fire (edict_t *ent)
 
 }
 
+void Weapon_MG42_Fire (edict_t *ent)
+{
+	int			i;
+	int			shots=1;
+	vec3_t		start;
+	vec3_t		forward, right, up;
+	vec3_t		offset;
+	vec3_t		angles;
+	int			kick = 30;
+	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
+	int mag_index=ent->client->pers.weapon->mag_index;
+	int mod=guninfo->MeansOfDeath;
+	int	damage=guninfo->damage_direct;
+	trace_t tr; //faf
+    vec3_t end; //faf
+	vec3_t g_offset; //faf
+
+
+	if (ent->client->next_fire_frame > level.framenum)
+		return;
+
+	//Wheaty: Disable HMG while standing, totally
+	//faf:  hmgers can now rest hmg on sandbags/objects in front of them
+	if (ent->stanceflags == STANCE_STAND && (ent->client->buttons & BUTTON_ATTACK))
+	{
+		VectorCopy (vec3_origin,g_offset);
+
+	    AngleVectors (ent->client->v_angle, forward, right, NULL);
+	    VectorSet(offset, 24, 8, ent->viewheight-25);
+	    VectorAdd (offset, g_offset, offset);
+	    P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	    VectorScale (forward, -2, ent->client->kick_origin);
+		
+		VectorMA (start, 15, forward, end);  //calculates the range vector  //faf: 10 = range
+		tr = gi.trace (ent->s.origin, NULL, NULL, end, ent, MASK_SHOT);// figures out what in front of the player up till "end"
+
+		if (ent->client->movement || tr.fraction >= 1.0 || ent->client->v_angle[0] > 40)
+		{
+			if (ent->client->gunwarntime && ent->client->gunwarntime > level.time - 1)
+				return;
+
+			gi.cprintf(ent, PRINT_HIGH, "You need to rest that thing on something to shoot it!\n");
+			ent->client->gunwarntime = level.time;
+			return;
+		}
+	}
+
+// this is for when the trigger is released
+	if (!(ent->client->buttons & BUTTON_ATTACK))
+	{
+		if (!ent->client->aim)
+			ent->client->ps.gunframe = guninfo->LastFire;
+		else 
+			ent->client->ps.gunframe=guninfo->LastAFire;
+
+		ent->client->weapon_sound = 0;
+		ent->client->machinegun_shots=0;
+		
+		ent->client->buttons &= ~BUTTON_ATTACK;
+		ent->client->latched_buttons &= ~BUTTON_ATTACK;
+		ent->client->weaponstate = WEAPON_READY;
+
+		return;
+	}
+
+	/*
+// if you are still firing, recycle back to first firing
+	if (!ent->client->aim)
+	{		
+		 if(ent->client->ps.gunframe == guninfo->LastFire) 
+			 ent->client->ps.gunframe = guninfo->LastFire-1;
+		 else 
+			 ent->client->ps.gunframe = guninfo->LastFire;
+	}
+// else give another guninfo
+	else
+	{
+		if (ent->client->ps.gunframe >= guninfo->LastAFire)
+			ent->client->ps.gunframe = guninfo->LastAFire-2;
+		else 
+			ent->client->ps.gunframe++;
+		
+	}
+//	*/
+
+	// pbowens: the following assumes HMGs use only 2 firing frames
+	i = (level.framenum % 2) ? 1 : 0;
+
+	if (ent->client->aim)
+		ent->client->ps.gunframe = guninfo->AFO[i];
+	else
+		ent->client->ps.gunframe = guninfo->FO[i];
+
+/*
+	if (ent->client->mags[mag_index].hmg_rnd < shots)
+		shots = ent->client->mags[mag_index].hmg_rnd;
+*/
+	if (ent->client->p_rnd && *ent->client->p_rnd == 0)
+	{
+		if (ent->client->weaponstate != WEAPON_FIRING)
+			return;
+
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+//		if(auto_weapon_change->value) NoAmmoWeaponChange (ent);
+
+		 if (ent->client->aim) 
+			 ent->client->ps.gunframe = guninfo->LastAFire;
+		 else 
+			 ent->client->ps.gunframe = guninfo->LastFire;
+
+		 ent->client->weaponstate = WEAPON_READY;
+		 return;
+	}
+
+//	jamchance = rand() % 100;
+	if (ent->client->mg42_temperature > 45)
+	{
+		gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+		gi.centerprintf(ent, "The MG42 overheated! Fire that\nthing in bursts next time!\n"); 
+		ent->client->mags[mag_index].hmg_rnd= 0;
+
+		//ent->client->mg42_temperature =0;
+		ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo))]=0;
+
+		ent->client->mg42_temperature = 43;
+		return;
+	}
+
+	//ent->client->ps.gunframe++;
+
+	// get start / end positions
+	
+	//if not crouched, make gun jump sporadicly
+//faf	if (ent->stanceflags == STANCE_STAND || !ent->client->aim)
+	if (!ent->client->aim)
+	{	
+		for (i=0 ; i<3 ; i++)
+		{
+			//rezmoth - changed for new firing system
+			ent->client->kick_origin[i] = (crandom() * 3.35)-1.5;
+			ent->client->kick_angles[i] += (crandom() * 13.7)-1.5;
+		}
+		//rezmoth - changed for new firing system
+		ent->client->kick_origin[0] = crandom() * 0.35;
+		ent->client->kick_angles[0] += ent->client->machinegun_shots * -1.8;
+		// Raise HMG faster
+		ent->client->machinegun_shots += 2;
+		VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
+		AngleVectors (angles, forward, right, up);
+	}
+	else
+	{
+		for (i=0 ; i<3 ; i++)
+		{
+			//rezmoth - changed for new firing system
+			ent->client->kick_origin[i] = crandom() * 0.35;
+			ent->client->kick_angles[i] += crandom() * 0.7;
+		}
+		VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
+		AngleVectors (angles, forward, right, up);
+	}
+	
+	// Instead of limit, force the aim down and start over for jumpiness
+	if (ent->client->machinegun_shots > 10)
+		ent->client->machinegun_shots -= 10;
+
+//	for (i=0 ; i<shots ; i++)
+//	{
+		// get start / end positions
+
+		//rezmoth - changed for new firing system
+		//if(!ent->client->aim) 
+		//	//VectorSet(offset, 50, 9, ent->viewheight-6);
+		//	VectorSet(offset, 50, 9, crandom() * 40);
+		//else 
+		//	VectorSet(offset, 50, 0, ent->viewheight-1);
+
+		//rezmoth - changed for new firing system
+		/*
+		if (!strcmp(ent->client->pers.weapon->ammo, "mg42_mag"))
+		{
+			VectorSet(offset, 200, 0, ent->viewheight + 4);
+		} else if (!strcmp(ent->client->pers.weapon->ammo, "hmg_mag")) {
+			VectorSet(offset, 0, 0, ent->viewheight + 20);
+		} else {
+			gi.dprintf("*** Firing System Error\n");
+		}
+		*/
+
+		//start[2] += ent->viewheight;
+		//start[2] += ent->viewheight;
+
+		VectorSet(offset, 0, 0, ent->viewheight - 0);
+		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+		// rezmoth - tracers moved to here
+		//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, mod, true);
+		++ent->numfired;
+
+		if (ent->numfired % TRACERSHOT == 1)
+		{
+			VectorNormalize (right);
+			if (ent->client->pers.hand)
+				VectorScale (right, .0175 * ent->client->crosshair_offset_x, right);
+			else
+				VectorScale (right, -.0175 * ent->client->crosshair_offset_x, right);
+
+			VectorAdd (forward, right, forward);
+			forward[2] += -.0175 * ent->client->crosshair_offset_y;// (forward, right, forward);
+			fire_tracer (ent, start, forward, damage, mod);
+//			fire_gun(ent, start, forward, damage, kick, HMG_SPREAD, HMG_SPREAD, mod, false); //mg42 fires twice as fast now
+		}
+		else
+//			fire_hmg_bullet (ent, start, forward, damage, mod);//faf:  removing after testing
+		{
+			fire_gun(ent, start, forward, damage, kick, 100, 100, mod, false);
+		//	fire_gun(ent, start, forward, damage, kick, HMG_SPREAD, HMG_SPREAD, mod, false);  //mg42 fires twice as fast now
+		}
+
+		// rezmoth - changed to new firing code
+		//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, mod, true);
+//	}
+
+	Play_WepSound(ent,guninfo->FireSound);//PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	// send muzzle flash
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	gi.WriteByte (MZ_MACHINEGUN | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	/*
+	if (ent->client->p_rnd && *ent->client->p_rnd==1)
+	  { 
+		//Hard coded for reload only.
+        ent->client->ps.gunframe=guninfo->LastReload + 1;
+        ent->client->weaponstate = WEAPON_END_MAG;
+		Play_WepSound(ent,guninfo->LastRoundSound);
+	  }
+	  */
+
+	//if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+	//	ent->client->pers.inventory[ent->client->ammo_index] -= shots;
+
+		//ent->client->mags[mag_index].hmg_rnd-= 2; //shots;
+
+		ent->client->mags[mag_index].hmg_rnd-= 1; //shots;
+
+	//	if(ent->client->mags[mag_index].hmg_rnd==0 && auto_reload->value) Cmd_Reload_f(ent);
+	ent->client->next_fire_frame = level.framenum + guninfo->frame_delay;
+//		ent->client->mg42_temperature++;
+}
+
 void Weapon_Rocket_Fire (edict_t *ent)
 {
 
@@ -3746,6 +4003,787 @@ void Weapon_Sabre_Fire (edict_t *ent)
 	}
 
 	ent->client->ps.gunframe++;
+
+	PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
+}
+
+
+void fire_gun2(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv)
+{
+	// standard defines
+	trace_t		tr;
+	vec3_t		dir;
+	vec3_t		forward, right, up;
+	vec3_t		end;
+	float		r;
+	float		u;
+	vec3_t		water_start;
+	qboolean	water = false;
+	int			content_mask = MASK_SHOT | MASK_WATER;
+
+	// rezmoth - start dist trace
+	vec3_t	diststart, dist;
+	vec3_t	distend = {0, 0, -8192};
+	trace_t	disttr;
+
+	VectorCopy(self->s.origin, diststart);	// initial value
+	//VectorAdd(start, ent->mins, start); // go to the bottom of the player
+	VectorAdd(diststart, distend, distend);			// add distance for end
+
+	disttr = gi.trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
+	VectorSubtract(self->s.origin, disttr.endpos, dist);
+	// rezmoth - end dist trace
+
+	// Extra debugging propaganda
+	//gi.dprintf("self    %s\n", self->client->pers.netname);
+	//gi.dprintf("damage  %i\n", damage);
+	//gi.dprintf("kick    %i\n", kick);
+	//gi.dprintf("mod     %i\n", mod);
+	//gi.dprintf("calcv   %s\n", (calcv) ? "true":"false");
+
+	// Useful debugging information
+	//gi.dprintf("hspread %i\n", hspread);
+	//gi.dprintf("vspread %i\n", vspread);
+	//showvector("start   ", start);
+	//showvector("aimdir  ", aimdir);
+
+	// fetch trace results
+	tr = gi.trace(self->s.origin, NULL, NULL, start, self, MASK_SHOT);
+
+	// if the trace hit anything before distance termination
+	if (!(tr.fraction < 1.0))
+	{
+		// seperate the aimdir into three parts
+		vectoangles(aimdir, dir);
+		AngleVectors(dir, forward, right, up);
+
+		// rezmoth - TODO: fix this part
+		// random spread calculation
+		calcv = false;
+		//r = (calcv) ? (crandom() * hspread) : hspread;
+		//u = (calcv) ? (crandom() * vspread) : vspread;
+
+		// add spread to hip shots
+		if (!self->client->aim)
+		{
+			r = crandom() * 600;
+			u = crandom() * 600;
+		} else {
+			r = crandom() * 50;
+			u = crandom() * 50;
+		}
+
+		if (VectorLength(dist) > 20 && self->velocity[2] != 0)
+		{
+			r = crandom() * 1600;
+			u = crandom() * 1600;
+		}
+
+		// end = start[i] + 8192 * forward[i]
+		VectorMA (start, 8192, aimdir, end);//forward, end);
+		// scale right angle by calculated horizontal spread
+		VectorMA (end, r, right, end);
+		// scale up angle by calculated vertical spread
+		VectorMA (end, u, up, end);
+
+		// if trace starts in water?
+		if (gi.pointcontents (start) & MASK_WATER)
+		{
+			water = true;
+			VectorCopy (start, water_start);
+			// remove water from possible impacts during trace
+			content_mask &= ~MASK_WATER;
+		}
+
+		// retrace from point of impact with water
+		tr = gi.trace (start, NULL, NULL, end, self, content_mask);
+
+		// if trace impacts dead player
+
+//faf	if (tr.contents & MASK_DEADSOLID)
+//faf		SprayBlood(self, tr.endpos, up, 0, MOD_UNKNOWN);
+//faf:  sprayblood wont work here
+
+
+		// more spread calculation
+		if(calcv) calcVspread(self,&tr);
+
+		// if the trace impacts water?
+		if (tr.contents & MASK_WATER)
+		{
+			int		color;
+			water = true;
+
+			// copy trace's impact with water (end) to water_start
+			VectorCopy (tr.endpos, water_start);
+
+			// if the trace's start and end were not the same
+			if (!VectorCompare (start, tr.endpos))
+			{
+				// if trace impacts water
+				if (tr.contents & CONTENTS_WATER)
+				{
+					// if water is brown
+					if (strcmp(tr.surface->name, "*brwater") == 0)
+						color = SPLASH_BROWN_WATER;
+					// if water is blue
+					else
+						color = SPLASH_BLUE_WATER;
+				}
+				// if trace impacts slime
+				else if (tr.contents & CONTENTS_SLIME)
+					color = SPLASH_SLIME;
+				// if trace impacts lava
+				else if (tr.contents & CONTENTS_LAVA)
+					color = SPLASH_LAVA;
+				// if trace impacts unknown water
+				else
+					color = SPLASH_UNKNOWN;
+
+				// if trace impacted known water
+				if (color != SPLASH_UNKNOWN)
+				{
+					// display water splash particles
+					gi.WriteByte (svc_temp_entity);
+					gi.WriteByte (TE_SPLASH);
+					gi.WriteByte (8);
+					gi.WritePosition (tr.endpos);
+					gi.WriteDir (tr.plane.normal);
+					gi.WriteByte (color);
+					gi.multicast (tr.endpos, MULTICAST_PVS);
+				}
+
+				// change bullet's course when it enters water
+				VectorSubtract (end, start, dir);
+				vectoangles (dir, dir);
+				AngleVectors (dir, forward, right, up);
+				r = crandom()*hspread*2;
+				u = crandom()*vspread*2;
+				VectorMA (water_start, 8192, aimdir, end);//faf forward, end);
+				VectorMA (end, r, right, end);
+				VectorMA (end, u, up, end);
+			}
+
+			// retrace starting from impact with water
+			tr = gi.trace (water_start, NULL, NULL, end, self, MASK_SHOT);
+		}
+	}
+
+	// if trace does not impact a surface and the surface is not the sky
+	if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))
+	{
+		// if the trace impacted anything before distance termination
+		if (tr.fraction < 1.0)
+		{
+			// if the impacted player can take damage
+			if (tr.ent->takedamage)
+			{
+				// damage impacted player
+				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
+			}
+			else
+			{
+				// if the trace impacted a surface other than the sky
+				if (strncmp (tr.surface->name, "sky", 3) != 0)
+				{
+					// display impact on surface
+					gi.WriteByte (svc_temp_entity);
+					if (crandom() < 0.5)
+						gi.WriteByte (TE_GUNSHOT);
+					else
+						gi.WriteByte (TE_BULLET_SPARKS);
+						gi.WritePosition (tr.endpos);
+						gi.WriteDir (tr.plane.normal);
+						gi.multicast (tr.endpos, MULTICAST_PVS);
+
+					// output impact sound
+					if (self->client)
+						PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
+//						ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex(guninfo->FireSound), 1, ATTN_NORM, 0);//faf
+
+											
+				}
+			}
+		}
+	}
+
+	// if trace impacted water
+	if (water)
+	{
+		vec3_t	pos;
+
+		VectorSubtract (tr.endpos, water_start, dir);
+		VectorNormalize (dir);
+		VectorMA (tr.endpos, -2, dir, pos);
+		if (gi.pointcontents (pos) & MASK_WATER)
+			VectorCopy (pos, tr.endpos);
+		else
+			tr = gi.trace (pos, NULL, NULL, water_start, tr.ent, MASK_WATER);
+
+		VectorAdd (water_start, tr.endpos, pos);
+		VectorScale (pos, 0.5, pos);
+
+		// display bubble trail
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_BUBBLETRAIL);
+		gi.WritePosition (water_start);
+		gi.WritePosition (tr.endpos);
+		gi.multicast (pos, MULTICAST_PVS);
+	}
+} 
+
+
+void Weapon_Bren_Fire (edict_t *ent)
+{
+//	int	i;
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		angles;
+	int			kick = 2;
+	vec3_t		offset;
+	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
+	int mag_index=ent->client->pers.weapon->mag_index;
+	int mod=guninfo->MeansOfDeath;
+	int	damage = guninfo->damage_direct;
+
+	if (ent->client->next_fire_frame > level.framenum)
+		return;
+
+	if (!(ent->client->buttons & BUTTON_ATTACK))
+	{
+		ent->client->machinegun_shots = 0;
+		ent->client->ps.gunframe++;
+		return;
+	}
+
+	if(ent->client->aim)
+	{
+		if (ent->client->ps.gunframe == guninfo->LastAFire)
+			ent->client->ps.gunframe = guninfo->LastAFire-1;
+		else
+			ent->client->ps.gunframe = guninfo->LastAFire;
+	}
+
+	else
+	{
+		if (ent->client->ps.gunframe == guninfo->LastFire)
+			ent->client->ps.gunframe = guninfo->LastFire-1;
+		else
+			ent->client->ps.gunframe = guninfo->LastFire;
+	}
+
+	if (!ent->client->mags[mag_index].lmg_rnd)
+	{
+		ent->client->ps.gunframe = (ent->client->aim)?guninfo->LastAFire+1:guninfo->LastFire+1;
+	
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+		
+/*
+		if (auto_weapon_change->value) 
+			NoAmmoWeaponChange (ent);
+*/
+		
+		return;
+	}
+
+
+	// raise the gun as it is firing
+//	if (!deathmatch->value)
+//	{
+	if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
+		ent->client->machinegun_shots++;
+
+	if (ent->client->machinegun_shots > 9)
+		ent->client->machinegun_shots = 9;
+
+	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+		ent->client->machinegun_shots = 0;
+
+//	}
+
+	// vspread
+	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));
+	// rezmoth - changed for new firing system
+	//VectorSet(offset, 0, (ent->client->aim)?0:8, (ent->client->aim)?ent->viewheight-8:crandom() * 15);
+	if (ent->client->pers.weapon->position == LOC_L_MACHINEGUN)
+		VectorSet(offset, 0, 0, ent->viewheight - 0);	//10
+	else
+		gi.dprintf("*** Firing System Error\n");
+
+	// rezmoth - cosmetic recoil
+	if (level.framenum % 3 == 0)
+	{
+		if (ent->client->aim)
+			ent->client->kick_angles[0] -= 1.5;
+		else
+			ent->client->kick_angles[0] = -3;
+	}
+
+	// pbowens: for darwin's 3.2 kick
+	ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
+
+	// get start / end positions
+	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
+	AngleVectors (angles, forward, right, NULL);
+	
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+	/*	
+	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
+	AngleVectors (angles, forward, right, NULL);
+	VectorSet(offset, 0, 8, ent->viewheight-8);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+*/
+
+	fire_gun2(ent, start, forward, damage, kick, 0, 0, mod, false);
+
+	if(ent->client->mags[mag_index].lmg_rnd==1)
+	{
+		//Hard coded for reload only.
+        ent->client->ps.gunframe=guninfo->LastReload+1;
+        ent->client->weaponstate = WEAPON_END_MAG;
+//faf	Play_WepSound(ent,guninfo->LastRoundSound);
+		gi.sound(ent, CHAN_WEAPON, gi.soundindex(guninfo->LastRoundSound), 1, ATTN_NORM, 0);//faf
+	}
+
+	// rezmoth - changed to new firing code
+	//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, mod, false);
+/*	
+	    ent->client->anim_priority = ANIM_ATTACK;
+    if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
+    {
+        ent->s.frame = FRAME_crattak1 - 1 + (ent->client->ps.gunframe % 3);
+        ent->client->anim_end = FRAME_crattak9;
+    }
+    else
+    {
+        ent->s.frame = FRAME_attack1 - 1 + (ent->client->ps.gunframe % 3);
+        ent->client->anim_end = FRAME_attack8;
+    }
+*/
+	//gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/machgf2b.wav"), 1, ATTN_NORM, 0);
+
+
+//faf	Play_WepSound(ent,guninfo->FireSound);//PlayerNoise(ent, start, PNOISE_WEAPON);
+	gi.sound(ent, CHAN_WEAPON, gi.soundindex(guninfo->FireSound), 1, ATTN_NORM, 0);//faf
+
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	gi.WriteByte (MZ_MACHINEGUN);// | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	ent->client->mags[mag_index].lmg_rnd--;
+	ent->client->next_fire_frame = level.framenum + guninfo->frame_delay;
+}
+
+
+qboolean fire_katana ( edict_t *self, vec3_t start, vec3_t dir, int damage, int kick)
+{    
+    trace_t tr; //detect whats in front of you up to range "vec3_t end"
+
+    vec3_t end;
+
+	vec3_t	vec;
+	float	dot;
+	vec3_t	forward;
+
+
+    // Figure out what we hit, if anything:
+
+    VectorMA (start, 55, dir, end);  //calculates the range vector //50 is sword range
+    tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+                        // figures out what in front of the player up till "end"
+    
+   // Figure out what to do about what we hit, if anything
+
+    if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))    
+    {
+        if (tr.fraction < 1.0)        
+        {            
+            if (tr.ent->takedamage)            
+            {
+
+				if (tr.ent->client && 
+					tr.ent->client->pers.weapon &&
+					!Q_strcasecmp(tr.ent->client->pers.weapon->classname, "weapon_katana"))
+				{
+					AngleVectors (tr.ent->s.angles, forward, NULL, NULL);
+					VectorSubtract (self->s.origin, tr.ent->s.origin, vec);
+					VectorNormalize (vec);
+					dot = DotProduct (vec, forward);
+					//safe_bprintf (PRINT_HIGH, "dot = %f \n",dot);
+					if (dot > 0.6  &&
+						tr.ent->client->weaponstate != WEAPON_FIRING)
+					{
+						if (random() < .5)	
+							gi.sound (self, CHAN_AUTO, gi.soundindex("jpn/katana/hit1.wav") , 1, ATTN_NORM, 0);
+						else
+							gi.sound (self, CHAN_AUTO, gi.soundindex("jpn/katana/hit2.wav") , 1, ATTN_NORM, 0);
+							gi.WriteByte (svc_temp_entity);
+							gi.WriteByte (TE_SPARKS);
+							gi.WritePosition (tr.endpos);
+							gi.WriteDir (tr.endpos);
+							gi.multicast (tr.endpos, MULTICAST_PVS);
+					}
+
+					else
+					{
+						T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, 100, 50, 0,MOD_KNIFE);//faf
+					  gi.sound (self, CHAN_AUTO, gi.soundindex("brain/melee3.wav") , 1, ATTN_NORM, 0); 
+					}
+
+			
+				}
+				else
+				{
+					T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, 100, 50, 0,MOD_KNIFE);//faf
+	                gi.sound (self, CHAN_AUTO, gi.soundindex("brain/melee3.wav") , 1, ATTN_NORM, 0); 
+				}
+
+            }        
+            else        
+            {                
+                gi.WriteByte (svc_temp_entity);    
+                gi.WriteByte (TE_SPARKS);
+                gi.WritePosition (tr.endpos);    
+                gi.WriteDir (tr.plane.normal);
+                gi.multicast (tr.endpos, MULTICAST_PVS);
+
+				if (tr.surface && Surface(tr.surface->name, SURF_WOOD))
+				{
+					if (random() < .333)	
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/wood1.wav") , 1, ATTN_NORM, 0);
+					else if (random() < .5)	
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/wood2.wav") , 1, ATTN_NORM, 0);
+					else
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/wood3.wav") , 1, ATTN_NORM, 0);
+
+				}
+				else if ( tr.surface && (Surface(tr.surface->name, SURF_SAND) || Surface(tr.surface->name, SURF_GRASS)) )
+				{
+					if (random() < .333)	
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/sand1.wav") , 1, ATTN_NORM, 0);
+					else if (random() < .5)	
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/sand2.wav") , 1, ATTN_NORM, 0);
+					else
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/sand3.wav") , 1, ATTN_NORM, 0);
+
+				}			
+				else if (tr.surface && Surface(tr.surface->name, SURF_METAL))
+				{
+					if (random() < .333)	
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/metal1.wav") , 1, ATTN_NORM, 0);
+					else if (random() < .5)	
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/metal2.wav") , 1, ATTN_NORM, 0);
+					else
+						gi.sound (self, CHAN_AUTO, gi.soundindex("bullet/metal3.wav") , 1, ATTN_NORM, 0);
+
+				}
+				else if (random() < .5)	
+					gi.sound (self, CHAN_AUTO, gi.soundindex("jpn/katana/hit1.wav") , 1, ATTN_NORM, 0);
+				else
+					gi.sound (self, CHAN_AUTO, gi.soundindex("jpn/katana/hit2.wav") , 1, ATTN_NORM, 0);
+
+            }    
+			return true;
+        }
+    }
+    return false;
+} 
+ 
+
+void Weapon_Katana_Fire (edict_t *ent)
+{
+	vec3_t  forward, right;
+    vec3_t  start;
+    vec3_t  offset;
+	vec3_t g_offset;
+	vec3_t direction;
+
+	ent->client->ps.gunframe++;//faf
+
+	VectorCopy (vec3_origin,g_offset);
+
+    AngleVectors (ent->client->v_angle, forward, right, NULL);
+    VectorSet(offset, 24, 8, ent->viewheight-8);
+    VectorAdd (offset, g_offset, offset);
+    P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+    VectorScale (forward, -2, ent->client->kick_origin);
+    ent->client->kick_angles[0] = -1;
+
+	VectorAdd (forward, right, direction);
+	VectorAdd (direction, forward, direction);
+	VectorNormalize (direction);
+ 
+	if (!(fire_katana (ent, start, direction, 50, 0)))
+	{
+		VectorAdd (direction, forward, direction);
+		VectorSubtract (forward, right, direction);
+		VectorNormalize (direction);
+		if (!(fire_katana (ent, start, direction, 50, 0)))
+		{
+			if (!(fire_katana (ent, start, forward, 50, 0)))
+			{
+				VectorAdd (direction, forward, direction);
+				VectorSubtract (forward, right, direction);
+				VectorNormalize (direction);
+				if (!(fire_katana (ent, start, direction, 50, 0)))
+				{}
+			}
+		}
+	}
+	
+	ent->client->ps.gunframe++;
+
+	PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
+
+	if (ent->client)
+		ent->client->last_fire_time = level.time;
+}
+
+
+void Use_Weapon (edict_t *ent, gitem_t *item);
+void PBM_CheckFire (edict_t *self);
+void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point);
+void PBM_FireDropTouch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf );
+
+void Molotov_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	edict_t *attacker;
+	int i;
+	vec3_t v;
+
+	edict_t	*e;
+	vec3_t distvector;
+	float	distance;
+
+	vec3_t org;
+
+
+    if (surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict (ent);
+        return;
+	}
+
+	if (ent->waterlevel)
+	{
+		ent->touch = NULL;
+		ent->s.sound = 0;
+		return;
+	}
+
+	org[0] = ent->s.origin[0] + crandom() * ent->size[0];
+	org[1] = ent->s.origin[1] + crandom() * ent->size[1];
+	org[2] = ent->s.origin[2] + crandom() * ent->size[2];
+	ThrowDebris (ent, "models/objects/debris1/tris.md2", 1, org);
+	org[0] = ent->s.origin[0] + crandom() * ent->size[0];
+	org[1] = ent->s.origin[1] + crandom() * ent->size[1];
+	org[2] = ent->s.origin[2] + crandom() * ent->size[2];
+	ThrowDebris (ent, "models/objects/debris1/tris.md2", 1, org);
+
+	attacker = ent->owner;
+
+	//explode
+/*	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_EXPLOSION1);
+	gi.WritePosition (ent->s.origin);
+	gi.multicast (ent->s.origin, MULTICAST_PHS);*/
+
+	for (i=0 ; i<game.maxclients ; i++)
+	{	
+		e = g_edicts + 1 + i;
+	
+		if (!e->inuse)
+			continue;
+		if (!e->client)
+			continue;
+		if (!e->s.origin)
+			continue;
+		if (e->deadflag)
+			continue;
+		if (OnSameTeam(e,ent))
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (e->health < 1)
+			continue;
+		if (e->flyingnun)
+			continue;
+
+		VectorSubtract(e->s.origin, ent->s.origin, distvector);
+		distance = VectorLength( distvector);
+
+		if (distance < 80)
+		{
+			if (visible (e,ent))
+				PBM_Ignite (e, attacker, ent->s.origin);
+		}
+	}
+
+	//burn
+	PBM_Ignite (other, attacker, ent->s.origin);
+
+	T_Damage (other, ent, ent, vec3_origin, other->s.origin, vec3_origin, 50, 0, 0, MOD_BOTTLE);	
+	//safe_bprintf (PRINT_HIGH, "ignite \n");
+
+	for (i = 0; i <4; i ++)
+	{
+		edict_t *fire;
+
+		fire = G_Spawn();
+		fire->s.modelindex = gi.modelindex("models/fire/tris.md2");
+		fire->s.frame      = 0;
+		fire->s.skinnum    = 0;
+		VectorClear (fire->mins);
+		VectorClear (fire->maxs);
+		VectorCopy (ent->s.origin, fire->s.origin);
+		VectorClear (fire->s.angles);
+		VectorClear (fire->velocity);
+		fire->movetype     = MOVETYPE_TOSS;
+		fire->clipmask     = MASK_SHOT;
+		fire->solid        = SOLID_BBOX;
+		fire->takedamage   = DAMAGE_NO;
+		fire->s.effects    = 0;
+		fire->s.renderfx   = RF_FULLBRIGHT;
+
+		fire->owner        = fire;
+		fire->master       = attacker;
+		fire->classname    = "fire";
+		fire->touch        = PBM_FireDropTouch;
+		fire->burnout      = level.time + 2 + random() * 3;
+		fire->timestamp    = level.time;
+		fire->nextthink    = level.time + FRAMETIME;
+		fire->think        = PBM_CheckFire;
+	//				VectorCopy (30, fire->pos1);
+	//				VectorCopy (30, fire->pos2);
+		fire->dmg_radius   = 30;
+		fire->dmg          = 1;//blast_chance;
+
+//		fire->s.origin[0] = ent->s.origin[0] + crandom() * 100;				
+//		fire->s.origin[1] = ent->s.origin[1] + crandom() * 100;
+//		fire->s.origin[2] = ent->s.origin[2] + crandom() * 100;
+
+							
+		v[0] = 75 + 50 * crandom();
+		v[1] = 75 + 50 * crandom();
+		if (random() < .5)
+		{
+			v[0] = -v[0];
+		}
+		if (random() < .5)
+		{
+			v[1] = -v[1];
+		}
+
+
+		v[2] = 75 + 50 * crandom();
+		VectorMA (fire->velocity, 2, v, fire->velocity);
+
+
+		gi.linkentity (fire);
+
+		
+	}
+	gi.sound(ent, CHAN_WEAPON, gi.soundindex("jpn/molotov/break.wav"), 1, ATTN_NORM, 0);
+
+	G_FreeEdict(ent);
+}
+
+
+void Molotov_Throw (edict_t *self, vec3_t start, vec3_t dir)
+{
+	edict_t	*molotov;
+//	trace_t	tr;
+
+	VectorNormalize (dir);
+
+	molotov = G_Spawn();
+	VectorCopy (start, molotov->s.origin);
+	VectorCopy (start, molotov->s.old_origin);
+	vectoangles (dir, molotov->s.angles);
+	VectorScale (dir, 750, molotov->velocity);
+//faf	molotov->movetype = MOVETYPE_STEP;
+	molotov->clipmask = MASK_SHOT;
+	molotov->solid = SOLID_BBOX;
+//faf 	molotov->s.effects |= effect;
+
+
+	molotov->movetype = MOVETYPE_TOSS;//STEP;
+	VectorSet (molotov->mins, -4, -4, 0);
+	VectorSet (molotov->maxs, 4, 4, 4);
+
+	VectorSet (molotov->avelocity, (500 - 1000 * random()), (500 - 1000 * random()), (500 - 1000 * random()));
+
+	molotov->s.modelindex = gi.modelindex("models/weapons/jpn/g_molotov/tris.md2");
+
+	molotov->owner = self;
+//faf: for separate helmet/molotov death messages  	molotov->touch = Blade_touch;
+	molotov->touch = Molotov_Touch;//faf
+
+	molotov->nextthink = level.time + 5;//faf 2;
+	molotov->think = G_FreeEdict;
+	molotov->dmg = 0;
+	molotov->s.frame = 0;
+	
+	molotov->classname = "molotov";
+
+//	molotov->s.effects = EF_GRENADE;
+
+	molotov->s.sound = gi.soundindex("inland/fire.wav");
+
+	molotov->spawnflags = 1;
+	gi.linkentity (molotov);
+}
+
+
+void Weapon_Molotov_Fire (edict_t *ent)
+{
+//	int molotovs;		//var to keep track of how many molotovs are left.
+//	int molotov_index; //index to molotov
+	vec3_t  forward, right;
+    vec3_t  start;
+    vec3_t  offset;
+	vec3_t g_offset;
+
+	int mag_index=ent->client->pers.weapon->mag_index;
+
+	ent->client->ps.gunframe++;//faf
+	
+	VectorCopy (vec3_origin,g_offset);
+
+    AngleVectors (ent->client->v_angle, forward, right, NULL);
+    VectorSet(offset, 24, 8, ent->viewheight-8);
+    VectorAdd (offset, g_offset, offset);
+    P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+    VectorScale (forward, -2, ent->client->kick_origin);
+    ent->client->kick_angles[0] = -1;
+ 
+//	if(ent->client->pers.inventory[molotov_index])
+//	{
+		start[2]+= 5;//faf
+		Molotov_Throw(ent, start,forward);
+//		ent->client->pers.inventory[molotov_index]--;
+	//	ent->client->mags[jpn_index].antitank_rnd--;
+//	ent->client->mags[jpn_index].antitank_rnd--;
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+
+	
+	if (ent->client->pers.inventory[ent->client->ammo_index] ==0)
+	{
+		ent->client->weaponstate=WEAPON_LOWER;
+		Use_Weapon (ent, FindItem("Fists"));
+		return;
+	} 
+	
+	ent->client->ps.gunframe++;
+	gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/tnt/toss.wav"), 1, ATTN_NORM, 0);
 
 	PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 }

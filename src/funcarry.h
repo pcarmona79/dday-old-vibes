@@ -562,15 +562,19 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Weapon_Bandage_Use", (void (*))Weapon_Bandage_Use,   // void Weapon_Bandage_Use(edict_t * ent )  \dday\source/p_weapon.c:827
 "Weapon_Binoculars", (void (*))Weapon_Binoculars,   // void Weapon_Binoculars(edict_t * ent )  \dday\source/p_weapon.c:753
 "Weapon_Binoculars_Look", (void (*))Weapon_Binoculars_Look,   // void Weapon_Binoculars_Look(edict_t * ent )  \dday\source/p_weapon.c:737
+"Weapon_Bren_Fire", (void (*))Weapon_Bren_Fire, // void Weapon_Bren_Fire (edict_t *ent)
 "Weapon_Flamethrower", (void (*))Weapon_Flamethrower,   // void Weapon_Flamethrower(edict_t * ent )  \dday\source/p_weapon.c:944
 "Weapon_Generic", (void (*))Weapon_Generic,   // void Weapon_Generic(edict_t * ent , int FRAME_ACTIVATE_LAST , int FRAME_LFIRE_LAST , int FRAME_LIDLE_LAST ,  int FRAME_RELOAD_LAST , int FRAME_LASTRD_LAST , int FRAME_DEACTIVATE_LAST ,  int FRAME_RAISE_LAST , int FRAME_AFIRE_LAST , int FRAME_AIDLE_LAST ,  int * pause_frames , int * fire_frames , void ( * fire ) ( edict_t * ent ) )  \dday\source/p_generic_wep.c:29
 "Weapon_Grenade", (void (*))Weapon_Grenade,   // void Weapon_Grenade(edict_t * ent )  \dday\source/p_weapon.c:374
 "Weapon_HMG_Fire", (void (*))Weapon_HMG_Fire,   // void Weapon_HMG_Fire(edict_t * ent )  \dday\source/g_weapon.c:1294
+"Weapon_Katana_Fire", (void (*))Weapon_Katana_Fire, // void Weapon_Katana_Fire (edict_t *ent)
 "Weapon_Knife", (void (*))Weapon_Knife,   // void Weapon_Knife(edict_t * ent )  \dday\source/p_weapon.c:725
 "Weapon_Knife_Fire", (void (*))Weapon_Knife_Fire,   // void Weapon_Knife_Fire(edict_t * ent )  \dday\source/p_weapon.c:682
 "Weapon_LMG_Fire", (void (*))Weapon_LMG_Fire,   // void Weapon_LMG_Fire(edict_t * ent )  \dday\source/g_weapon.c:1213
 "Weapon_MG34_Fire", (void (*))Weapon_MG34_Fire, // void Weapon_MG34_Fire (edict_t *ent)
+"Weapon_MG42_Fire", (void (*))Weapon_MG42_Fire, // void Weapon_MG42_Fire (edict_t *ent)
 "Weapon_Mine", (void (*))Weapon_Mine,   // void Weapon_Mine(edict_t * ent )  \dday\source/p_weapon.c:535
+"Weapon_Molotov_Fire", (void (*))Weapon_Molotov_Fire, // void Weapon_Molotov_Fire (edict_t *ent)
 "Weapon_Morphine", (void (*))Weapon_Morphine,   // void Weapon_Morphine(edict_t * ent )  \dday\source/p_weapon.c:817
 "Weapon_Morphine_Use", (void (*))Weapon_Morphine_Use,   // void Weapon_Morphine_Use(edict_t * ent )  \dday\source/p_weapon.c:790
 "Weapon_PIAT_Fire", (void (*))Weapon_PIAT_Fire, // void Weapon_PIAT_Fire (edict_t *ent)

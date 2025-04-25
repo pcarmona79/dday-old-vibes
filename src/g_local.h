@@ -1483,6 +1483,8 @@ struct gclient_s
 	float		smoke_effect_goal;
 	float		smoke_effect_actual;
 
+	float		mg42_temperature;
+
 	edict_t		*sandbag_preview;
 	vec3_t		sandbag_pos;
 };

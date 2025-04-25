@@ -312,6 +312,7 @@ void DoEndOM(edict_t *ent /*,qboolean notOfficer*/)
 	ent->client->limbo_mode = false;
 	ent->client->resp.changeteam = false;
 
+	ent->client->mg42_temperature = 0;
 } 
 
 

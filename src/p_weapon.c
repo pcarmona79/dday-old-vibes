@@ -1640,7 +1640,7 @@ void Weapon_Knife_Fire (edict_t *ent)
 		{
 			ent->client->aim=false;
 			ent->client->weaponstate=WEAPON_LOWER;
-			Use_Weapon (ent, FindItem("fists"));
+			Use_Weapon (ent, FindItem("Fists"));
 		}
 				
 	}

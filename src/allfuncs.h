@@ -584,6 +584,10 @@ void Weapon_Sniper_Fire(edict_t * ent );   // found @ line:1465
 void Weapon_MG34_Fire (edict_t *ent);
 void Weapon_PIAT_Fire (edict_t *ent);
 void Weapon_Sabre_Fire (edict_t *ent);
+void Weapon_Bren_Fire (edict_t *ent);
+void Weapon_Katana_Fire (edict_t *ent);
+void Weapon_Molotov_Fire (edict_t *ent);
+void Weapon_MG42_Fire (edict_t *ent);
 
 // File : \dday\source/m_actor.c
 void actor_stand(edict_t * self );   // found @ line:68
