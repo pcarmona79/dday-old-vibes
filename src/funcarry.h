@@ -399,6 +399,7 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "SP_misc_banner_2", (void (*))SP_misc_banner_2,
 "SP_misc_banner_3", (void (*))SP_misc_banner_3,
 "SP_misc_banner_4", (void (*))SP_misc_banner_4,
+"SP_misc_banner_generic", (void (*))SP_misc_banner_generic,
 "SP_misc_banner_x", (void (*))SP_misc_banner_x,
 "SP_misc_bigviper", (void (*))SP_misc_bigviper,   // void SP_misc_bigviper(edict_t * ent )  \dday\source/g_misc.c:1304
 "SP_misc_blackhole", (void (*))SP_misc_blackhole,   // void SP_misc_blackhole(edict_t * ent )  \dday\source/g_misc.c:1023
@@ -502,6 +503,7 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "ServerCommand", (void (*))ServerCommand,   // void ServerCommand(void )  \dday\source/g_svcmds.c:23
 "SetItemNames", (void (*))SetItemNames,   // void SetItemNames(void )  \dday\source/g_items.c:1690
 "SetRespawn", (void (*))SetRespawn,   // void SetRespawn(edict_t * ent , float delay )  \dday\source/g_items.c:124
+"Shotgun_Reload", (void (*))Shotgun_Reload,
 "Show_Mos", (void (*))Show_Mos,   // void Show_Mos(edict_t * ent )  \dday\source/p_classes.c:62
 "Shrapnel_Explode", (void (*))Shrapnel_Explode,   // void Shrapnel_Explode(edict_t * ent )  \dday\source/g_weapon.c:486
 //"Shrapnel_Touch", (void (*))Shrapnel_Touch,   // static void Shrapnel_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_weapon.c:559
@@ -582,6 +584,7 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Weapon_Rifle_Fire", (void (*))Weapon_Rifle_Fire,   // void Weapon_Rifle_Fire(edict_t * ent )  \dday\source/g_weapon.c:1067
 "Weapon_Rocket_Fire", (void (*))Weapon_Rocket_Fire,   // void Weapon_Rocket_Fire(edict_t * ent )  \dday\source/g_weapon.c:1421
 "Weapon_Sabre_Fire", (void (*))Weapon_Sabre_Fire, // void Weapon_Sabre_Fire (edict_t *ent)
+"Weapon_Shotgun_Fire", (void (*))Weapon_Shotgun_Fire, // void Weapon_Shotgun_Fire (edict_t *ent);
 "Weapon_Sniper_Fire", (void (*))Weapon_Sniper_Fire,   // void Weapon_Sniper_Fire(edict_t * ent )  \dday\source/g_weapon.c:1465
 "Weapon_Submachinegun_Fire", (void (*))Weapon_Submachinegun_Fire,   // void Weapon_Submachinegun_Fire(edict_t * ent )  \dday\source/g_weapon.c:1127
 "WriteClient", (void (*))WriteClient,   // void WriteClient(FILE * f , gclient_t * client )  \dday\source/g_save.c:374
@@ -830,4 +833,4 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   729
+#define  FUNARRAYLEN   736

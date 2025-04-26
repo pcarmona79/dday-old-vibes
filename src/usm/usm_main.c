@@ -1,8 +1,8 @@
 /*       D-Day: Normandy by Vipersoft
  ************************************
- *   $Source: /var/lib/cvs/dday42sk/src/usa/usa_main.c,v $
- *   $Revision: 1.1.1.1 $
- *   $Date: 2003/10/06 22:58:01 $
+ *   $Source: /usr/local/cvsroot/dday/src/usa/usa_main.c,v $
+ *   $Revision: 1.9 $
+ *   $Date: 2002/07/23 19:12:49 $
  * 
  ***********************************
 
@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "usa_main.h"
-#include "usa_classes.h"
+#include "usm_main.h"
+#include "usm_classes.h"
 
 #ifdef AMIGA
 #include "dll.h"
@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /* Place the name of your dll here */
 
-#define DLL_NAME    "USA"
+#define DLL_NAME    "USM"
 
 
 
@@ -61,44 +61,51 @@ static int AlreadyLoad = 0;
 
 void InitFunctions(void)
 {
-	       //////////////////////////////////////////////////////////////////
-           // This is where you would acquire any needed function pointers //
+	//////////////////////////////////////////////////////////////////
+	// This is where you would acquire any needed function pointers //
+	FindItem = (gitem_t * (*)(char *)) PlayerFindFunction("FindItem");
+	SpawnItem = (void (*)(edict_t *, gitem_t *)) PlayerFindFunction("SpawnItem");
+	FindItemByClassname = (gitem_t *(*)(char *)) PlayerFindFunction("FindItemByClassname");
+	
+	SP_misc_banner_generic = (void (*)(edict_t *, char *)) PlayerFindFunction("SP_misc_banner_generic");
 
+	Use_Weapon=(void(*)(edict_t *, gitem_t *)) PlayerFindFunction("Use_Weapon");
+	Pickup_Weapon=(qboolean(*)(edict_t *, edict_t *)) PlayerFindFunction("Pickup_Weapon");
+	Drop_Weapon=(void (*)(edict_t *, gitem_t *)) PlayerFindFunction("Drop_Weapon");
+	Pickup_Ammo=(qboolean(*)(edict_t *, edict_t *)) PlayerFindFunction("Pickup_Ammo");
+	Drop_Ammo=(void(*)(edict_t *, gitem_t *)) PlayerFindFunction("Drop_Ammo");
+/*
     fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
                    PlayerFindFunction("fire_bullet");
-    ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
-	SP_misc_banner_generic = (void (*)(edict_t *, char *)) PlayerFindFunction("SP_misc_banner_generic");
-    Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int,int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
-                   PlayerFindFunction("Weapon_Generic");
-    FindItem = (gitem_t * (*)(char *)) PlayerFindFunction("FindItem");
-    SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
-    FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
-	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
-	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
+    ifchangewep = (void (*)(edict_t *)) PlayerFindFunction("ifchangewep");
+	
+	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t)) PlayerFindFunction("AngleVectors");
 	P_ProjectSource=(void(*)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t))
 					PlayerFindFunction("P_ProjectSource");
-	PlayerNoise=(void(*)(edict_t *, vec3_t, int))PlayerFindFunction("PlayerNoise");
-	Cmd_Reload_f=(qboolean(*)(edict_t *))PlayerFindFunction("Cmd_Reload_f");
-	Pickup_Weapon=(qboolean(*)(edict_t *, edict_t *))PlayerFindFunction("Pickup_Weapon");
-	Drop_Weapon=(void (*)(edict_t *, gitem_t *))PlayerFindFunction("Drop_Weapon");
-	fire_rifle=(void (*)(edict_t *, vec3_t, vec3_t, int, int, int))PlayerFindFunction("fire_rifle");
-	VectorScale=(void(*)(vec3_t, vec_t, vec3_t))PlayerFindFunction("VectorScale");
+	PlayerNoise=(void(*)(edict_t *, vec3_t, int)) PlayerFindFunction("PlayerNoise");
+	Cmd_Reload_f=(qboolean(*)(edict_t *)) PlayerFindFunction("Cmd_Reload_f");
+	fire_rifle=(void (*)(edict_t *, vec3_t, vec3_t, int, int, int)) PlayerFindFunction("fire_rifle");
+	VectorScale=(void(*)(vec3_t, vec_t, vec3_t)) PlayerFindFunction("VectorScale");
 	fire_rocket=(void (*)(edict_t *, vec3_t, vec3_t, int, int, float, int))
 					PlayerFindFunction("fire_rocket");
+*/
 	PBM_FireFlameThrower=(void(*)(edict_t *, vec3_t, vec3_t, vec3_t, int, vec3_t, vec3_t, int , int))
 					PlayerFindFunction("PBM_FireFlameThrower");
-	Pickup_Ammo=(qboolean(*)(edict_t *, edict_t *))PlayerFindFunction("Pickup_Ammo");
-	Drop_Ammo=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Drop_Ammo");
+    Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int,int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
+                   PlayerFindFunction("Weapon_Generic");
 	
-	Weapon_Pistol_Fire=(void(*)(edict_t *))PlayerFindFunction("Weapon_Pistol_Fire");
-	Weapon_Rifle_Fire=(void(*)(edict_t *))PlayerFindFunction("Weapon_Rifle_Fire");
-
-	Weapon_Submachinegun_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Submachinegun_Fire");
-	Weapon_LMG_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_LMG_Fire");
-	Weapon_HMG_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_HMG_Fire");
-	Weapon_Rocket_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Rocket_Fire");
-	Weapon_Sniper_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Sniper_Fire");
-	Weapon_Grenade=(void (*)(edict_t *))PlayerFindFunction("Weapon_Grenade");
+	Weapon_Pistol_Fire=(void(*)(edict_t *)) PlayerFindFunction("Weapon_Pistol_Fire");
+	Weapon_Rifle_Fire=(void(*)(edict_t *)) PlayerFindFunction("Weapon_Rifle_Fire");
+	Weapon_Submachinegun_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Submachinegun_Fire");
+	Weapon_LMG_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_LMG_Fire");
+	Weapon_HMG_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_HMG_Fire");
+	Weapon_Rocket_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Rocket_Fire");
+	Weapon_Sniper_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Sniper_Fire");
+	Weapon_Grenade=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Grenade");
+	
+	Shotgun_Reload=(void (*)(edict_t *, int,  int,  int,  int,  int,  int,  int,  int,  int,  int *, int *, void (*)(edict_t *)))
+			PlayerFindFunction("Shotgun_Reload");
+	Weapon_Shotgun_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Shotgun_Fire");
 }
 
 vec3_t vec3_origin = {0,0,0};
@@ -114,14 +121,9 @@ vec3_t vec3_origin = {0,0,0};
 
 // This is a security function and supposed to return an MD5 hash of the code in radix64.
 
-void
-
-UserDLLMD5(char *buf)
-
+void UserDLLMD5(char *buf)
 {
-
-    buf[0]='\0';  // Do nothing for now
-
+	buf[0]='\0';  // Do nothing for now
 }
 
 /* 
@@ -144,21 +146,12 @@ void UserPrecache(void)
 	//
 	// V-WEPS
 	//
-/*
-	// GRM 
-	ptrgi->modelindex("players/usa/w_p38.md2");
-	ptrgi->modelindex("players/usa/w_m98k.md2");
-	ptrgi->modelindex("players/usa/w_mp40.md2");
-	ptrgi->modelindex("players/usa/w_mp43.md2");
-	ptrgi->modelindex("players/usa/w_mg42.md2");
-	ptrgi->modelindex("players/usa/w_panzer.md2");	
-	ptrgi->modelindex("players/usa/w_m98ks.md2");
-	ptrgi->modelindex("players/usa/a_masher.md2");
-*/
+
+
 	// USA
 	ptrgi->modelindex("players/usa/w_colt45.md2");
 	ptrgi->modelindex("players/usa/w_m1.md2");
-	ptrgi->modelindex("players/usa/w_thompson.md2");
+	ptrgi->modelindex("players/usa/w_shotgun.md2");
 	ptrgi->modelindex("players/usa/w_bar.md2");
 	ptrgi->modelindex("players/usa/w_bhmg.md2");
 	ptrgi->modelindex("players/usa/w_bazooka.md2");
@@ -186,13 +179,12 @@ void UserDLLInit(void)
        
 //	auto_reload = ptrgi->cvar ("autoreload","0",0);
 //    deathmatch = ptrgi->cvar ("deathmatch", "4", CVAR_SERVERINFO | CVAR_LATCH);
-
 }
+
 /* 
    This is the clean up function - if there were global data structures
     that you had allocated, this is where you get rid of them. 
 */
-
 void UserDLLStop (void) {}
 
 /* 
@@ -234,9 +226,9 @@ static userdll_export_t userdll_export =
     UserDLLEndLevel,		//called when the user exits the level
     UserDLLPlayerRespawns,	//called when user respawns
     UserDLLPlayerDies,		//called when the user dies
-	USA_MOS_List,			//the class list
-	"usa",					//team id
-	"usa"					//this is the player model to use when spawning
+	USM_MOS_List,			//the class list
+	"usm",					//team id
+	"usm"					//this is the player model to use when spawning
 };
 
 
@@ -245,22 +237,21 @@ static userdll_export_t userdll_export =
    the external loader. 
 */
 
-userdll_export_t USAGetAPI(userdll_import_t udit)
+userdll_export_t USMGetAPI(userdll_import_t udit)
 {
-
-	PlayerInsertItem=udit.InsertItem;
-    PlayerInsertCommands =  udit.InsertCommands;
-    PlayerFindFunction = udit.FindFunction;
-    ptrgi = udit.gi;
-//	CVscope_setting=udit.scope_setting;
-        ptrGlobals = udit.globals;
-        ptrlevel = udit.level;
-    ptrGame = udit.game;
-	is_silenced=udit.is_silenced;
-	g_edicts=udit.g_edicts;
-	usa_index=udit.team_index;
-        ptrgi->dprintf(" += GetAPI reached <%s>\n",DLL_NAME);
-    return userdll_export;
+	PlayerInsertItem = udit.InsertItem;
+	PlayerInsertCommands = udit.InsertCommands;
+	PlayerFindFunction = udit.FindFunction;
+	ptrgi = udit.gi;
+	//	CVscope_setting=udit.scope_setting;
+	ptrGlobals = udit.globals;
+	ptrlevel = udit.level;
+	ptrGame = udit.game;
+	is_silenced = udit.is_silenced;
+	g_edicts = udit.g_edicts;
+	usm_index = udit.team_index;
+	ptrgi->dprintf(" += GetAPI reached <%s>\n", DLL_NAME);
+	return userdll_export;
 }
 
 #ifdef AMIGA
@@ -286,7 +277,7 @@ dll_tExportSymbol DLL_ExportSymbols[]=
     {dllFindResource,"dllFindResource"},
     {dllLoadResource,"dllLoadResource"},
     {dllFreeResource,"dllFreeResource"},
-   {(void *)USAGetAPI,"USAGetAPI"},
+   {(void *)USAGetAPI,"USMGetAPI"},
    {0,0}
 };
 

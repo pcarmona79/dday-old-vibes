@@ -341,6 +341,7 @@ void SP_misc_banner_1(edict_t * ent );   // found @ line:1182
 void SP_misc_banner_2(edict_t * ent );   // found @ line:1182
 void SP_misc_banner_3(edict_t * ent );   // found @ line:1182
 void SP_misc_banner_4(edict_t * ent );   // found @ line:1182
+void SP_misc_banner_generic (edict_t *ent, char *model);
 //bcass end
 void misc_deadsoldier_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point );   // found @ line:1197
 void SP_misc_deadsoldier(edict_t * ent );   // found @ line:1212
@@ -588,6 +589,12 @@ void Weapon_Bren_Fire (edict_t *ent);
 void Weapon_Katana_Fire (edict_t *ent);
 void Weapon_Molotov_Fire (edict_t *ent);
 void Weapon_MG42_Fire (edict_t *ent);
+void Shotgun_Reload (edict_t *ent, 
+	int FRAME_ACTIVATE_LAST,	int FRAME_LFIRE_LAST,	int FRAME_LIDLE_LAST, 
+	int FRAME_RELOAD_LAST,		int FRAME_LASTRD_LAST,	int FRAME_DEACTIVATE_LAST,
+	int FRAME_RAISE_LAST,		int FRAME_AFIRE_LAST,	int FRAME_AIDLE_LAST,
+	int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent));
+void Weapon_Shotgun_Fire (edict_t *ent);
 
 // File : \dday\source/m_actor.c
 void actor_stand(edict_t * self );   // found @ line:68

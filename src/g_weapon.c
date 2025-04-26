@@ -4380,6 +4380,313 @@ void Weapon_Bren_Fire (edict_t *ent)
 	ent->client->next_fire_frame = level.framenum + guninfo->frame_delay;
 }
 
+#define FRAME_LIDLE_FIRST		(FRAME_LFIRE_LAST+1)
+#define FRAME_RELOAD_FIRST		(FRAME_LIDLE_LAST+1)
+#define FRAME_RAISE_FIRST		(FRAME_DEACTIVATE_LAST+1)
+#define FRAME_AIDLE_FIRST		(FRAME_AFIRE_LAST+1)
+
+#define FRAME_pain304         	65
+#define FRAME_pain301         	62
+#define FRAME_crpain1         	169
+#define FRAME_crpain4         	172
+#define FRAME_crawlpain01		230
+#define FRAME_crawlpain04		233
+
+void Shotgun_Reload (edict_t *ent, 
+					 int FRAME_ACTIVATE_LAST,	int FRAME_LFIRE_LAST,	int FRAME_LIDLE_LAST, 
+					 int FRAME_RELOAD_LAST,		int FRAME_LASTRD_LAST,	int FRAME_DEACTIVATE_LAST,
+					 int FRAME_RAISE_LAST,		int FRAME_AFIRE_LAST,	int FRAME_AIDLE_LAST,
+					 int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent))
+{
+	gitem_t *ammo_item;
+	int		ammo_index,	*ammo_amount;
+	int		FRAME_IDLE_FIRST = (ent->client->aim)?FRAME_AIDLE_FIRST:FRAME_LIDLE_FIRST;
+
+	if(ent->client->pers.weapon->ammo)
+	{
+		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_index = ent->client->ammo_index;
+		ammo_amount=&ent->client->pers.inventory[ammo_index];
+	}
+
+	ent->client->ps.fov=STANDARD_FOV;
+
+	if (ent->client->ps.gunframe == FRAME_RELOAD_FIRST)
+	{
+		ent->client->anim_priority = ANIM_REVERSE;
+        if (ent->stanceflags == STANCE_STAND)
+        {
+            ent->s.frame = FRAME_pain304+1;
+            ent->client->anim_end = FRAME_pain301;            
+        }
+        else if (ent->stanceflags == STANCE_DUCK)
+        {
+            ent->s.frame = FRAME_crpain4+1;
+            ent->client->anim_end = FRAME_crpain1;
+        }
+        else if (ent->stanceflags == STANCE_CRAWL)
+        {
+            ent->s.frame = FRAME_crawlpain04+1;
+            ent->client->anim_end = FRAME_crawlpain01;
+        }
+	}
+        
+	if (ent->client->aim) 
+	{
+		if(ent->client->ps.gunframe==FRAME_RAISE_FIRST)
+			ent->client->aim=false;
+		else if (ent->client->ps.gunframe > FRAME_RAISE_LAST || ent->client->ps.gunframe < FRAME_RAISE_FIRST)
+			ent->client->ps.gunframe=FRAME_RAISE_LAST;
+		else  
+			ent->client->ps.gunframe--;
+
+		return;
+	}
+	
+	if (ent->client->ps.gunframe == 63)
+	{
+		if (*ammo_amount)
+		{
+			ent->client->pers.inventory[ammo_index]--;
+			ent->client->mags[ent->client->pers.weapon->mag_index].shotgun_rnd++;
+		}
+	}
+
+	if (ent->client->ps.gunframe < FRAME_RELOAD_FIRST 
+		|| ent->client->ps.gunframe > FRAME_RELOAD_LAST)
+		ent->client->ps.gunframe = FRAME_RELOAD_FIRST;
+    else if (ent->client->ps.gunframe == FRAME_RELOAD_LAST -2 
+		&& ent->client->mags[ent->client->pers.weapon->mag_index].shotgun_rnd < 6 
+		&& ent->client->pers.inventory[ammo_index]>0)
+	{
+		ent->client->ps.gunframe = 61;
+	}
+	else if(ent->client->ps.gunframe < FRAME_RELOAD_LAST-1)
+	{ 
+		ent->client->ps.gunframe++;             
+		if ((ent->client->pers.weapon->guninfo) && (ent->client->ps.gunframe == 0/*RELOAD SOUND FRAME*/))
+			gi.sound(ent, CHAN_WEAPON, gi.soundindex(ent->client->pers.weapon->guninfo->ReloadSound1), 1, ATTN_NORM, 0);
+	}
+	else
+	{
+		ent->client->ps.gunframe = FRAME_IDLE_FIRST;
+        ent->client->weaponstate = WEAPON_READY;
+	}
+}
+
+void fire_shotgun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv)
+{
+	trace_t		tr;
+	vec3_t		dir;
+	vec3_t		forward, right, up;
+	vec3_t		end;
+	float		r;
+	float		u;
+	vec3_t		water_start;
+	qboolean	water = false;
+	int			content_mask = MASK_SHOT | MASK_WATER;
+
+	vec3_t	diststart, dist;
+	vec3_t	distend = {0, 0, -8192};
+	trace_t	disttr;
+
+	VectorCopy(self->s.origin, diststart);
+	VectorAdd(diststart, distend, distend);
+
+	disttr = gi.trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
+	VectorSubtract(self->s.origin, disttr.endpos, dist);
+	tr = gi.trace(self->s.origin, NULL, NULL, start, self, MASK_SHOT);
+
+	if (!(tr.fraction < 1.0))
+	{
+		vectoangles(aimdir, dir);
+		AngleVectors(dir, forward, right, up);
+
+		calcv = false;
+
+		if (self->client->aim)
+		{
+			r = crandom() * 400;
+			u = crandom() * 400;
+		}
+		else
+		{
+			r = crandom() * 400;
+			u = crandom() * 400;
+		}
+
+		VectorMA (start, 8192, aimdir, end);
+		VectorMA (end, r, right, end);
+		VectorMA (end, u, up, end);
+
+		if (gi.pointcontents (start) & MASK_WATER)
+		{
+			water = true;
+			VectorCopy (start, water_start);
+			content_mask &= ~MASK_WATER;
+		}
+
+		tr = gi.trace (start, NULL, NULL, end, self, content_mask);
+
+		if(calcv) calcVspread(self,&tr);
+
+		if (tr.contents & MASK_WATER)
+		{
+			int		color;
+			water = true;
+
+			VectorCopy (tr.endpos, water_start);
+
+			if (!VectorCompare (start, tr.endpos))
+			{
+				if (tr.contents & CONTENTS_WATER)
+				{
+					if (strcmp(tr.surface->name, "*brwater") == 0)
+						color = SPLASH_BROWN_WATER;
+					else
+						color = SPLASH_BLUE_WATER;
+				}
+				else if (tr.contents & CONTENTS_SLIME)
+					color = SPLASH_SLIME;
+				else if (tr.contents & CONTENTS_LAVA)
+					color = SPLASH_LAVA;
+				else
+					color = SPLASH_UNKNOWN;
+
+				if (color != SPLASH_UNKNOWN)
+				{
+					gi.WriteByte (svc_temp_entity);
+					gi.WriteByte (TE_SPLASH);
+					gi.WriteByte (8);
+					gi.WritePosition (tr.endpos);
+					gi.WriteDir (tr.plane.normal);
+					gi.WriteByte (color);
+					gi.multicast (tr.endpos, MULTICAST_PVS);
+				}
+
+				VectorSubtract (end, start, dir);
+				vectoangles (dir, dir);
+				AngleVectors (dir, forward, right, up);
+				r = crandom()*hspread*2;
+				u = crandom()*vspread*2;
+				VectorMA (water_start, 8192, aimdir, end);
+				VectorMA (end, r, right, end);
+				VectorMA (end, u, up, end);
+			}
+
+			tr = gi.trace (water_start, NULL, NULL, end, self, MASK_SHOT);
+		}
+	}
+
+	if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))
+	{
+		if (tr.fraction < 1.0)
+		{
+			if (tr.ent->takedamage)
+			{
+				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
+			}
+			else
+			{
+				if (strncmp (tr.surface->name, "sky", 3) != 0)
+				{
+					gi.WriteByte (svc_temp_entity);
+
+
+					if (crandom() < 0.5)
+						gi.WriteByte (TE_GUNSHOT);
+					else
+						gi.WriteByte (TE_BULLET_SPARKS);
+
+					gi.WritePosition (tr.endpos);
+					gi.WriteDir (tr.plane.normal);
+					gi.multicast (tr.endpos, MULTICAST_PVS);
+
+					if (self->client) PlayerNoise(self, tr.endpos, PNOISE_IMPACT);						
+				}
+			}
+		}
+	}
+
+	if (water)
+	{
+		vec3_t	pos;
+
+		VectorSubtract (tr.endpos, water_start, dir);
+		VectorNormalize (dir);
+		VectorMA (tr.endpos, -2, dir, pos);
+
+		if (gi.pointcontents (pos) & MASK_WATER)
+			VectorCopy (pos, tr.endpos);
+		else
+			tr = gi.trace (pos, NULL, NULL, water_start, tr.ent, MASK_WATER);
+
+		VectorAdd (water_start, tr.endpos, pos);
+		VectorScale (pos, 0.5, pos);
+
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_BUBBLETRAIL);
+		gi.WritePosition (water_start);
+		gi.WritePosition (tr.endpos);
+		gi.multicast (pos, MULTICAST_PVS);
+	}
+} 
+
+/////////////////////////////////////////////////
+// shotgun
+/////////////////////////////////////////////////
+void Weapon_Shotgun_Fire (edict_t *ent)
+{
+	int		kick=2, i;
+	vec3_t		offset;
+	vec3_t		forward, right;
+	vec3_t		start;
+	vec3_t		angles;
+	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;
+	
+	int mag_index=ent->client->pers.weapon->mag_index;
+	int mod=guninfo->MeansOfDeath;
+	int	damage=guninfo->damage_direct;
+	
+	//ent->client->aim = false;
+
+	if (ent->client->next_fire_frame > level.framenum) return;
+//	if (!(ent->client->buttons & BUTTON_ATTACK)) return;
+
+	ent->client->ps.gunframe++;     
+	
+
+	if ((!ent->client->mags[mag_index].shotgun_rnd))
+	{
+		gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"),1, ATTN_NORM, 0);
+		ent->pain_debounce_time = level.time + 1;
+
+		ent->client->ps.gunframe = (ent->client->aim)?85:16;
+		ent->client->weaponstate = WEAPON_READY;
+		ent->client->next_fire_frame = level.framenum + 10;	
+
+		return;
+	}
+
+	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
+	AngleVectors (angles, forward, right, NULL);
+	VectorSet(offset, 0, 0, ent->viewheight - 0);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	for (i=0; i<DEFAULT_DEATHMATCH_SHOTGUN_COUNT; i++) fire_shotgun(ent, start, forward, damage, kick, 0, 0, MOD_SHOTGUN2, false);
+	
+	ent->client->kick_angles[0] -= 2;
+
+
+	ent->client->mags[mag_index].shotgun_rnd--;
+	gi.sound(ent, CHAN_WEAPON, gi.soundindex(guninfo->FireSound), 1, ATTN_NORM, 0);
+
+	//gi.WriteByte (svc_muzzleflash);
+	//gi.WriteShort (ent-g_edicts);
+	//gi.WriteByte (MZ_MACHINEGUN);
+	//gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+//	ent->client->next_fire_frame = level.framenum + guninfo->frame_delay;	
+}
 
 qboolean fire_katana ( edict_t *self, vec3_t start, vec3_t dir, int damage, int kick)
 {    
