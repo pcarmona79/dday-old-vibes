@@ -113,13 +113,13 @@ void Weapon_Arisaka (edict_t *ent)
 	//faf
 	if (ent->client->ps.gunframe == 9 ||
 		ent->client->ps.gunframe == 63)
-		gi.sound(ent, CHAN_VOICE, gi.soundindex("jpn/arisaka/bolt.wav"), 1, ATTN_NORM, 0);
+		ptrgi->sound(ent, CHAN_VOICE, ptrgi->soundindex("jpn/arisaka/bolt.wav"), 1, ATTN_NORM, 0);
 
 	if (ent->client->weaponstate != WEAPON_RELOADING &&
 		ent->client->ps.gunframe > 70 &&
 		!ent->client->aim)
 	{
-		//gi.dprintf ("%i\n",ent->client->weaponstate);
+		//ptrgi->dprintf ("%i\n",ent->client->weaponstate);
 		ent->client->ps.gunframe = 58;
 		ent->client->weaponstate = WEAPON_LOWER;
 		return;
@@ -318,7 +318,7 @@ void Weapon_Katana (edict_t *ent)
 		fire_frames[1] = 0;
 
 	if(ent->client->ps.gunframe == 1)
-		gi.sound(ent, CHAN_WEAPON, gi.soundindex("jpn/katana/draw.wav"), 1, ATTN_NORM, 0);//faf
+		ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex("jpn/katana/draw.wav"), 1, ATTN_NORM, 0);//faf
 
 	if (ent->client->ps.gunframe == 9)
 	{
@@ -344,15 +344,15 @@ void Weapon_Katana (edict_t *ent)
 	{
 		if (random() < .333)	
 		{
-			gi.sound(ent, CHAN_WEAPON, gi.soundindex("jpn/katana/swing1.wav"), 1, ATTN_NORM, 0);
+			ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex("jpn/katana/swing1.wav"), 1, ATTN_NORM, 0);
 		}
 		else if (random() < .5)	
 		{
-			gi.sound(ent, CHAN_WEAPON, gi.soundindex("jpn/katana/swing2.wav"), 1, ATTN_NORM, 0);
+			ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex("jpn/katana/swing2.wav"), 1, ATTN_NORM, 0);
 		}
 		else
 		{
-			gi.sound(ent, CHAN_WEAPON, gi.soundindex("jpn/katana/swing3.wav"), 1, ATTN_NORM, 0);
+			ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex("jpn/katana/swing3.wav"), 1, ATTN_NORM, 0);
 		}
 	}
 
@@ -386,7 +386,7 @@ void Weapon_Molotov (edict_t *ent)
 	fire_frames[1] = 0;
 
 	if (ent->client->ps.gunframe == 5)
-		gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/tnt/light.wav"), 1, ATTN_NORM, 0);
+		ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex("weapons/tnt/light.wav"), 1, ATTN_NORM, 0);
 
 	if (ent->client->ps.gunframe == 16)
 		if (ent->client->buttons & BUTTON_ATTACK)
@@ -423,10 +423,10 @@ void JPN_Weapon_MG42 (edict_t *ent)
 	if (ent->client->weaponstate == WEAPON_RELOADING)
 	{
 		if (ent->client->ps.gunframe == 14)
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("grm/mg42/unload.wav"), 1, ATTN_NORM, 0);
+		ptrgi->sound(ent, CHAN_AUTO, ptrgi->soundindex("grm/mg42/unload.wav"), 1, ATTN_NORM, 0);
 		
 		else if (ent->client->ps.gunframe == 72)
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("grm/mg42/reload.wav"), 1, ATTN_NORM, 0);
+		ptrgi->sound(ent, CHAN_AUTO, ptrgi->soundindex("grm/mg42/reload.wav"), 1, ATTN_NORM, 0);
 	}
 	Weapon_Generic (ent,
 		20, 22, 62,
