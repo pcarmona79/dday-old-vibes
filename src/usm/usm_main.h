@@ -44,7 +44,7 @@ void (*Drop_Weapon)(edict_t *, gitem_t *);
 void(*Use_Weapon)(edict_t *, gitem_t *);
 qboolean (*Pickup_Ammo)(edict_t *, edict_t *);
 void (*Drop_Ammo)(edict_t *, gitem_t *);
-void misc_banner_think (edict_t *ent);
+//void misc_banner_think (edict_t *ent);
 
 //float *CVscope_setting;
 //usa.c
@@ -62,6 +62,7 @@ gitem_t *(*PlayerInsertItem)(gitem_t *it, spawn_t *spawn);
 gitem_t *(*FindItem)(char *);
 void (*SpawnItem)(edict_t *, gitem_t *);
 gitem_t *(*FindItemByClassname)(char *);
+gitem_t	*(*FindItemByClassnameInTeam)(char *, char *);
 
 // p_weapon.c
 void (*Weapon_Generic)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent));
@@ -87,11 +88,7 @@ void (*Weapon_Rocket_Fire)(edict_t *);
 void (*Weapon_Sniper_Fire)(edict_t *);
 void (*Weapon_Grenade)(edict_t *);
 
-void (*Shotgun_Reload) (edict_t *ent, 
-	int FRAME_ACTIVATE_LAST,	int FRAME_LFIRE_LAST,	int FRAME_LIDLE_LAST, 
-	int FRAME_RELOAD_LAST,		int FRAME_LASTRD_LAST,	int FRAME_DEACTIVATE_LAST,
-	int FRAME_RAISE_LAST,		int FRAME_AFIRE_LAST,	int FRAME_AIDLE_LAST,
-	int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent));
+void (*Shotgun_Reload) (edict_t *, int, int, int, int, int, int, int, int, int, int *, int *, void (*)(edict_t *));
 void (*Weapon_Shotgun_Fire) (edict_t *ent);
 
 void USM_Weapon_Colt45 (edict_t *ent);

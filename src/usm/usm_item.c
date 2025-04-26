@@ -94,7 +94,7 @@ gitem_t usmitems[]=
 		1,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/colt45/fire.wav usa/colt45/reload.wav usa/colt45/unload.wav",
 		&usmguninfo[COLT45_FRAME],
 		0
@@ -123,7 +123,7 @@ gitem_t usmitems[]=
 		9,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/m1/fire.wav usa/m1/lastround.wav usa/m1/reload.wav usa/m1/unload.wav",
 		&usmguninfo[M1_FRAME],
 		0
@@ -153,7 +153,7 @@ gitem_t usmitems[]=
 		20,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/bar/fire.wav usa/bar/reload.wav usa/bar/unload.wav",
 		&usmguninfo[BAR_FRAME],
 		20
@@ -183,7 +183,7 @@ gitem_t usmitems[]=
 		50,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/bhmg/fire.wav usa/bhmg/reload.wav usa/bhmg/unload.wav",
 		&usmguninfo[BHMG_FRAME],
 		0
@@ -213,7 +213,7 @@ gitem_t usmitems[]=
 		10,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ "usa/bazooka/fire.wav usa/bazooka/reload.wav usa/bazooka/rockfly.wav models/objects/rocket/tris.md2 models/objects/debris2/tris.md2",
 		&usmguninfo[BAZOOKA_FRAME],
 		0
@@ -244,7 +244,7 @@ gitem_t usmitems[]=
 		8,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/m1903/fire.wav usa/m1903/lastround.wav usa/m1903/reload.wav usa/m1903/unload.wav",
 		&usmguninfo[SNIPER_FRAME],
 		0
@@ -273,7 +273,7 @@ gitem_t usmitems[]=
 		10,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/thompson/fire.wav usa/thompson/reload.wav usa/thompson/unload.wav",
 		&usmguninfo[THOMPSON_FRAME],
 		0
@@ -303,7 +303,7 @@ gitem_t usmitems[]=
 		10,
 		5000,
 		100,
-		"usa",
+		"usm",
 /* precache */ "usa/shotgun/fire.wav usa/shotgun/reload.wav",
 		&usmguninfo[SHOTGUN_FRAME],
 		0
@@ -337,7 +337,7 @@ gitem_t usmitems[]=
 		0.25,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ "weapons/hgrent1a.wav weapons/hgrena1b.wav weapons/hgrenb1a.wav weapons/hgrenb2a.wav weapons/throw.wav "
 	},
 
@@ -365,7 +365,7 @@ gitem_t usmitems[]=
 		0.25,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 
@@ -394,7 +394,7 @@ gitem_t usmitems[]=
 		0.25,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 
@@ -423,7 +423,7 @@ gitem_t usmitems[]=
 		0.5,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 
@@ -451,7 +451,7 @@ gitem_t usmitems[]=
 		1,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 
@@ -480,7 +480,7 @@ gitem_t usmitems[]=
 		3,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 
@@ -509,7 +509,7 @@ gitem_t usmitems[]=
 		0.25,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 
@@ -538,7 +538,7 @@ gitem_t usmitems[]=
 		0.25,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 	
@@ -567,7 +567,7 @@ gitem_t usmitems[]=
 		0.25,
 		0,
 		0,
-		"usa",
+		"usm",
 /* precache */ ""
 	},
 

@@ -66,6 +66,7 @@ void InitFunctions(void)
 	FindItem = (gitem_t * (*)(char *)) PlayerFindFunction("FindItem");
 	SpawnItem = (void (*)(edict_t *, gitem_t *)) PlayerFindFunction("SpawnItem");
 	FindItemByClassname = (gitem_t *(*)(char *)) PlayerFindFunction("FindItemByClassname");
+	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	
 	SP_misc_banner_generic = (void (*)(edict_t *, char *)) PlayerFindFunction("SP_misc_banner_generic");
 
@@ -102,8 +103,8 @@ void InitFunctions(void)
 	Weapon_Rocket_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Rocket_Fire");
 	Weapon_Sniper_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Sniper_Fire");
 	Weapon_Grenade=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Grenade");
-	
-	Shotgun_Reload=(void (*)(edict_t *, int,  int,  int,  int,  int,  int,  int,  int,  int,  int *, int *, void (*)(edict_t *)))
+
+	Shotgun_Reload=(void (*)(edict_t *, int, int, int, int, int, int, int, int, int, int *, int *, void (*)(edict_t *)))
 			PlayerFindFunction("Shotgun_Reload");
 	Weapon_Shotgun_Fire=(void (*)(edict_t *)) PlayerFindFunction("Weapon_Shotgun_Fire");
 }

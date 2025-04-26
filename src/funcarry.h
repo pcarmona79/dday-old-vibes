@@ -146,6 +146,7 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "FindCommand", (void (*))FindCommand,   // struct g_cmds_t * FindCommand(char * cmd )  \dday\source/g_cmds.c:1466
 "FindItem", (void (*))FindItem,   // gitem_t * FindItem(char * pickup_name )  \dday\source/g_items.c:78
 "FindItemByClassname", (void (*))FindItemByClassname,   // gitem_t * FindItemByClassname(char * classname )  \dday\source/g_items.c:55
+"FindItemByClassnameInTeam", (void (*))FindItemByClassnameInTeam, // gitem_t * FindItemByClassnameInTeam(char *classname, char *dllname)
 "FindNextPickup", (void (*))FindNextPickup,   // gitem_t * FindNextPos(edict_t * ent , int position )  \dday\source/g_cmds.c:450
 //"FindNextPos", (void (*))FindNextPos,   // gitem_t * FindNextPos(edict_t * ent , int position )  \dday\source/g_cmds.c:450
 //"FindTarget", (void (*))FindTarget,   // qboolean FindTarget(edict_t * self )  \dday\source/g_ai.c:388
@@ -833,4 +834,4 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   736
+#define  FUNARRAYLEN   737

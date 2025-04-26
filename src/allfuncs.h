@@ -217,6 +217,7 @@ void reinforcement_think(edict_t * ent );   // found @ line:2032
 gitem_t * GetItemByIndex(int index );   // found @ line:40
 gitem_t * FindItemByClassname(char * classname );   // found @ line:55
 gitem_t * FindItem(char * pickup_name );   // found @ line:78
+gitem_t	* FindItemByClassnameInTeam(char *classname, char *dllname);
 void DoRespawn(edict_t * ent );   // found @ line:97
 void SetRespawn(edict_t * ent , float delay );   // found @ line:124
 qboolean Pickup_Powerup(edict_t * ent , edict_t * other );   // found @ line:137

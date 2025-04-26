@@ -2423,7 +2423,7 @@ qboolean Cmd_Reload_f (edict_t *ent)
 
 	if (ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->resp.team_on->teamid);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_ammount = &ent->client->pers.inventory[ammo_index];
 	}
@@ -2446,7 +2446,8 @@ qboolean Cmd_Reload_f (edict_t *ent)
 			return false;
 		}
 
-		mags_left= ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo))];
+		mags_left = ent->client->pers.inventory[ITEM_INDEX(FindItemInTeam(ent->client->pers.weapon->ammo,
+				ent->client->resp.team_on->teamid))];
 	} else
 		return false;
 
