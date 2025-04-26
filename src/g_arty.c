@@ -199,10 +199,10 @@ void Cmd_Arty_f (edict_t *ent)
 	}
 
 
-//	if (ent->client->resp.mos != OFFICER) {
-//		gi.cprintf(ent, PRINT_HIGH, "You're not an officer, soldier!\n");
-//		return;
-//	}
+	if (ent->client->resp.mos != OFFICER) {
+		gi.cprintf(ent, PRINT_HIGH, "You're not an officer, soldier!\n");
+		return;
+	}
 
 	if (ent->deadflag || ent->client->limbo_mode ) {
 		gi.cprintf(ent, PRINT_HIGH, "You are dead!\n");
@@ -212,13 +212,13 @@ void Cmd_Arty_f (edict_t *ent)
 
 
 
-	/* Wheaty: Officers can only call airstrikes with binoculars!
+	// Wheaty: Officers can only call airstrikes with binoculars! 
 	if (strcmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 	{
 		gi.cprintf(ent, PRINT_HIGH, "What the hell are you aiming at? Use your binoculars!\n");
 		return;
 	}
-	else // pbowens: they have to be aiming, too
+	/* else // pbowens: they have to be aiming, too
 	{
 		if (!(ent->client->buttons & BUTTON_ATTACK)) {
 			gi.cprintf(ent, PRINT_HIGH, "Aim at the location, sir.\n");
