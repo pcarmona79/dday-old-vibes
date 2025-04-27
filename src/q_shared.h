@@ -1035,6 +1035,7 @@ typedef enum
 #define	STAT_STAMINA_CUR		28
 #define	STAT_CROSSHAIR			29
 //#define STAT_RESPAWNTIME		30
+#define STAT_AUTOPICKUP			30 //kernel
 
 
 #define	MAX_STATS				32

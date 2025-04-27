@@ -857,6 +857,26 @@ char *dday_statusbar =
 "   pic 28 "
 "endif "
 
+/*
+//autopickup
+"if 29 "
+"    xl 70 "
+"    yb -30 "
+"    string2 \"PICKUP\" "
+"    xl 65 "
+"    yb -20 "
+"    string2 \"ENABLED\" "
+"endif "
+*/
+//autopickup
+"if 30 "
+//"    xl 70 "
+//"    yb -30 "
+"   yb	-24 "
+"   xv	-60 "
+"pic 30 "
+"endif "
+
 // objectives	
 "if 16 "
 "   xl 0 " 

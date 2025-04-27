@@ -2658,10 +2658,12 @@ void Cmd_AutoPickUp_f (edict_t *ent) {
 	}
 
 	if (!ent->client->resp.autopickup) {
-		gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup enabled.\n");
+		// if (nohud->value) kernel: this cvar doesn't exist yet but it will be fun in the future
+		//	gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup enabled.\n");
 		ent->client->resp.autopickup = true;
 	} else {
-		gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup disabled.\n");
+		// if (nohud->value)
+		//	gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup disabled.\n");
 		ent->client->resp.autopickup = false;
 	}
 }

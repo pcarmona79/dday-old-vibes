@@ -1106,6 +1106,12 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_TIMER]		= 0;
 	}
 
+	// autopickup hud
+	if (ent->client->resp.autopickup == true)
+		ent->client->ps.stats[STAT_AUTOPICKUP] = gi.imageindex ("w_fists");
+	else
+		ent->client->ps.stats[STAT_AUTOPICKUP] = 0;
+
 	//
 	// OBJECTIVES
 	//
