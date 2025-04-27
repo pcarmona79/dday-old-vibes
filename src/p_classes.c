@@ -41,6 +41,8 @@ void Load_Weapon (edict_t *ent, gitem_t	*item)
 	// Loads primary weapon when spawning
 	ammo_item = FindItemInTeam(item->ammo, item->dllname);
 	if (!ammo_item)
+		ammo_item = FindItem(item->ammo);
+	if (!ammo_item)
 	{
 		gi.dprintf("WARNING: in Give_Class_Weapon %s spawned with no ammo for %s -> %s\n", ent->client->pers.netname, item->pickup_name, item->ammo);
 		return;
@@ -185,22 +187,32 @@ void Give_Class_Weapon(edict_t *ent)
 //this function is for giving the player ammo...
 void Give_Class_Ammo(edict_t *ent)
 {
-	gitem_t *item,*item2;
+	gitem_t *item, *ammo_item;
 	
 	if (ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1 )
 	{
 		item = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
 							  ent->client->resp.team_on->teamid);
-		item2 = FindItemInTeam(item->ammo, item->dllname);
-		Add_Ammo(ent, item2, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1);
+		if (!item)
+			item = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
+		if (!ammo_item)
+			ammo_item = FindItem(item->ammo);
+		if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1))
+			gi.cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
 	}
 
 	if (ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2 )
 	{
 		item = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
 							  ent->client->resp.team_on->teamid);
-		item2 = FindItemInTeam(item->ammo, item->dllname);
-		Add_Ammo(ent, item2, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2);
+		if (!item)
+			item = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
+		if (!ammo_item)
+			ammo_item = FindItem(item->ammo);
+		if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2))
+			gi.cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
 	}
 }
 
