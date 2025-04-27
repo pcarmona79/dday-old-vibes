@@ -137,12 +137,12 @@ void UserDLLMD5(char *buf)
 void UserPrecache(void) 
 {
 
-	ptrgi->imageindex("scope_usa");
-	ptrgi->imageindex("victory_usa");
+	ptrgi->imageindex("scope_usm");
+	ptrgi->imageindex("victory_usm");
 
-	ptrgi->soundindex("usa/victory.wav");
+	ptrgi->soundindex("usm/victory.wav");
 
-	ptrgi->modelindex("players/usa/tris.md2");
+	ptrgi->modelindex("players/usm/tris.md2");
 
 	//
 	// V-WEPS
@@ -150,20 +150,20 @@ void UserPrecache(void)
 
 
 	// USA
-	ptrgi->modelindex("players/usa/w_colt45.md2");
-	ptrgi->modelindex("players/usa/w_m1.md2");
-	ptrgi->modelindex("players/usa/w_shotgun.md2");
-	ptrgi->modelindex("players/usa/w_bar.md2");
-	ptrgi->modelindex("players/usa/w_bhmg.md2");
-	ptrgi->modelindex("players/usa/w_bazooka.md2");
-	ptrgi->modelindex("players/usa/w_m1903.md2");
-	ptrgi->modelindex("players/usa/a_grenade.md2");
+	ptrgi->modelindex("players/usm/w_colt45.md2");
+	ptrgi->modelindex("players/usm/w_m1.md2");
+	ptrgi->modelindex("players/usm/w_shotgun.md2");
+	ptrgi->modelindex("players/usm/w_bar.md2");
+	ptrgi->modelindex("players/usm/w_bhmg.md2");
+	ptrgi->modelindex("players/usm/w_bazooka.md2");
+	ptrgi->modelindex("players/usm/w_m1903.md2");
+	ptrgi->modelindex("players/usm/a_grenade.md2");
 
 	// GENERIC
-	ptrgi->modelindex("players/usa/w_flame.md2");
-	ptrgi->modelindex("players/usa/w_morphine.md2");
-	ptrgi->modelindex("players/usa/w_knife.md2");
-	ptrgi->modelindex("players/usa/w_binoc.md2");
+	ptrgi->modelindex("players/usm/w_flame.md2");
+	ptrgi->modelindex("players/usm/w_morphine.md2");
+	ptrgi->modelindex("players/usm/w_knife.md2");
+	ptrgi->modelindex("players/usm/w_binoc.md2");
 }
 
 void UserDLLInit(void)

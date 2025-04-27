@@ -1123,7 +1123,8 @@ void G_SetStats (edict_t *ent)
 	// SNIPER CROSSHAIR
 	//
 	if (ent->client->crosshair && ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_SNIPER)
-		ent->client->ps.stats[STAT_SNIPER_SCOPE] = gi.imageindex (va("scope_%s", ent->client->resp.team_on->teamid));
+		// kernel: scope will follow weapon original team
+		ent->client->ps.stats[STAT_SNIPER_SCOPE] = gi.imageindex (va("scope_%s", ent->client->pers.weapon->dllname));
 	else
 		ent->client->ps.stats[STAT_SNIPER_SCOPE] = 0;
 
