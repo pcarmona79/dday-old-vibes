@@ -873,7 +873,7 @@ static void drop_make_touchable (edict_t *ent)
 	ent->touch = Touch_Item;
 	if (deathmatch->value)
 	{
-		ent->nextthink = level.time + 29;
+		ent->nextthink = level.time + 60; // kernel: was 29, now gives more time
 		ent->think = G_FreeEdict;
 	}
 }
