@@ -594,7 +594,7 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 {
 	edict_t	*dropped;
 	int		index;
-	int		grennum; //Wheaty: Temp variable
+//	int		grennum; //Wheaty: Temp variable
 
 	index = ITEM_INDEX(item);
 	dropped = Drop_Item (ent, item);
@@ -603,6 +603,7 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 	else
 		dropped->count = ent->client->pers.inventory[index];
 
+/* kernel: just drop the right count of ammo
 	if (item->tag == AMMO_GRENADES)
 		grennum = ent->client->pers.inventory[index];
 
@@ -611,12 +612,12 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 	{
 		dropped->count = 1;
 	}
-
+*/
 	//Wheaty: Clear inventory of any grenades (even though you only drop 1)
-	if (!item->tag == AMMO_GRENADES)
+//	if (!item->tag == AMMO_GRENADES)
 		ent->client->pers.inventory[index] -= dropped->count;
-	else
-		ent->client->pers.inventory[index] = 0;
+//	else
+//		ent->client->pers.inventory[index] = 0;
 
 
 	ValidateSelectedItem (ent);
