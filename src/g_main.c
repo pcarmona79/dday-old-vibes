@@ -113,6 +113,8 @@ cvar_t  *force_auto_select;
 cvar_t  *allied_password;
 cvar_t  *axis_password;
 
+cvar_t *mashup;
+
 //kernel
 cvar_t  *teamkills_check;
 cvar_t  *teamkills_max;

@@ -294,6 +294,8 @@ void InitGame (void)
 
 	allied_password = gi.cvar ("allied_password", "", 0);
 	axis_password = gi.cvar ("axis_password", "", 0);
+	
+	mashup = gi.cvar ("mashup", "0", 0);
 
 	//kernel: cvar for team kill checking
 	teamkills_check = gi.cvar ("teamkills_check", "0", CVAR_SERVERINFO);
