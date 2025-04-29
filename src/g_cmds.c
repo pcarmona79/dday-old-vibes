@@ -1086,7 +1086,9 @@ void Cmd_Drop_f (edict_t *ent)
 			return;
 
 		// rezmoth - ammo_item definition has crashed the server twice
-		ammo_item	= FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
+		if (!ammo_item)
+			ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ammo_index	= ITEM_INDEX(ammo_item);
 
 		if (!ent->client->pers.inventory[ammo_index] || !ammo_item->drop)
@@ -1144,7 +1146,9 @@ void Cmd_Drop_f (edict_t *ent)
 			gitem_t *ammo_item;
 			int		 ammo_index;
 
-			ammo_item	= FindItem(item->ammo);
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
+			if (!ammo_item)
+				ammo_item = FindItem(item->ammo);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (ent->client->pers.inventory[ammo_index])
