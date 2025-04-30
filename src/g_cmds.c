@@ -860,7 +860,7 @@ void Cmd_Use_f (edict_t *ent)
 	char		*s;
 
 	s = gi.args();
-	it = FindItem (s);
+	//it = FindItem (s); // kernel: I think this is unnecessary
 
 	if (ent->client->limbo_mode || ent->deadflag)
 		return;
@@ -888,8 +888,8 @@ void Cmd_Use_f (edict_t *ent)
 	}
 
 
-	if (!it)
-	{
+	//if (!it)
+	//{
 //////////////
 /// NEW USE SYSTEM
 //////////////
@@ -901,14 +901,14 @@ void Cmd_Use_f (edict_t *ent)
 		else if (Q_stricmp(s,"weapon1")==0) 
 		{
 			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
+				/* strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1) */;
 			else
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"weapon2")==0) 
 		{
 			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2);
+				/* strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2) */;
 			else
 				it = ent->client->pers.weapon;
 		}
@@ -924,73 +924,73 @@ void Cmd_Use_f (edict_t *ent)
 		else if (Q_stricmp(s,"special")==0) 
 		{
 			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->special);
+				/* strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->special) */;
 			else
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"grenades")==0) 
 		{
 			it = FindNextPickup(ent, LOC_GRENADES);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		else if (Q_stricmp(s,"melee")==0) 
 		{
 			it = FindNextPickup(ent, LOC_KNIFE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		else if (Q_stricmp(s,"pickup")==0) 
 		{
 			it = FindNextPickup(ent, LOC_NONE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name); // kernel: it could be null!
 		}	
 		
 		//faf
 		else if (Q_stricmp(s,"sniper")==0) 
 		{
 			it = FindNextPickup(ent, LOC_SNIPER);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name); // kernel: it could be null!
 		}					
 
 		else if (Q_stricmp(s,"pistol")==0) 
 		{
 			it = FindNextPickup(ent, LOC_PISTOL);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"rifle")==0) 
 		{
 			it = FindNextPickup(ent, LOC_RIFLE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 
 		else if (Q_stricmp(s,"smg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_SUBMACHINEGUN2);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 			it = FindNextPickup(ent, LOC_SUBMACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"lmg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_L_MACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"hmg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_H_MACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		else if (Q_stricmp(s,"rocket")==0) 
 		{
 			it = FindNextPickup(ent, LOC_ROCKET);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		else if (Q_stricmp(s,"flamer")==0)
 		{
 			it = FindNextPickup(ent, LOC_FLAME);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		//end faf
 
@@ -1001,7 +1001,13 @@ void Cmd_Use_f (edict_t *ent)
 			return;
 		}
 				
+	//}
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Item '%s' not found\n", s);
+		return;
 	}
+
 	if (!it->use)
 	{
 		gi.cprintf (ent, PRINT_HIGH, "Item %s is not usable.\n", it->pickup_name);
