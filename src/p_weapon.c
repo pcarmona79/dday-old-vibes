@@ -178,7 +178,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		// give them some ammo with it
 		if(ent->item->ammo)
 		{
-			ammo = FindItem (ent->item->ammo);
+			ammo = FindItemInTeam(ent->item->ammo, ent->item->dllname);
+			if (!ammo)
+				ammo = FindItem(ent->item->ammo);
 //			if ( (int)dmflags->value & DF_INFINITE_AMMO )
 //				Add_Ammo (other, ammo, 1000);
 //			else
@@ -608,7 +610,9 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 
 	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
 	{
-		ammo_item = FindItem(item->ammo);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
+		if (!ammo_item)
+			ammo_item = FindItem(item->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
 
 		if (!strcmp(item->ammo, "p38_mag"))
@@ -658,11 +662,11 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 		*/
 
 		//pbowens: allows player to switch to empty gun now
-/*		if (!ent->client->pers.inventory[ammo_index] && !item_rounds)
+		if (!ent->client->pers.inventory[ammo_index] && !item_rounds)
 		{
 			gi.cprintf (ent, PRINT_HIGH, "No magazines or clips for %s.\n", item->pickup_name);
 			//return;
-		}*/
+		}
 
 	}
 
@@ -1002,9 +1006,12 @@ void weapon_grenade_prime (edict_t *ent, int team)
 
 	if (ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_GRENADES)
 		grenade->item = ent->client->pers.weapon;
-	else
-		grenade->item = FindItem(va("%s", (team) ? "Potato Masher" : "USA Grenade" ));
-	
+	else {
+		grenade->item = FindItemInTeam(va("%s", (team) ? "Potato Masher" : "USA Grenade" ),
+				ent->client->resp.team_on->teamid);
+		if (!grenade->item)
+			grenade->item = FindItem(va("%s", (team) ? "Potato Masher" : "USA Grenade" ));
+	}
 	dudchance = rand() % 100;
 	//gi.dprintf("chance: %f", dudchance);
 
@@ -1033,12 +1040,17 @@ void Weapon_Grenade (edict_t *ent)
 	if(	(!ent->client->grenade_index && !ent->client->pers.inventory[ent->client->ammo_index]) || 
 		(ent->client->grenade_index && !ent->client->pers.inventory[ent->client->grenade_index] && ent->client->weaponstate != WEAPON_FIRING) )
 	{
-	//	gi.dprintf("next\n");
+		// kernel: switch to team's main weapon when no grenades
+		char *weapon1 = ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1;
+		gitem_t *weapon_item = FindItemInTeam(weapon1, ent->client->resp.team_on->teamid);
+		if (!weapon_item)
+			weapon_item = FindItem(weapon1);
+		int weapon_index = ITEM_INDEX(weapon_item);
 		
-		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1 &&
-			ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))])
+		if (weapon1 && weapon_index >= 0 &&
+			ent->client->pers.inventory[weapon_index])
 		{
-			ent->client->newweapon = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
+			ent->client->newweapon = weapon_item;
 			ChangeWeapon(ent);
 		} else
 			Cmd_WeapNext_f(ent);

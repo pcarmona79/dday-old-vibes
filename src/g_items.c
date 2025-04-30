@@ -107,7 +107,7 @@ gitem_t	*FindItemByClassname (char *classname)
 /*
 ===============
 FindItem
-
+Find items by pickup name
 ===============
 */
 gitem_t	*FindItem (char *pickup_name)
@@ -1051,7 +1051,9 @@ void PrecacheItem (gitem_t *it)
 	// parse everything for its ammo
 	if (it->ammo && it->ammo[0])
 	{
-		ammo = FindItem (it->ammo);
+		ammo = FindItemInTeam(it->ammo, it->dllname);
+		if (!ammo)
+			ammo = FindItem(it->ammo);
 		if (ammo != it)
 			PrecacheItem (ammo);
 	}

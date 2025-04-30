@@ -1043,8 +1043,10 @@ void Cmd_Drop_f (edict_t *ent)
 	if (!ent->client->resp.team_on || !ent->client->resp.mos || ent->client->grenade || ent->client->grenade_index )
 		return;
 
-	s = gi.args();	
-	it = FindItem (s);
+	s = gi.args(); 
+	it = FindItemInTeam(s, ent->client->resp.team_on->teamid);
+	if (!it)
+		it = FindItem(s);
 
 //bcass start - drop
 	if (Q_stricmp(s, "gun") == 0 || //pbowens: do the same thing if it is the current weapon
