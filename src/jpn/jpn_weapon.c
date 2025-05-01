@@ -216,18 +216,19 @@ void Weapon_Type_99 (edict_t *ent)
 
 	ent->client->crosshair = false;
 
-
+/*
 	if (ent->client->ps.gunframe == 63)
 		ent->client->ps.gunframe= 64;
 
 	if (ent->client->next_fire_frame == 63)
 		ent->client->ps.gunframe= 64;
-		Weapon_Generic (ent,
+*/
+	Weapon_Generic (ent,
 			3,  5, 25,
 			53, 53, 57,
 			62, 64, 70,
 			pause_frames, fire_frames, Weapon_LMG_Fire);
-
+/*
 	//realized this should be changed in guninfo.c but screw it, leaving this hack in
 	if (ent->client->ps.gunframe == 80){
 		ent->client->ps.gunframe = 63 + ent->client->next_fire_frame%2;
@@ -235,6 +236,7 @@ void Weapon_Type_99 (edict_t *ent)
 	}
 	else
 		ent->client->next_fire_frame =0;
+*/
 }
 
 
