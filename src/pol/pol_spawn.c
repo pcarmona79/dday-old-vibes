@@ -34,93 +34,98 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void SP_item_weapon_vis(edict_t *self)
 {
-    SpawnItem(self,FindItem("weapon_vis"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_vis", "pol"));
 }
 
 void SP_item_weapon_svt(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_svt"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_svt", "pol"));
 }
 
 /*void SP_item_weapon_sten(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_sten"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_sten", "pol"));
 }*/
 void SP_item_weapon_mors(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_mors"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_mors", "pol"));
 }
 
 void SP_item_weapon_RKM(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_RKM"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_RKM", "pol"));
 }
 
 void SP_item_weapon_mg34(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_mg34"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_mg34", "pol"));
 }
 
 void SP_item_weapon_piat(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_piat"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_piat", "pol"));
 }
 
 void SP_item_weapon_POL_mauser98ks(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_pol_m98ks"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_pol_m98ks", "pol"));
 }
+
 void SP_item_weapon_sabre(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_sabre"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_sabre", "pol"));
 }
 
 //ammo
 
 void SP_item_ammo_grenades_pol(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_pol"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_grenades_pol", "pol"));
 }
+
 void SP_item_ammo_vis(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_vis"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_vis", "pol"));
 }
 
 void SP_item_ammo_svt(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_svt"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_svt", "pol"));
 }
 /*
 void SP_item_ammo_sten(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_sten"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_sten", "pol"));
 }
 */
 void SP_item_ammo_mors(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_mors"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_mors", "pol"));
 }
+
 void SP_item_ammo_RKM(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_RKM"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_RKM", "pol"));
 }
+
 void SP_item_ammo_pol_mauser98k(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_pol_m98k"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_pol_m98k", "pol"));
 }
+
 void SP_item_ammo_mg34(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_mg34"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_mg34", "pol"));
 }
+
 void SP_item_ammo_piat(edict_t *self)
 {
-    SpawnItem(self, FindItemByClassname("ammo_piat"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_piat", "pol"));
 }
 
 
 
 spawn_t sp_pol[] =
-
 {
     "weapon_vis", SP_item_weapon_vis,
 	"weapon_svt",SP_item_weapon_svt,

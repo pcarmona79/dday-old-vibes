@@ -73,6 +73,7 @@ void InitFunctions(void)
     FindItem = (gitem_t * (*)(char *)) PlayerFindFunction("FindItem");
     SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
     FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
+	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
 	P_ProjectSource=(void(*)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t))

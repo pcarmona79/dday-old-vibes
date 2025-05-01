@@ -34,88 +34,88 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void SP_item_weapon_nambu(edict_t *self)
 {
-    SpawnItem(self,FindItem("weapon_nambu"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_nambu", "jpn"));
 }
 
 void SP_item_weapon_arisaka(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_arisaka"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_arisaka", "jpn"));
 }
 
 void SP_item_weapon_type_100(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_type_100"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_type_100", "jpn"));
 }
 
 void SP_item_weapon_type_99(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_type_99"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_type_99", "jpn"));
 }
 
 //void SP_item_weapon_m1carb(edict_t *self)
 //{
- //   SpawnItem(self,FindItemByClassname("weapon_m1carb"));
+ //   SpawnItem(self, FindItemByClassnameInTeam("weapon_m1carb", "jpn"));
 //}
 
 void SP_item_weapon_arisakas(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_arisakas"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_arisakas", "jpn"));
 }
 
 void SP_item_weapon_katana(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_katana"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_katana", "jpn"));
 }
 
 //ammo
 void SP_item_molotov(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_molotov"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_molotov", "jpn"));
 }
 
 void SP_item_ammo_grenades_jpn(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_jpn"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_grenades_jpn", "jpn"));
 }
 
 void SP_item_ammo_nambu(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_nambu"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_nambu", "jpn"));
 }
 
 void SP_item_ammo_arisaka(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_arisaka"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_arisaka", "jpn"));
 }
 
 void SP_item_ammo_arisakas(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_arisakas"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_arisakas", "jpn"));
 }
 
 void SP_item_ammo_type_100(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_type_100"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_type_100", "jpn"));
 }
 
 void SP_item_ammo_type_99(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_type_99"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_type_99", "jpn"));
 }
 
 void SP_item_weapon_mg42(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_mg42"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_mg42", "jpn"));
 }
 
 void SP_item_ammo_mg42(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_mg42"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_mg42", "jpn"));
 }
 
 //void SP_item_ammo_m1carb(edict_t *self)
 //{
-//    SpawnItem(self,FindItemByClassname("ammo_m1carb"));
+//    SpawnItem(self, FindItemByClassnameInTeam("ammo_m1carb", "jpn"));
 //}
 
 spawn_t sp_jpn[] =

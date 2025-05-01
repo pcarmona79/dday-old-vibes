@@ -35,39 +35,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //no fancy spawning stuff here, just nice and easy
 
 void SP_item_weapon_webley(edict_t *self)
-
 {
-    SpawnItem(self,FindItem("webley"));
+    SpawnItem(self, FindItemByClassnameInTeam("webley", "gbr"));
 }
 
 void SP_item_weapon_enfield(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_enfield"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_enfield", "gbr"));
 }
 
 void SP_item_weapon_sten(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_sten"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_sten", "gbr"));
 }
 
 void SP_item_weapon_bren(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_bren"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_bren", "gbr"));
 }
 
 void SP_item_weapon_vickers(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_vickers"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_vickers", "gbr"));
 }
 
 void SP_item_weapon_piat(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_piat"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_piat", "gbr"));
 }
 
 void SP_item_weapon_enfields(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_enfields"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_enfields", "gbr"));
 }
 
 
@@ -75,41 +74,42 @@ void SP_item_weapon_enfields(edict_t *self)
 //ammo
 void SP_item_ammo_grenades_gbr(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_gbr"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_grenades_gbr", "gbr"));
 }
+
 void SP_item_ammo_webley(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_webley"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_webley", "gbr"));
 }
 
 void SP_item_ammo_sten(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_sten"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_sten", "gbr"));
 }
 
 void SP_item_ammo_bren(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_bren"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_bren", "gbr"));
 }
 
 void SP_item_ammo_piat(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_piat"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_piat", "gbr"));
 }
 
 void SP_item_ammo_enfield(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_enfield"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_enfield", "gbr"));
 }
 
 void SP_item_ammo_enfields(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_enfields"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_enfields", "gbr"));
 }
 
 void SP_item_ammo_vickers(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_vickers"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_vickers", "gbr"));
 }
 
 // Misc stuff
@@ -139,7 +139,6 @@ void SP_misc_flag_brit (edict_t *ent)
 /////////////////////////////////////////////////////////////
 
 spawn_t sp_gbr[] =
-
 {
     "weapon_webley", SP_item_weapon_webley,
 	"weapon_enfield",SP_item_weapon_enfield,

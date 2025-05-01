@@ -65,6 +65,7 @@ gitem_t *(*PlayerInsertItem)(gitem_t *it, spawn_t *spawn);
 gitem_t *(*FindItem)(char *);
 void (*SpawnItem)(edict_t *, gitem_t *);
 gitem_t *(*FindItemByClassname)(char *);
+gitem_t *(*FindItemByClassnameInTeam)(char *, char *);
 
 // p_weapon.c
 

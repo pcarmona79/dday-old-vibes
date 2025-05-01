@@ -37,37 +37,37 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void SP_item_weapon_colt45(edict_t *self)
 
 {
-    SpawnItem(self,FindItem("colt45"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_colt45", "usa"));
 }
 
 void SP_item_weapon_m1(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_m1"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_m1", "usa"));
 }
 
 void SP_item_weapon_thompson(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_thompson"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_thompson", "usa"));
 }
 
 void SP_item_weapon_BAR(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_BAR"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_BAR", "usa"));
 }
 
 void SP_item_weapon_30cal(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_30cal"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_30cal", "usa"));
 }
 
 void SP_item_weapon_bazooka(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_bazooka"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_bazooka", "usa"));
 }
 
 void SP_item_weapon_sniper(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_sniper"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_sniper", "usa"));
 }
 
 
@@ -75,41 +75,41 @@ void SP_item_weapon_sniper(edict_t *self)
 //ammo
 void SP_item_ammo_grenades_usa(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_usa"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_grenades_usa", "usa"));
 }
 void SP_item_ammo_colt45(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_colt45"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_colt45", "usa"));
 }
 
 void SP_item_ammo_thompson(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_thompson"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_thompson", "usa"));
 }
 
 void SP_item_ammo_BAR(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_BAR"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_BAR", "usa"));
 }
 
 void SP_item_ammo_rockets(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_rockets"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_rockets", "usa"));
 }
 
 void SP_item_ammo_m1(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_M1"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_M1", "usa"));
 }
 
 void SP_item_ammo_m1903(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_m1903"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_m1903", "usa"));
 }
 
 void SP_item_ammo_HMG(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_HMG"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_HMG", "usa"));
 }
 
 // Misc stuff

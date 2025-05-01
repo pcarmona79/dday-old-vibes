@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void SP_item_weapon_colt45(edict_t *self)
 {
-	SpawnItem(self, FindItemByClassnameInTeam("colt45", "usm"));
+	SpawnItem(self, FindItemByClassnameInTeam("weapon_colt45", "usm"));
 }
 
 void SP_item_weapon_m1(edict_t *self)

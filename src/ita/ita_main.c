@@ -82,8 +82,9 @@ void InitFunctions(void)
 
 	Weapon_Generic = (void (*)(edict_t *, int, int, int, int, int, int, int, int, int, int *, int *, void (*fire)(edict_t *ent)))
 			PlayerFindFunction("Weapon_Generic");
-	FindItem = (gitem_t * (*)(char *))
-			PlayerFindFunction("FindItem");
+	FindItem = (gitem_t * (*)(char *)) PlayerFindFunction("FindItem");
+	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
+
 	SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
 	FindItemByClassname = (gitem_t * (*)(char *)) PlayerFindFunction("FindItemByClassname");
 	Use_Weapon = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");

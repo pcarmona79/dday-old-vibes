@@ -79,6 +79,7 @@ void InitFunctions(void)
 			PlayerFindFunction("FindItem");
 	SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
 	FindItemByClassname = (gitem_t * (*)(char *)) PlayerFindFunction("FindItemByClassname");
+	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 /*
 	fire_gun = (void (*)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
 			PlayerFindFunction("fire_gun");
