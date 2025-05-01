@@ -394,47 +394,54 @@ void ShowGun( edict_t *ent)
 	//faf:  this makes it so only 1 w_weapon is loaded per weapon, except russian
 	//      weapons have different player animations, so they need to be separate.  This
 	//      will have to be removed if Parts adds arm animations.
-	
-	if (extra_anims->value !=0)
-		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
-	else
+
+//	if (extra_anims->value ==0)
+//		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+//	else
+//	{
+		
+//		if (!strcmp(team_list[0]->teamid, "rus") || !strcmp(team_list[1]->teamid, "rus"))
+//			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+
+//		else 
+
+	if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_molotov"))
 	{
-		if (!strcmp(team_list[0]->teamid, "rus") || !strcmp(team_list[1]->teamid, "rus"))
-		{
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
-		}
-		else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbags"))
-		{
-			ent->s.modelindex2 = gi.modelindex ("players/usa/w_fists.md2");
-		}	
-		else if (ent->client->pers.weapon->position == LOC_FLAME && !strcmp(ent->client->resp.team_on->teamid, "gbr"))
-		{
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
-		}
-		else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_katana"))
-		{
-			ent->s.modelindex2 = gi.modelindex ("players/jpn/w_katana.md2");
-		}
-		else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sabre"))
-		{
-			ent->s.modelindex2 = gi.modelindex ("players/pol/w_sabre.md2");
-		}
-		//faf: non team specific weaps will just use the w_ md2s in players/usa folder
-		else if (ent->client->pers.weapon->position == LOC_KNIFE ||
-			ent->client->pers.weapon->position == LOC_HELMET ||
-			ent->client->pers.weapon->position == LOC_FLAME ||
-			ent->client->pers.weapon->position == LOC_TNT ||
-			strcmp( pszIcon, "w_binoc") == 0 ||
-			strcmp( pszIcon, "w_morphine") == 0
-			)
-			ent->s.modelindex2 = gi.modelindex (va("players/usa/%s.md2", pszIcon));
-		else if (weap_team)
-		{
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", weap_team, pszIcon));//faf
-		}
-		else  //this shouldnt happen...
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+		ent->s.modelindex2 = gi.modelindex ("players/jpn/w_molotov.md2");
 	}
+	else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbag"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/usa/w_fists.md2");
+	}	
+	else if (ent->client->pers.weapon->position == LOC_FLAME && !strcmp(ent->client->resp.team_on->teamid, "gbr"))
+	{
+		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+	}
+	else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_katana"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/jpn/w_katana.md2");
+	}
+	else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sabre"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/pol/w_sabre.md2");
+	}
+	//faf: non team specific weaps will just use the w_ md2s in players/usa folder
+	else if (ent->client->pers.weapon->position == LOC_KNIFE ||
+		ent->client->pers.weapon->position == LOC_HELMET ||
+		ent->client->pers.weapon->position == LOC_FLAME ||
+		ent->client->pers.weapon->position == LOC_TNT ||
+		strcmp( pszIcon, "w_binoc") == 0 ||
+		strcmp( pszIcon, "w_morphine") == 0
+		)
+		ent->s.modelindex2 = gi.modelindex (va("players/usa/%s.md2", pszIcon));
+	else if (weap_team)
+	{
+		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", weap_team, pszIcon));//faf
+	}
+	else  //this shouldnt happen...
+		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+
+//	}
 //	gi.cprintf(ent, PRINT_HIGH, "%s.\n", weap_team);
 }
 

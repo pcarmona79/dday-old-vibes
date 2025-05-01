@@ -2155,7 +2155,7 @@ void sandbag_prev_think(edict_t *ent)
 {
 	if (!ent->owner || !ent->owner->client ||
 		!ent->owner->client->pers.weapon ||
-		Q_strcasecmp(ent->owner->client->pers.weapon->classname, "weapon_sandbags") ||
+		Q_strcasecmp(ent->owner->client->pers.weapon->classname, "weapon_sandbag") ||
 		ent->owner->health < 1)
 	{
 		ent->think = G_FreeEdict;

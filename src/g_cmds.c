@@ -311,7 +311,7 @@ void Cmd_Scope_f(edict_t *ent)
 {
 
 	if (!ent->client->pers.weapon ||
- 		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbags") ||
+ 		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbag") ||
  	//	 ent->client->pers.weapon->position== LOC_GRENADES ||
 		//bcass start - TNT
 		 ent->client->pers.weapon->position== LOC_TNT)
