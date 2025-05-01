@@ -64,7 +64,7 @@ GunInfo_t rusguninfo[]=
 
 		MOD_RIFLE,
 		DAMAGE_m9130, 0,
-		17
+		13 //17
 	},
 	{//ppsh41 
 		{4,5},{89,90}, 5,90, 81,81,

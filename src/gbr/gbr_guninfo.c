@@ -63,7 +63,7 @@ GunInfo_t gbrguninfo[]=
 
 		MOD_RIFLE,
 		DAMAGE_Enfield, 0,
-		17
+		13 //17
 	},
 	{//Sten
 		{4,5},{79,80}, 5,80, 71,71,
