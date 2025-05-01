@@ -2776,8 +2776,6 @@ void Weapon_MG42_Fire (edict_t *ent)
 
 		//ent->client->mg42_temperature =0;
 		gitem_t* ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		if (!ammo_item)
-			ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ent->client->pers.inventory[ITEM_INDEX(ammo_item)] = 0;
 
 		ent->client->mg42_temperature = 43;
@@ -4408,8 +4406,6 @@ void Shotgun_Reload (edict_t *ent,
 	if(ent->client->pers.weapon->ammo)
 	{
 		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		if (!ammo_item)
-			ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_amount=&ent->client->pers.inventory[ammo_index];
 	}

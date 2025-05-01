@@ -1045,8 +1045,6 @@ void Cmd_Drop_f (edict_t *ent)
 
 	s = gi.args(); 
 	it = FindItemInTeam(s, ent->client->resp.team_on->teamid);
-	if (!it)
-		it = FindItem(s);
 
 //bcass start - drop
 	if (Q_stricmp(s, "gun") == 0 || //pbowens: do the same thing if it is the current weapon
@@ -1095,8 +1093,6 @@ void Cmd_Drop_f (edict_t *ent)
 
 		// rezmoth - ammo_item definition has crashed the server twice
 		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		if (!ammo_item)
-			ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ammo_index	= ITEM_INDEX(ammo_item);
 
 		if (!ent->client->pers.inventory[ammo_index] || !ammo_item->drop)
@@ -1155,8 +1151,6 @@ void Cmd_Drop_f (edict_t *ent)
 			int		 ammo_index;
 
 			ammo_item = FindItemInTeam(item->ammo, item->dllname);
-			if (!ammo_item)
-				ammo_item = FindItem(item->ammo);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (ent->client->pers.inventory[ammo_index])
@@ -2436,8 +2430,6 @@ qboolean Cmd_Reload_f (edict_t *ent)
 	if (ent->client->pers.weapon->ammo)
 	{
 		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		if (!ammo_item)
-			ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_ammount = &ent->client->pers.inventory[ammo_index];
 	}
@@ -2461,8 +2453,6 @@ qboolean Cmd_Reload_f (edict_t *ent)
 		}
 
 		gitem_t *mags_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		if (!mags_item)
-			mags_item = FindItem(ent->client->pers.weapon->ammo);
 		mags_left = ent->client->pers.inventory[ITEM_INDEX(mags_item)];
 	} else
 		return false;

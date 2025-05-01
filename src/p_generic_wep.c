@@ -77,8 +77,6 @@ void Weapon_Generic (edict_t *ent,
 	if(ent->client->pers.weapon->ammo)
 	{
 		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		if (!ammo_item)
-			ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_ammount=&ent->client->pers.inventory[ammo_index];
 	}

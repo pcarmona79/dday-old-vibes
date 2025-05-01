@@ -741,8 +741,6 @@ void TossClientWeapon (edict_t *self)
 			int		 ammo_index;
 
 			ammo_item = FindItemInTeam(item->ammo, item->dllname);
-			if (!ammo_item)
-				ammo_item = FindItem(item->ammo);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (self->client->pers.inventory[ammo_index])

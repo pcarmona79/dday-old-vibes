@@ -143,7 +143,8 @@ gitem_t	*FindItemInTeam(char *pickup_name, char *dllname)
 			return it;
 	}
 
-	return NULL;
+	// try to not return null pointer
+	return FindItem(pickup_name);
 }
 
 // kernel: like FindItemByClassname but filtering by team
@@ -162,7 +163,8 @@ gitem_t	*FindItemByClassnameInTeam(char *classname, char *dllname)
 			return it;
 	}
 
-	return NULL;
+	// try to not return null pointer
+	return FindItemByClassname(classname);
 }
 
 gitem_t *FindTeamItem (char *dllname, int position)  //faf:  added for team dll support.  Finds item by dll name and 'position'.  Not 100% sure if it works yet...
@@ -1052,8 +1054,6 @@ void PrecacheItem (gitem_t *it)
 	if (it->ammo && it->ammo[0])
 	{
 		ammo = FindItemInTeam(it->ammo, it->dllname);
-		if (!ammo)
-			ammo = FindItem(it->ammo);
 		if (ammo != it)
 			PrecacheItem (ammo);
 	}

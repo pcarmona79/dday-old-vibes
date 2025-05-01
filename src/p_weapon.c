@@ -179,8 +179,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		if(ent->item->ammo)
 		{
 			ammo = FindItemInTeam(ent->item->ammo, ent->item->dllname);
-			if (!ammo)
-				ammo = FindItem(ent->item->ammo);
 //			if ( (int)dmflags->value & DF_INFINITE_AMMO )
 //				Add_Ammo (other, ammo, 1000);
 //			else
@@ -470,8 +468,6 @@ void ChangeWeapon (edict_t *ent)
 		// kernel: this will force to search in team's items first
 		gitem_t* item = FindItemInTeam(ent->client->pers.weapon->ammo,
 				ent->client->resp.team_on->teamid);
-		if (!item)
-			item = FindItem(ent->client->pers.weapon->ammo);
 
 		if (item)
 			ent->client->ammo_index = ITEM_INDEX(item);
@@ -611,8 +607,6 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
 	{
 		ammo_item = FindItemInTeam(item->ammo, item->dllname);
-		if (!ammo_item)
-			ammo_item = FindItem(item->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
 
 		if (!strcmp(item->ammo, "p38_mag"))
@@ -1009,8 +1003,6 @@ void weapon_grenade_prime (edict_t *ent, int team)
 	else {
 		grenade->item = FindItemInTeam(va("%s", (team) ? "Potato Masher" : "USA Grenade" ),
 				ent->client->resp.team_on->teamid);
-		if (!grenade->item)
-			grenade->item = FindItem(va("%s", (team) ? "Potato Masher" : "USA Grenade" ));
 	}
 	dudchance = rand() % 100;
 	//gi.dprintf("chance: %f", dudchance);
@@ -1043,8 +1035,6 @@ void Weapon_Grenade (edict_t *ent)
 		// kernel: switch to team's main weapon when no grenades
 		char *weapon1 = ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1;
 		gitem_t *weapon_item = FindItemInTeam(weapon1, ent->client->resp.team_on->teamid);
-		if (!weapon_item)
-			weapon_item = FindItem(weapon1);
 		int weapon_index = ITEM_INDEX(weapon_item);
 		
 		if (weapon1 && weapon_index >= 0 &&
