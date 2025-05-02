@@ -3277,7 +3277,7 @@ void Weapon_Sniper_Fire (edict_t *ent)
 	vec3_t		offset;
 	vec3_t      angles;
 	int			kick=200;
-	int			i;
+	//int			i;
 
 	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
 	int mag_index=ent->client->pers.weapon->mag_index;
@@ -3379,11 +3379,11 @@ void Weapon_Sniper_Fire (edict_t *ent)
 
 				        
         //Calculate the kick angles
-        for (i=1 ; i<3 ; i++)
-        {
+        //for (i=1 ; i<3 ; i++)
+        //{
 			//ent->client->kick_origin[i] = crandom() * (ent->client->aim)?0:7;
             //ent->client->kick_angles[i] = crandom() * (ent->client->aim)?0:6.5;
-        }
+        //}
         //ent->client->kick_origin[0] = crandom() * (ent->client->aim)?0:1.5;
         //ent->client->kick_angles[0] = ent->client->machinegun_shots * (ent->client->aim)?0:2;
         
