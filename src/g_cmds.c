@@ -821,13 +821,19 @@ gitem_t	*FindNextPickup (edict_t *ent, int location)
 		else if (location)	// Skip the stuff below if its looking for a specific position
 			continue;
 
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1) )
+		// weapon1, weapon2, grenades y special son nombres de las armas del equipo
+		// agregar comprobacion de team para descartar que el arma recogida tenga el mismo nombre de otra en el inventario
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+				ent->client->resp.team_on->teamid))
 			continue;
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+				ent->client->resp.team_on->teamid))
 			continue;
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades,
+				ent->client->resp.team_on->teamid))
 			continue;
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+				ent->client->resp.team_on->teamid))
 			continue;
 		if (it == FindItem("Knife") )
 			continue;
@@ -900,16 +906,16 @@ void Cmd_Use_f (edict_t *ent)
 		}
 		else if (Q_stricmp(s,"weapon1")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))
-				/* strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1) */;
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"weapon2")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2))
-				/* strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2) */;
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		/*
@@ -923,9 +929,9 @@ void Cmd_Use_f (edict_t *ent)
 		*/
 		else if (Q_stricmp(s,"special")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special))
-				/* strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->special) */;
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"grenades")==0) 
