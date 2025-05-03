@@ -138,9 +138,14 @@ gitem_t	*FindItemInTeam(char *pickup_name, char *dllname)
 	{
 		if (!it->pickup_name)
 			continue;
-		if (!Q_stricmp(it->pickup_name, pickup_name)
-			&& !Q_stricmp(it->dllname, dllname))
-			return it;
+		if (dllname != NULL && it->dllname != NULL) {
+			if (!Q_stricmp(it->pickup_name, pickup_name)
+					&& !Q_stricmp(it->dllname, dllname))
+				return it;
+		} else {
+			if (!Q_stricmp(it->pickup_name, pickup_name))
+				return it;
+		}
 	}
 
 	// try to not return null pointer
@@ -158,9 +163,14 @@ gitem_t	*FindItemByClassnameInTeam(char *classname, char *dllname)
 	{
 		if (!it->classname)
 			continue;
-		if (!Q_stricmp(it->classname, classname)
-			&& !Q_stricmp(it->dllname, dllname))
-			return it;
+		if (dllname != NULL && it->dllname != NULL) {
+			if (!Q_stricmp(it->classname, classname)
+					&& !Q_stricmp(it->dllname, dllname))
+				return it;
+		} else {
+			if (!Q_stricmp(it->classname, classname))
+				return it;
+		}
 	}
 
 	// try to not return null pointer
@@ -1241,6 +1251,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0.25,
 		0,
 		0,
+		"",
 /* precache */ "weapons/hgrent1a.wav weapons/hgrena1b.wav weapons/hgrenb1a.wav weapons/hgrenb2a.wav "
 	},
 //bcass end
@@ -1332,6 +1343,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 	   0,
 	   0,
 		0,
+		"",
        "misc/fhit3.wav knife/fire.wav knife/hit.wav knife/pullout.wav"
 
 		},
@@ -1358,6 +1370,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 	   0,
 	   0,
 		0,
+		"",
        "misc/fhit3.wav fists/fire.wav fists/hit.wav"
 
 	   },
@@ -1383,6 +1396,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0,
 		0,
 		0,
+		"",
 		"faf/woodbreak.wav"
 	},
 /*QUAKED item_helmet (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -1409,6 +1423,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0,
 		0,
 		0,
+		"",
 /* precache */ ""
 	},
 
@@ -1436,6 +1451,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0.5,
 		0,
 		0,
+		"",
 /* precache */ ""
 	},
 
@@ -1463,6 +1479,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0,
 		0,
 		0,
+		"",
 /* precache */ ""
 	},
 
@@ -1491,6 +1508,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		70,
 		0,
 		0,
+		"",
 /* precache */ "weapons/flamer/fire.wav"
 	},
 
@@ -1518,6 +1536,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0.25,
 		0,
 		0,
+		"",
 /* precache */ ""
 	},
 
@@ -1546,6 +1565,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		0,
 		0,
 		0,
+		"",
 /* precache */ ""
 	},
 
