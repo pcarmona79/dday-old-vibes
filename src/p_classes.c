@@ -173,7 +173,8 @@ void Give_Class_Weapon(edict_t *ent)
 	//}
 	//if(client->resp.team_on->mos[client->resp.mos]->special)
 	//{
-		if(item=FindItem(client->resp.team_on->mos[client->resp.mos]->special) )
+		if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->special,
+				client->resp.team_on->teamid))
 		client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->specnum;
 	//}
 

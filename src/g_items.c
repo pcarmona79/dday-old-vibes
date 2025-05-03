@@ -2163,7 +2163,7 @@ void Weapon_Sandbag_Fire(edict_t *ent)
 	{
 		ent->client->weaponstate = WEAPON_LOWER;
 		ent->client->ps.gunframe = 20;
-		Use_Weapon(ent, FindItem("fists"));
+		Use_Weapon(ent, FindItem("Fists"));
 		return;
 	}
 
