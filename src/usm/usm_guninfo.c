@@ -53,10 +53,10 @@ GunInfo_t usmguninfo[]=
 		{4},{76}, 6,78, 64,67,
 			
 			"usa/m1/unload.wav",
-				{56},
+				{55},//{56},
 		
 			"usa/m1/reload.wav",
-				{58},
+				{57},//	{58},
 		
 		"usa/m1/fire.wav",
 		"usa/m1/lastround.wav",
@@ -69,10 +69,10 @@ GunInfo_t usmguninfo[]=
 		{4,5},{77,78}, 5,78, 69,69,
 			
 			"usa/bar/unload.wav",
-				{47},
+		{46},//{47},
 		
 			"usa/bar/reload.wav",
-				{62},
+		{61},//	{62},
 		
 		"usa/bar/fire.wav",
 		NULL,
@@ -131,7 +131,7 @@ GunInfo_t usmguninfo[]=
 		0,
 		"usa/m1903/bolt.wav", 66
 	},
-			{//Thompson
+	{//Thompson
 		{4,5},{79,80}, 5,80, 71,71,
 
 			"usa/thompson/unload.wav",
