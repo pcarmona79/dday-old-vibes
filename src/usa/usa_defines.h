@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define BAR_MAG			20
 #define HMG_MAG			100
 #define BAZOOKA_MAG		1
+#define M1CARB_MAG		30
 
 #define COLT45_FRAME	0
 #define M1_FRAME		1
@@ -43,6 +44,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define BHMG_FRAME		4
 #define BAZOOKA_FRAME	5
 #define SNIPER_FRAME	6
+#define M1CARB_FRAME	7
 
 #define DAMAGE_COLT45		25
 // rezmoth - was 33 before new locational damage
@@ -53,5 +55,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_BAZOOKA_HIT	1000 // bridges default to 2000 with cast's maps =)
 #define DAMAGE_BAZOOKA_RAD	500
 #define DAMAGE_M1903		100
+#define DAMAGE_M1CARB		35
 
 #endif /* __USA_DEFINES_H__ */

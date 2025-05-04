@@ -146,6 +146,22 @@ GunInfo_t usaguninfo[]=
 		DAMAGE_M1903, 0,
 		0,
 		"usa/m1903/bolt.wav", 67//66
+	},
+	{//M1 Carbine
+		{4},{76}, 6,78, 64,67,
+
+		"usa/m1carb/unload.wav",
+		{56},
+
+		"usa/m1carb/reload.wav",
+		{58},
+
+		"usa/m1carb/fire.wav",
+		NULL,
+
+		MOD_RIFLE,
+		DAMAGE_M1CARB, 0,
+		0
 	}
 };
 

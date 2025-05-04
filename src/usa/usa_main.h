@@ -87,7 +87,7 @@ void (*Weapon_HMG_Fire)(edict_t *);
 void (*Weapon_Rocket_Fire)(edict_t *);
 void (*Weapon_Sniper_Fire)(edict_t *);
 void (*Weapon_Grenade)(edict_t *);
-
+void (*Weapon_M1Carbine_Fire) (edict_t *ent);
 
 void Weapon_Colt45 (edict_t *ent);
 void Weapon_m1(edict_t *ent);
@@ -96,6 +96,7 @@ void Weapon_BAR(edict_t *ent);
 void Weapon_30cal(edict_t *ent);
 void Weapon_Bazooka(edict_t *ent);
 void Weapon_Sniper(edict_t *ent);
+void Weapon_M1Carbine(edict_t *ent);
 
 // g_spawnn.c
 void (*SP_misc_banner_generic) (edict_t *ent, char *model);

@@ -274,6 +274,35 @@ gitem_t usaitems[]=
 		&usaguninfo[SNIPER_FRAME]
 	},
 
+/* QUAKED weapon_m1carb (.3 .3 1) (-16 -16 -16) (16 16 16)
+*/
+	{
+		"weapon_m1carb",
+		L_Pickup_Weapon,
+		L_Use_Weapon,
+		L_Drop_Weapon,
+		Weapon_M1Carbine,
+		"misc/w_pkup.wav",
+		"models/weapons/usa/g_m1carb/tris.md2", 0,
+		"models/weapons/usa/v_m1carb/tris.md2",
+/* icon */		"w_m1carb",
+/* pickup */	"M1 Carbine",
+		0,
+		1,
+		"m1carb_mag",
+		IT_WEAPON|IT_STAY_COOP,
+		NULL,
+		0,
+		LOC_SUBMACHINEGUN2,
+		2,
+		9,
+		5000,
+		100,
+		"usa",
+/* precache */ "usa/m1carb/fire.wav usa/m1carb/reload.wav usa/m1carb/unload.wav",
+		&usaguninfo[M1CARB_FRAME]
+	},
+
 //////////////////////////////////////////////////////////////////////////////////////
 //                                   AMMO                                           //
 //////////////////////////////////////////////////////////////////////////////////////
@@ -506,8 +535,33 @@ gitem_t usaitems[]=
 /* precache */ ""
 	},
 
-	
-
+/*QUAKED ammo_m1carb (.3 .3 1) (-16 -16 -16) (16 16 16)
+*/
+	{
+		"ammo_m1carb",
+		L_Pickup_Ammo,
+		NULL,
+		L_Drop_Ammo,
+		NULL,
+		"misc/am_pkup.wav",
+		"models/items/ammo/m1/tris.md2", 0,
+		NULL,
+/* icon */		"a_m1carb",
+/* pickup */	"m1carb_mag",
+/* width */		3,
+		M1CARB_MAG,
+		NULL,
+		IT_AMMO,
+		NULL,
+		AMMO_SUBMG,//AMMO_CARBINE,
+		0,
+		0,
+		1,
+		0,
+		0,
+		"usa",
+/* precache */ ""
+	},
 
 {
 	NULL
