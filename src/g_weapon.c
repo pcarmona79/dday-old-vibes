@@ -2288,7 +2288,7 @@ void Weapon_Submachinegun_Fire (edict_t *ent)
 
 void Weapon_LMG_Fire (edict_t *ent)
 {
-	int	i;
+//	int	i;
 	vec3_t		start;
 	vec3_t		forward, right,up;
 	vec3_t		angles;
@@ -2309,7 +2309,6 @@ void Weapon_LMG_Fire (edict_t *ent)
 		return;
 	}
 
-	/*
 	if(ent->client->aim)
 	{
 		if(ent->client->ps.gunframe == guninfo->LastAFire)
@@ -2323,7 +2322,7 @@ void Weapon_LMG_Fire (edict_t *ent)
 		else
 			ent->client->ps.gunframe = guninfo->LastFire;
 	}
-*/
+
 	if (ent->client->mags[mag_index].lmg_rnd < 1)
 	{
 		ent->client->ps.gunframe = (ent->client->aim)?guninfo->LastAFire + 1:guninfo->LastFire + 1;
@@ -2343,12 +2342,12 @@ void Weapon_LMG_Fire (edict_t *ent)
 
 	if (!ent->client->aim)
 	{
-		for (i=0 ; i<3 ; i++)
-		{
+		//for (i=0 ; i<3 ; i++)
+		//{
 			//rezmoth - changed for new firing system
 			//ent->client->kick_origin[i] = (crandom() * 0.5)-1.5;
 			//ent->client->kick_angles[i] = (crandom() * 0.7)-1.5;
-		}
+		//}
 		//rezmoth - changed for new firing system
 		//ent->client->kick_origin[0] = crandom() * 0.35;
 		//ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.8;
@@ -2358,12 +2357,12 @@ void Weapon_LMG_Fire (edict_t *ent)
 	}
 	else
 	{
-		for (i=1 ; i<3 ; i++)
-		{
+		//for (i=1 ; i<3 ; i++)
+		//{
 			//rezmoth - changed for new firing system
 			//ent->client->kick_origin[i] = crandom() * 0.30;
 			//ent->client->kick_angles[i] = crandom() * 0.5;
-		}
+		//}
 		//rezmoth - changed for new firing system
 		//ent->client->kick_origin[0] = crandom() * 0.35;
 		//ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.0;
