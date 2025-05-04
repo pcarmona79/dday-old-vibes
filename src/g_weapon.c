@@ -3517,11 +3517,11 @@ void TNT_Explode (edict_t *ent)
 }
 
 
-static void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-//	int	index;
+	int	index;
 //	trace_t		trace;
-	
+
     if (surf && (surf->flags & SURF_SKY))
 	{
 		G_FreeEdict (ent);
@@ -3541,17 +3541,23 @@ static void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t
 
 		VectorClear (ent->velocity) ;
 		VectorClear (ent->avelocity) ;
-		ent->movetype = MOVETYPE_NONE;
-        
+		//ent->movetype = MOVETYPE_NONE; // kernel: now you can pick it up o_O
 		return;
 	}
-/*  What a mess...  TNT pickup for RC1
+/*  What a mess...  TNT pickup for RC1 */
 //else pick it up
 
 	if (!other->client ||
-		(invuln_medic->value == 1 || other->client->resp.mos == MEDIC) ||
-		(teamgren->value == 1 && other->client->resp.team_on->index == ent->obj_owner ))	
-		return;	
+		other->client->tnt || // they already have a tnt
+		(invuln_medic->value == 1 || other->client->resp.mos == MEDIC)) //||
+		//(teamgren->value == 1 && other->client->resp.team_on->index == ent->obj_owner ))
+		return;
+	
+	//faf:  trying to fix a crash that happens every so often.
+	if (!other->client->pers.inventory)
+		return;
+	if (!ent->item)
+		return;
 
 	index= ITEM_INDEX(ent->item);
 
@@ -3559,22 +3565,26 @@ static void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t
 	// something about picking up live TNT?
 	other->client->pers.inventory[index]++;
 	other->client->newweapon = ent->item;
-	other->client->grenade_time=ent->nextthink;		
+	//other->client->grenade_time=ent->nextthink;
+	other->client->tnt = ent; // set their caught tnt
+	other->client->aim = false;
+
 	ChangeWeapon(other);
 
-	gi.cprintf(other, PRINT_HIGH, "You have live TNT!\n");
+	gi.cprintf(other, PRINT_HIGH, "You have a live TNT!\n");
 	
 //	other->client->pers.lastweapon = other->client->pers.weapon;
 //	other->client->pers.weapon = other->client->newweapon;
 //	other->client->newweapon = NULL;
 	
-	G_FreeEdict(ent);
-	other->armed_grenade=true;
+	//ent->s.modelindex = 0; // set model to null
+	//G_FreeEdict(ent);
+	//other->armed_grenade=true;
 	//other->client->weaponstate = WEAPON_FIRING;
-	other->client->ps.gunframe = 6;
+	//other->client->ps.gunframe = 13;
     //ent->enemy = other;
     //Shrapnel_Explode (ent);
-*/
+
 
 //	ent->enemy = other;
 //	TNT_Explode (ent);
