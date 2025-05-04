@@ -355,38 +355,37 @@ void Weapon_M1Carbine (edict_t *ent)
 
 	// Wheaty: Uncomment next line to allow topping off
 	//ent->client->p_fract = &ent->client->mags[usa_index].rifle_fract
-	ent->client->p_rnd= &ent->client->mags[usa_index].submg_rnd;
+	ent->client->p_rnd = &ent->client->mags[usa_index].rifle_rnd;
 
 	ent->client->crosshair = false;
 
-if ((ent->client->weaponstate == WEAPON_FIRING || ent->client->weaponstate == WEAPON_READY)
+	if ((ent->client->weaponstate == WEAPON_FIRING || ent->client->weaponstate == WEAPON_READY)
 			&& !ent->client->heldfire && (ent->client->buttons & BUTTON_ATTACK)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?75:3)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?76:4)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?77:5)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?78:6)
 			//gotta do it this way for both firing modes
-)
-		{
-			if (ent->client->ps.gunframe<4)
-//				firetype = abs(5-ent->client->ps.gunframe);  unknown function
-			ent->client->ps.gunframe = 4;
-			ent->client->weaponstate = WEAPON_READY;
-		//	ent->client->latched_buttons |= BUTTON_ATTACK;
-			ent->client->heldfire = true;
-		}
-		else
-		{
-			ent->client->buttons &= ~BUTTON_ATTACK;
-			ent->client->latched_buttons &= ~BUTTON_ATTACK;
-		}
+	)
+	{
+		if (ent->client->ps.gunframe<4)
+//			firetype = abs(5-ent->client->ps.gunframe);  unknown function
+		ent->client->ps.gunframe = 4;
+		ent->client->weaponstate = WEAPON_READY;
+	//	ent->client->latched_buttons |= BUTTON_ATTACK;
+		ent->client->heldfire = true;
+	}
+	else
+	{
+		ent->client->buttons &= ~BUTTON_ATTACK;
+		ent->client->latched_buttons &= ~BUTTON_ATTACK;
+	}
 //else
 //		ent->client->heldfire = false;  // have to comment out or else semi-auto doesn't work
 
 	Weapon_Generic (ent, 
 		 3,  6, 47, 
 		64, 67, 72, 
-		75, 78, 89, 
-		
-		pause_frames, fire_frames, Weapon_M1Carbine_Fire);
+		75, 78, 89, 	
+		pause_frames, fire_frames, Weapon_Rifle_Fire);
 }

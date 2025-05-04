@@ -602,7 +602,6 @@ void Shotgun_Reload (edict_t *ent,
 	int FRAME_RAISE_LAST,		int FRAME_AFIRE_LAST,	int FRAME_AIDLE_LAST,
 	int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent));
 void Weapon_Shotgun_Fire (edict_t *ent);
-void Weapon_M1Carbine_Fire (edict_t *ent);
 
 // File : \dday\source/m_actor.c
 void actor_stand(edict_t * self );   // found @ line:68

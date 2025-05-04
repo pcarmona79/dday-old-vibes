@@ -100,7 +100,6 @@ void InitFunctions(void)
 	Weapon_Rocket_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Rocket_Fire");
 	Weapon_Sniper_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Sniper_Fire");
 	Weapon_Grenade=(void (*)(edict_t *))PlayerFindFunction("Weapon_Grenade");
-	Weapon_M1Carbine_Fire = (void (*)(edict_t *))PlayerFindFunction("Weapon_M1Carbine_Fire");
 }
 
 vec3_t vec3_origin = {0,0,0};

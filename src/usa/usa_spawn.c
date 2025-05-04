@@ -70,6 +70,10 @@ void SP_item_weapon_sniper(edict_t *self)
     SpawnItem(self, FindItemByClassnameInTeam("weapon_sniper", "usa"));
 }
 
+void SP_item_weapon_m1carb(edict_t *self)
+{
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_m1carb", "usa"));
+}
 
 
 //ammo
@@ -77,6 +81,7 @@ void SP_item_ammo_grenades_usa(edict_t *self)
 {
     SpawnItem(self, FindItemByClassnameInTeam("ammo_grenades_usa", "usa"));
 }
+
 void SP_item_ammo_colt45(edict_t *self)
 {
     SpawnItem(self, FindItemByClassnameInTeam("ammo_colt45", "usa"));
@@ -112,6 +117,11 @@ void SP_item_ammo_HMG(edict_t *self)
     SpawnItem(self, FindItemByClassnameInTeam("ammo_HMG", "usa"));
 }
 
+void SP_item_ammo_m1carb(edict_t *self)
+{
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_m1carb", "usa"));
+}
+
 // Misc stuff
 
 void SP_misc_banner_usa (edict_t *ent)
@@ -139,7 +149,6 @@ void SP_misc_flag_brit (edict_t *ent)
 /////////////////////////////////////////////////////////////
 
 spawn_t sp_usa[] =
-
 {
     "weapon_colt45", SP_item_weapon_colt45,
 	"weapon_m1",SP_item_weapon_m1,
@@ -148,6 +157,7 @@ spawn_t sp_usa[] =
 	"weapon_30cal", SP_item_weapon_30cal,
 	"weapon_bazooka",SP_item_weapon_bazooka,
 	"weapon_sniper",SP_item_weapon_sniper,
+	"weapon_m1carb",SP_item_weapon_m1carb,
 	"ammo_grenades_usa",SP_item_ammo_grenades_usa,
 	"ammo_colt45",SP_item_ammo_colt45,
 	"ammo_m1",SP_item_ammo_m1,
@@ -156,6 +166,7 @@ spawn_t sp_usa[] =
 	"ammo_HMG",SP_item_ammo_HMG,
 	"ammo_rockets",SP_item_ammo_rockets,
 	"ammo_m1903",SP_item_ammo_m1903,
+	"ammo_m1carb",SP_item_ammo_m1carb,
 	"misc_banner_usa",SP_misc_banner_usa,
 	"misc_banner_brit",SP_misc_banner_brit,
 	"misc_flag_usa",SP_misc_flag_usa,

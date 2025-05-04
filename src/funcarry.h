@@ -580,7 +580,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Weapon_Knife", (void (*))Weapon_Knife,   // void Weapon_Knife(edict_t * ent )  \dday\source/p_weapon.c:725
 "Weapon_Knife_Fire", (void (*))Weapon_Knife_Fire,   // void Weapon_Knife_Fire(edict_t * ent )  \dday\source/p_weapon.c:682
 "Weapon_LMG_Fire", (void (*))Weapon_LMG_Fire,   // void Weapon_LMG_Fire(edict_t * ent )  \dday\source/g_weapon.c:1213
-"Weapon_M1Carbine_Fire", (void (*))Weapon_M1Carbine_Fire, // void Weapon_M1Carbine_Fire (edict_t *ent);
 "Weapon_MG34_Fire", (void (*))Weapon_MG34_Fire, // void Weapon_MG34_Fire (edict_t *ent)
 "Weapon_MG42_Fire", (void (*))Weapon_MG42_Fire, // void Weapon_MG42_Fire (edict_t *ent)
 "Weapon_Mine", (void (*))Weapon_Mine,   // void Weapon_Mine(edict_t * ent )  \dday\source/p_weapon.c:535

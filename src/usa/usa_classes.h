@@ -160,8 +160,8 @@ SMos_t USA_MOS_List[]=
 	{
 		"Airborne",
 		"class_special",
-		"Thompson",
-		5,
+		"M1 Carbine",
+		6,
 		NULL,
 		0,
 		"USA Grenade",
@@ -172,7 +172,7 @@ SMos_t USA_MOS_List[]=
 		MAX_SPECIAL,
 		STANDARD_NORMAL-5,
 		STANDARD_MAX-5,
-		(STANDARD_SPEED_MOD * 0.95),
+		STANDARD_SPEED_MOD,
 		0.33,
 		"info_special_start"
 	},
