@@ -544,7 +544,7 @@ gitem_t usaitems[]=
 		L_Drop_Ammo,
 		NULL,
 		"misc/am_pkup.wav",
-		"models/items/ammo/m1/tris.md2", 0,
+		"models/items/ammo/m1carb/tris.md2", 0,
 		NULL,
 /* icon */		"a_m1carb",
 /* pickup */	"m1carb_mag",

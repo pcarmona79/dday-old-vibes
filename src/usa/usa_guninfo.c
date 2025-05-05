@@ -151,7 +151,7 @@ GunInfo_t usaguninfo[]=
 		{4},{76}, 6,78, 64,67,
 
 		"usa/m1carb/unload.wav",
-		{56},
+		{51},
 
 		"usa/m1carb/reload.wav",
 		{58},

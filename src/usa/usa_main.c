@@ -165,6 +165,7 @@ void UserPrecache(void)
 	ptrgi->modelindex("players/usa/w_bazooka.md2");
 	ptrgi->modelindex("players/usa/w_m1903.md2");
 	ptrgi->modelindex("players/usa/a_grenade.md2");
+	ptrgi->modelindex("players/usa/w_m1carb.md2");
 
 	// GENERIC
 	ptrgi->modelindex("players/usa/w_flame.md2");
