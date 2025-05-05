@@ -156,7 +156,7 @@ SMos_t JPN_MOS_List[]=
 		"Banzai!!!",
 		"class_special",
 		"Katana",
-		1,
+		0,
 		"Nambu Pistol",
 		4,
 		"Type97 Grenade",
