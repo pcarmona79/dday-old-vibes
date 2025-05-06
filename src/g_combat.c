@@ -29,7 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
-#include "allfuncs.h"
+#include "x_fire.h"//faf
+
 
 #define LEG_DAMAGE		(height/2) - abs(targ->mins[2]) - 3 
 #define STOMACH_DAMAGE	(height/1.6) - abs(targ->mins[2]) 
@@ -501,7 +502,10 @@ qboolean In_Vector_Range(vec3_t point, vec3_t origin,
 }
 
 int Damage_Loc(edict_t *targ, vec3_t point)
-{	float min_x = targ->s.origin[0] + targ->mins[0] - 0.1;
+{
+	float x_coord, y_coord, p_angle; //faf
+
+	float min_x = targ->s.origin[0] + targ->mins[0] - 0.1;
 	float max_x = targ->s.origin[0] + targ->maxs[0] + 0.1;
 	float min_y = targ->s.origin[1] + targ->mins[1] - 0.1;
 	float max_y = targ->s.origin[1] + targ->maxs[1] + 0.1;
@@ -522,6 +526,42 @@ int Damage_Loc(edict_t *targ, vec3_t point)
 		{
 			//gi.dprintf("head\n");
 			return HEAD_WOUND;
+		}
+
+		//faf: check for flamer hit
+		else if (//attacker->client && // kernel: no attacker in this version
+			targ->client &&
+			targ->client->pers.weapon &&
+			targ->client->pers.weapon->position == LOC_FLAME 
+				&& point[2] > min_z + 30 && point[2] < min_z + 46
+				&& targ->client->tank_hit == false)
+				//&& attacker->client->resp.team_on != targ->client->resp.team_on)
+		{
+			//messy but it works decent... detects the angle where the bullet 
+			//hit the bounding box, from the origin of the player
+			x_coord = point[0] - targ->s.origin[0];
+			y_coord = point[1] - targ->s.origin[1];
+			if (x_coord > 0)
+				p_angle = (atan ((y_coord)  / (x_coord))) * (360 / (2 * 3.14159));
+			else if (y_coord < 0)
+				p_angle = - (180 -(atan ((y_coord)  / (x_coord))) * (360 / (2 * 3.14159)));
+			else
+				p_angle = (atan ((y_coord)  / (x_coord))) * (360 / (2 * 3.14159)) + 180;
+			
+			//adjusts the angle according to direction player is facing
+			//this is messed and goes to -220 in the back instead of -180 but it wont matter here:
+			p_angle = p_angle - targ->client->v_angle[1];
+
+//			gi.bprintf(PRINT_HIGH, "x %f, y %f \n", x_coord, y_coord);
+//			gi.bprintf(PRINT_HIGH, "x %f \n", p_angle);
+
+			if (p_angle > 90 || p_angle < -90)
+			{
+				gi.cprintf(targ, PRINT_HIGH, "Your tank has been shot!\n");
+				return TANK_HIT;
+//				gi.bprintf(PRINT_HIGH, "TANK HIT\n");
+			}
+
 		} else if (point[2] > min_z + 37 && point[2] < min_z + 46) {
 			//gi.dprintf("chest\n");
 			return CHEST_WOUND;
@@ -672,6 +712,7 @@ int Damage_Loc(edict_t *targ, vec3_t point)
 #define DROP_SHOT 97
 
 //void Drop_Shot (edict_t *ent, gitem_t *item);
+void Use_Weapon (edict_t *ent, gitem_t *inv);
 
 void Drop_Shot (edict_t *ent, gitem_t *item)
 {
@@ -716,6 +757,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				
 				wound_location, 
 				die_time;
+
+	//faf
+	int i;
+	vec3_t	v;
     qboolean saved=false;
 	
 	if (IsValidPlayer(targ) && level.time < targ->client->spawntime + invuln_spawn->value) // pbowens: invulnerability
@@ -752,6 +797,72 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			
 			result = Damage_Loc(targ, point);
 			targ->client->damage_knockback = 20;
+
+		//faf: if flamethrower tank is hit
+		if (result == TANK_HIT)
+		{
+			//explode
+			gi.WriteByte (svc_temp_entity);
+			gi.WriteByte (TE_EXPLOSION1);
+			gi.WritePosition (targ->s.origin);
+			gi.multicast (targ->s.origin, MULTICAST_PHS);
+
+			T_RadiusDamage (targ, attacker, 45, targ, 40, MOD_EXPLOSIVE);
+			T_Damage (targ, attacker, attacker, vec3_origin, targ->s.origin, vec3_origin, 50, 0, 0, MOD_TANKHIT);
+			gi.positioned_sound (targ->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("bullet/metal1.wav"), 1, ATTN_NORM, 0);
+
+			//burn
+			PBM_Ignite (targ, attacker, point);
+//			gi.bprintf (PRINT_HIGH, "ignite \n");
+
+			targ->client->tank_hit = true;
+			targ->client->flame_rnd = 0;
+ 
+			for (i = 0; i <9; i ++)
+			{
+				edict_t *fire;
+
+				fire = G_Spawn();
+				fire->s.modelindex = MD2_FIRE;
+				fire->s.frame      = FRAME_FIRST_SMALLIGNITE;
+				fire->s.skinnum    = SKIN_FIRE_RED;
+				VectorClear (fire->mins);
+				VectorClear (fire->maxs);
+				VectorCopy (targ->s.origin, fire->s.origin);
+				VectorClear (fire->s.angles);
+				VectorClear (fire->velocity);
+				fire->movetype     = MOVETYPE_TOSS;
+				fire->clipmask     = MASK_SHOT;
+				fire->solid        = SOLID_BBOX;
+				fire->takedamage   = DAMAGE_NO;
+				fire->s.effects    = 0;
+				fire->s.renderfx   = RF_FULLBRIGHT;
+				fire->owner        = fire;
+				fire->master       = attacker;
+				fire->classname    = "fire";
+				fire->touch        = PBM_FireDropTouch;
+				fire->burnout      = level.time + 2 + random() * 3;
+				fire->timestamp    = level.time;
+				fire->nextthink    = level.time + FRAMETIME;
+				fire->think        = PBM_CheckFire;
+	//			VectorCopy (30, fire->pos1);
+	//			VectorCopy (30, fire->pos2);
+				fire->dmg_radius   = 30;
+				fire->dmg          = 1;//blast_chance;
+
+				fire->s.origin[0] = targ->s.origin[0] + crandom() * 100;				
+				fire->s.origin[1] = targ->s.origin[1] + crandom() * 100;
+				fire->s.origin[2] = targ->s.origin[2] + crandom() * 100;
+
+				v[0] = 50 + 100 * crandom();
+				v[1] = 50 + 100 * crandom();
+				v[2] = 50 + 100 * crandom();
+				VectorMA (targ->velocity, 2, v, fire->velocity);
+
+				gi.linkentity (fire);
+			}
+			return;
+		}
 
 	//Wheaty: Panzer Deflection (too lazy to make it modular)
 	// pbowens: moved to be damage loc-independant

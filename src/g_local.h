@@ -1478,6 +1478,8 @@ struct gclient_s
 
 	float       last_fire_time;//faf
 
+	qboolean    tank_hit;//faf
+
 	float 		crosshair_offset_x;
 	float 		crosshair_offset_y;
 
