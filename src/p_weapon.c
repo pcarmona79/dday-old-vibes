@@ -2044,9 +2044,9 @@ void weapon_flame_fire (edict_t *ent)
 	//250 / 500 / 500
 	//375 / 900 / 900
 	speed = 250 + (ent->client->machinegun_shots * 150);
-	if (speed >= 200)
+	if (speed >= 300)
 	{
-		speed = 200;
+		speed = 300;
         ent->client->machinegun_shots = 0;
 	}
 	else
