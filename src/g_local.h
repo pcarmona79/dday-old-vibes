@@ -1480,6 +1480,8 @@ struct gclient_s
 
 	qboolean    tank_hit;//faf
 
+	edict_t     *chasetarget;//faf
+
 	float 		crosshair_offset_x;
 	float 		crosshair_offset_y;
 

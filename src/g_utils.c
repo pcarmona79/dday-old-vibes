@@ -748,7 +748,11 @@ void centerprintall (char *mesg, ...)
 
 qboolean IsValidPlayer(edict_t *ent) {
 
-	if (ent && ent->client && ent->client->resp.team_on && ent->client->resp.mos)
+	if (ent && 
+		ent->client && 
+		ent->client->resp.team_on && 
+		ent->client->resp.mos &&
+		!ent->flyingnun)
 		return true;
 	else
 		return false;

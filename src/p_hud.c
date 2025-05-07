@@ -1124,21 +1124,24 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_OBJECTIVE] = 0;
 
 	//
-	// SNIPER CROSSHAIR
-	//
-	if (ent->client->crosshair && ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_SNIPER)
-		// kernel: scope will follow weapon original team
-		ent->client->ps.stats[STAT_SNIPER_SCOPE] = gi.imageindex (va("scope_%s", ent->client->pers.weapon->dllname));
-	else
-		ent->client->ps.stats[STAT_SNIPER_SCOPE] = 0;
-
-	//
 	// REGULAR CROSSHAIR
 	//
 	if (ent->client->crosshair && ent->client->pers.weapon && ent->client->pers.weapon->position != LOC_SNIPER)
 		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
 	else
 		ent->client->ps.stats[STAT_CROSSHAIR] = 0;
+
+	//
+	// SNIPER CROSSHAIR
+	//
+	if (ent->client->crosshair && ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_SNIPER)
+		// kernel: scope will follow weapon original team
+		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex (va("scope_%s", ent->client->pers.weapon->dllname));
+	else
+		ent->client->ps.stats[STAT_CROSSHAIR] = 0;
+
+	if (ent->client->chasetarget && ent->client->chasetarget->client->aim && ent->client->aim)
+		ent->client->ps.stats[STAT_CROSSHAIR] = ent->client->chasetarget->client->ps.stats[STAT_CROSSHAIR];
 
 	//
 	// SELECTED ITEM

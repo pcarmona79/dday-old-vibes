@@ -38,6 +38,7 @@ void ClientUserinfoChanged(edict_t *ent, char *userinfo);
 void SwitchToObserver(edict_t *ent);
 void SyncUserInfo(edict_t *ent, qboolean pers);
 void ClientSetMaxSpeed (edict_t *ent, qboolean sync);
+void check_unscope (edict_t *ent);
 
 #define MEDIC_CALL_TIME 30
 
@@ -49,7 +50,7 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 	char* pw = NULL;
 	pw = gi.args();
 
-	if (ent->client->resp.AlreadySpawned)
+	/*if (ent->client->resp.AlreadySpawned)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Observer Mode is only available before you join a team.\n");
 		return;
@@ -59,7 +60,10 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Observer Mode Not Available\n");
 		return;
-	} else if (Q_stricmp(flyingnun_password->string, pw) != 0) {
+	} else */
+	if (Q_stricmp(flyingnun_password->string, pw) != 0 
+		&& !ent->flyingnun) //faf
+	{
 		gi.cprintf(ent, PRINT_HIGH, "Observer Mode Password Incorrect\n");
 		return;
 	}
@@ -67,10 +71,72 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 	if (ent->flyingnun)
 	{
 		ent->flyingnun = false;
-		gi.bprintf(PRINT_CHAT, "***** %s is no longer an Observer *****\n", ent->client->pers.netname);
+		ent->client->chasetarget = NULL;
+		gi.bprintf (PRINT_HIGH, "%s is no longer an Observer.\n", ent->client->pers.netname);
+	
+		ent->client->resp.mos = NONE;
+		ent->client->resp.team_on = NULL;
+		ent->client->resp.AlreadySpawned = false;
+		InitClientResp (ent->client);
+		PutClientInServer (ent);
+		SwitchToObserver(ent);
 	} else {
+		if (!ent->deadflag && !ent->client->limbo_mode && ent->health > 0)
+		{
+			ent->flags &= ~FL_GODMODE;
+			ent->health = 0;
+			meansOfDeath = MOD_SUICIDE;
+			player_die (ent, ent, ent, 100000, vec3_origin);
+		}
+
+		ent->stance_view=20;//faf 22;
+		ent->stanceflags = STANCE_STAND;	
+
 		ent->flyingnun = true;
-		gi.bprintf(PRINT_CHAT, "***** %s is now an Observer *****\n", ent->client->pers.netname);
+		gi.bprintf(PRINT_HIGH, "%s is now an Observer.\n", ent->client->pers.netname);
+		gi.cprintf(ent,PRINT_HIGH, "Type \"Observer\" to leave observer mode.\n");
+		
+		//faf
+		//ent->client->layout_type = SHOW_NONE;
+	
+		//faf
+		ent->client->speedmax[0]=120;
+		ent->client->speedmax[1]=120;
+		ent->client->speedmax[2]=120;
+		ent->client->syncspeed = true;
+		ent->client->display_info = false;
+
+//		ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
+		/*faf: needs work
+
+		if (ent->health > 0)
+		{
+			ent->flags &= ~FL_GODMODE;
+			ent->health = 0;
+			meansOfDeath = MOD_SUICIDE;
+			player_die (ent, ent, ent, 100000, vec3_origin);
+		}
+
+
+		ent->s.sound = 0;
+		ent->s.modelindex = 0;
+		ent->movetype = MOVETYPE_NOCLIP; 
+		ent->solid = SOLID_NOT; 
+		ent->svflags |= SVF_NOCLIENT; 
+		ent->client->ps.gunindex = 0; 
+		ent->client->resp.team_on = 0;
+		ent->client->resp.mos = 0;
+		gi.linkentity (ent);  */
+
+
+		ent->s.sound = 0;
+		ent->s.modelindex = 0;
+		ent->movetype = MOVETYPE_NOCLIP; 
+		ent->solid = SOLID_NOT; 
+		ent->svflags |= SVF_NOCLIENT; 
+		ent->client->ps.gunindex = 0; 
+		ent->client->resp.team_on = NULL;
+		ent->client->resp.mos = NONE;
 	}
 }
 
@@ -177,12 +243,16 @@ void Cmd_Menu_Main_f(edict_t *ent)
 }
 void Cmd_Menu_Team_f(edict_t *ent) 
 { 
-	if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
+	if (ent->flyingnun)
+		Cmd_Menu_Main_f(ent);
+	else if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
 		ChooseTeam(ent); 
 }
 void Cmd_Menu_Class_f(edict_t *ent) 
 {	
-	if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
+	if (ent->flyingnun)
+		Cmd_Menu_Main_f(ent);
+	else if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
 		M_ChooseMOS(ent); 
 }
 
@@ -309,6 +379,36 @@ void Cmd_Scope_f(edict_t *ent);
 
 void Cmd_Scope_f(edict_t *ent)
 {
+	if (ent->client->chasetarget)
+	{
+		if(ent->client->aim == 0)
+		{
+			ent->client->aim = 1;
+			gi.centerprintf(ent,"(1) 1st person chase mode\n");
+		}
+		else if (ent->client->aim == 1)
+		{
+			ent->client->aim = 2;
+			gi.centerprintf(ent,"(2) 1st person chase with weapons mode\n");
+		}
+		else if (ent->client->aim == 2)
+		{
+			ent->client->aim = 3;
+			gi.centerprintf(ent,"(3) Auto 1st person with weapons/\n3rd person mode\n");
+		}
+		else if (ent->client->aim == 3)
+		{
+			ent->client->aim = 4;
+			gi.centerprintf(ent,"(4) Bird's eye view\n");
+		}
+		else if (ent->client->aim == 4)
+		{
+			ent->client->aim = 0;
+			gi.centerprintf(ent,"(5) 3rd person chase mode\n");
+		}
+
+		return;
+	}
 
 	if (!ent->client->pers.weapon ||
  		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbag") ||
@@ -396,7 +496,7 @@ void Cmd_Scope_f(edict_t *ent)
 				ent->client->resp.scopewobble = 0;
 			}
 		}
-
+		return;
 	}
 
 	// pbowens: switched to WeighPlayer
@@ -434,6 +534,56 @@ char *ClientTeam (edict_t *ent)
 }
 
 
+void ChaseNext(edict_t *ent)
+{
+	int i;
+	edict_t *e;
+
+	if (!ent->client->chasetarget)
+		return;
+
+	i = ent->client->chasetarget - g_edicts;
+	do {
+		i++;
+		if (i > maxclients->value)
+			i = 1;
+		e = g_edicts + i;
+		if (!e->inuse)
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (!e->flyingnun)
+			break;
+	} while (e != ent->client->chasetarget);
+
+	ent->client->chasetarget = e;
+}
+
+void ChasePrev(edict_t *ent)
+{
+	int i;
+	edict_t *e;
+
+	if (!ent->client->chasetarget)
+		return;
+
+	i = ent->client->chasetarget - g_edicts;
+	do {
+		i--;
+		if (i < 1)
+			i = maxclients->value;
+		e = g_edicts + i;
+		if (!e->inuse)
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (!e->flyingnun)
+			break;
+	} while (e != ent->client->chasetarget);
+
+	ent->client->chasetarget = e;
+}
+
 
 void SelectNextItem (edict_t *ent, int itflags)
 {
@@ -442,6 +592,12 @@ void SelectNextItem (edict_t *ent, int itflags)
 	gitem_t		*it;
 
 	cl = ent->client;
+
+	if (cl->chasetarget) 
+	{
+		ChaseNext(ent);
+		return;
+	}
 
    	if (cl->menu) {
 		PMenu_Next(ent);
@@ -475,6 +631,12 @@ void SelectPrevItem (edict_t *ent, int itflags)
 	gitem_t		*it;
 
 	cl = ent->client;
+
+	if (cl->chasetarget) 
+ 	{
+		ChasePrev(ent);
+		return;
+	}
 
    	if (cl->menu) {
 		PMenu_Prev(ent);
@@ -867,6 +1029,12 @@ void Cmd_Use_f (edict_t *ent)
 
 	s = gi.args();
 	//it = FindItem (s); // kernel: I think this is unnecessary
+
+	if (ent->client->chasetarget)
+	{
+		if(Q_stricmp(s,"weapon")==0) 
+			Cmd_Scope_f(ent);
+	}
 
 	if (ent->client->limbo_mode || ent->deadflag)
 		return;
@@ -1298,6 +1466,14 @@ void Cmd_WeapPrev_f (edict_t *ent)
 
 	cl = ent->client;
 
+	if (cl->chasetarget) 
+	{
+		ChasePrev(ent);
+		return;
+	}
+	
+	check_unscope(ent);//faf
+
 	cl->ps.fov = STANDARD_FOV;
 
 	if (!cl->pers.weapon)
@@ -1344,6 +1520,13 @@ void Cmd_WeapNext_f (edict_t *ent)
 
 	cl = ent->client;
 
+
+	if (cl->chasetarget) 
+	{
+		ChaseNext(ent);
+		return;
+	}
+
 //	if (!cl->pers.weapon)
 //		return;
 
@@ -1355,6 +1538,7 @@ void Cmd_WeapNext_f (edict_t *ent)
 //blah		return;
 
 
+	check_unscope(ent);//faf
 
 	cl->ps.fov = STANDARD_FOV;
 
@@ -1394,6 +1578,14 @@ void Cmd_WeapLast_f (edict_t *ent)
 	gitem_t		*it;
 
 	cl = ent->client;
+
+	if (cl->chasetarget) 
+	{
+		ChasePrev(ent);
+		return;
+	}
+	check_unscope(ent);//faf
+
 	cl->ps.fov = STANDARD_FOV;
 
 	if (!cl->pers.weapon || !cl->pers.lastweapon)
@@ -2055,6 +2247,26 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		} 
 	}
 
+	if (ent->flyingnun || ent->deadflag || ent->health < 1)
+		return;
+
+	ent->client->anim_priority = ANIM_WAVE;
+	if (ent->stanceflags == STANCE_STAND)
+	{
+		ent->s.frame = FRAME_flip01-1;
+		ent->client->anim_end = FRAME_flip12;
+	}
+	else if (ent->stanceflags == STANCE_DUCK)
+	{
+		ent->s.frame = 168;
+		ent->client->anim_end = 171;
+	}
+	else if (ent->stanceflags == STANCE_CRAWL)
+	{
+		ent->s.frame = 229;
+		ent->client->anim_end = 232;
+	}
+	
 }
 
 

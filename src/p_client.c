@@ -2459,9 +2459,18 @@ you can get the motd by typing MOTD at the console too
   //these are the premove routines needed to make sure things work the way they are supposed to...
 	if (client->limbo_mode && ent->flyingnun && !ent->client->resp.team_on)
 	{
-		ucmd->forwardmove *= 3;
-		ucmd->sidemove *= 3;
-		ucmd->upmove *= 3;
+		if (!client->chasetarget)
+		{
+			ucmd->forwardmove *= 3;
+			ucmd->sidemove *= 3;
+			ucmd->upmove *= 3;
+		}
+		else
+		{
+			ucmd->forwardmove	 = 0;
+			ucmd->sidemove		 = 0;
+			ucmd->upmove		 = 0;
+		}
 	}
 	else if (client->limbo_mode)
 	{
@@ -2645,6 +2654,15 @@ you can get the motd by typing MOTD at the console too
 	if (level.time >= ent->client->cmdtime || client->syncspeed == true) 
 	{
 		if (client->syncspeed) {
+			//faf : player properly frozen in death view
+			if (ent->client->limbo_mode &&
+					!ent->flyingnun) //observer mode
+			{
+				ent->client->speedmax[0]=0;
+				ent->client->speedmax[1]=0;
+				ent->client->speedmax[2]=0;
+			}
+
 			// be careful with this. it can overflow clients if used too much
 			Com_sprintf(cmd, sizeof(cmd), "cl_forwardspeed %i; cl_sidespeed %i; cl_upspeed %i;",
 				ent->client->speedmax[0],
@@ -2992,6 +3010,40 @@ you can get the motd by typing MOTD at the console too
 	//END DDAY
 }
 
+edict_t *Nearest_Player(edict_t *ent)
+{
+	int i;
+    edict_t *e;
+	edict_t *nearest = NULL;
+	float temp_distance, nearest_distance = 9999999;
+	vec3_t dist;
+
+
+	for (i=0 ; i < game.maxclients ; i++)
+	{
+		e = g_edicts + 1 + i;
+		if (!e->inuse || !e->client || !e->client->resp.team_on)
+			continue;
+		if (e == ent)
+			continue;
+		
+		VectorSubtract (e->s.origin, ent->s.origin, dist);
+		
+		temp_distance = VectorLength(dist);
+		if (temp_distance < nearest_distance)
+		{
+			nearest_distance = temp_distance;
+			nearest = e;
+		}
+	}
+
+	if (nearest)
+		return nearest;
+	else 
+		return NULL;
+}
+
+
 void EndObserverMode(edict_t *ent);
 /*
 ==============
@@ -3005,6 +3057,7 @@ void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;
+	edict_t *chase;
 
 	if (level.intermissiontime)
 		return;
@@ -3017,10 +3070,48 @@ void ClientBeginServerFrame (edict_t *ent)
 	else
 		client->weapon_thunk = false;
 
-	
+	if (ent->flyingnun)
+	{
+		if (ent->client->chasetarget && !ent->client->chasetarget->inuse)
+			ent->client->chasetarget=NULL;
+
+
+		if (client->latched_buttons & BUTTON_ATTACK)
+		{
+			if (ent->client->chasetarget)
+				ent->client->chasetarget = NULL;
+			else 
+			{
+				/*for (n = 1; n <= maxclients->value; n++)
+				{
+					player = &g_edicts[n];
+
+					if (!player->inuse)
+						continue;
+					if (!player->client)
+						continue;
+					if (!player->client->resp.team_on)
+						continue;
+
+					chase = player;
+				}*/
+				chase = Nearest_Player(ent);
+				if (!chase)
+				{
+					//gi.cprintf (ent, PRINT_HIGH, "No one to chase.\n");
+					ent->client->chasetarget = NULL;
+					
+				}
+				else
+					ent->client->chasetarget= chase;
+			}
+		}
+		client->latched_buttons = 0;
+		return;
+	}
 
 //faf:  players press fire to bring up class or team menu when they need it
-	if (ent->client->limbo_mode)
+	else if (ent->client->limbo_mode)
 	{
 		if (client->latched_buttons & BUTTON_ATTACK)
 		{

@@ -400,6 +400,9 @@ void M_ChooseMOS(edict_t *ent)
 	  (!ent->client->resp.team_on || !ent->client->resp.team_on->teamname) )
 		return;
 
+	if (ent->flyingnun)
+		return;
+
 	for(i=1; i < MAX_MOS;i++) 
 	{
 		//char theText[24];
@@ -618,15 +621,22 @@ void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 
 
 void ChooseTeam(edict_t *ent) {
-	int i,j;
+	int i;//,j;
 	char* theText = NULL;
 	int max_clients;
+
 	PMenu_Close(ent);
 
-	if (ent->client->resp.changeteam == true) {
-		gi.centerprintf(ent, "You have already changed teams once!\nYou must wait for your next assignment\n");
+	if (ent->flyingnun)
+	{
+		gi.cprintf (ent, PRINT_HIGH, "You need to leave observer mode first.  Type \"observer\".\n");
 		return;
 	}
+
+//	if (ent->client->resp.changeteam == true) {
+//		gi.centerprintf(ent, "You have already changed teams once!\nYou must wait for your next assignment\n");
+//		return;
+//	}
 
 	// rezmoth - must wait until end of lobby time //faf:  not
 //faf	if (level.framenum < ((int)level_wait->value * 10))
@@ -681,7 +691,7 @@ void ChooseTeam(edict_t *ent) {
 
 
 
-			for (j=0; team_list[i]->units[j]; j++);
+//			for (j=0; team_list[i]->units[j]; j++);
 
 			max_clients = maxclients->value;
 			// Make the text look good
