@@ -1135,7 +1135,8 @@ void G_SetStats (edict_t *ent)
 	//
 	// REGULAR CROSSHAIR
 	//
-	if (ent->client->crosshair && ent->client->pers.weapon && ent->client->pers.weapon->position != LOC_SNIPER)
+	if (ent->client->resp.mos == MEDIC && ent->client->pers.weapon &&
+		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_morphine"))
 		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
 	else
 		ent->client->ps.stats[STAT_CROSSHAIR] = 0;
@@ -1206,7 +1207,7 @@ void G_SetStats (edict_t *ent)
 
 /*
 ==================
-DDayScoreboardMessage
+DDayScoreboardMessage (kernel: reuse to observer mode)
  based off of CTF scoreboard
 ==================
 */

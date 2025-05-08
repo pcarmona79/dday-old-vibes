@@ -1025,7 +1025,7 @@ typedef enum
 #define STAT_IDENT_PLAYER		18
 #define STAT_IDENT_HEALTH		19
 #define STAT_IDENT_ICON			20
-#define STAT_SNIPER_SCOPE		21
+#define STAT_CROSSHAIR		21
 #define	STAT_TEAM0_ICON			22
 #define	STAT_TEAM0_KILLS		23
 #define	STAT_TEAM0_POINTS		24
@@ -1033,7 +1033,7 @@ typedef enum
 #define	STAT_TEAM1_KILLS		26
 #define	STAT_TEAM1_POINTS		27
 #define	STAT_STAMINA_CUR		28
-#define	STAT_CROSSHAIR			29
+//#define	STAT_CROSSHAIR			29
 //#define STAT_RESPAWNTIME		30
 #define STAT_AUTOPICKUP			30 //kernel
 
