@@ -1777,6 +1777,7 @@ edict_t *FindOverlap(edict_t *ent, edict_t *last_overlap)
 }
 
 void A_ScoreboardMessage (edict_t *ent);
+void DDayScoreboardMessage (edict_t *ent);
 
 void ClientEndServerFrame (edict_t *ent)
 {
@@ -1838,9 +1839,10 @@ void ClientEndServerFrame (edict_t *ent)
 				ent->client->showscores = true;
 			}
 
-
-			A_ScoreboardMessage(ent);//
-			//faf DDayScoreboardMessage(ent);
+			if (!ent->flyingnun)
+				A_ScoreboardMessage(ent);
+			else
+				DDayScoreboardMessage(ent);
 			gi.unicast (ent, true);
 		}
 
@@ -1951,9 +1953,12 @@ void ClientEndServerFrame (edict_t *ent)
 		if (ent->client->menu)
 			PMenu_Update(ent);
 		else
-			A_ScoreboardMessage(ent);
-			//faf DDayScoreboardMessage(ent);
-
+		{
+			if (!ent->flyingnun)
+				A_ScoreboardMessage(ent);
+			else
+				DDayScoreboardMessage(ent);
+		}
 		gi.unicast (ent, false);
 	}
 
