@@ -1283,10 +1283,10 @@ void DDayScoreboardMessage (edict_t *ent)
         
 	// display the split graphics
 	sprintf(string,
-			"xv -320 yv 200 picn %s_score_top  " // scoretopleftpic
-			"        xv 480 picn %s_score_top  " // scoretoprightpic
-			"xv -320 yv 280 picn %s_score  "	  // scoreleftpic
-			"        xv 480 picn %s_score  ",	  // scorerightpic
+			"xl 0 yb -190 picn %s_score_top  " // scoretopleftpic
+			"     xr -160 picn %s_score_top  " // scoretoprightpic
+			"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+			"     xr -160 picn %s_score  ",	  // scorerightpic
 			team_list[0]->teamid,
 			team_list[1]->teamid,
 			team_list[0]->teamid,
@@ -1294,11 +1294,11 @@ void DDayScoreboardMessage (edict_t *ent)
 
 	sprintf(string2,
 			// TEAM1
-			"xv -283 yv 238 string \"%4d/%-3d\" "
-			"xv -223 yv 238 string \"%4d/%-3d\" "
+			"xl 37  yb -152 string \"%4d/%-3d\" "
+			"xl 100 yb -152 string \"%4d/%-3d\" "
 			//  TEAM2
-			"xv 511 yv 238 string \"%4d/%-3d\" "
-			"xv 570 yv 238 string \"%4d/%-3d\" ",
+			"xr -128 yb -152 string \"%4d/%-3d\" "
+			"xr -65  yb -152 string \"%4d/%-3d\" ",
 			team_list[TEAM1]->kills, team_list[TEAM1]->need_kills, team_list[TEAM1]->score, team_list[TEAM1]->need_points,
 			team_list[TEAM2]->kills, team_list[TEAM2]->need_kills, team_list[TEAM2]->score, team_list[TEAM2]->need_points);
 	
@@ -1306,13 +1306,13 @@ void DDayScoreboardMessage (edict_t *ent)
 
 	if (player_scores->value)
 	{
-		strcat(string, "xv -316  yv 267 string  \"Ping  Player  Score\" ");   // faf
-		strcat(string, "xv  484  yv 267 string  \"Ping  Player  Score\" "); // faf
+		strcat(string, "xl  3   yb -124 string  \"Ping  Player  Score\" ");   // faf
+		strcat(string, "xr -155 yb -124 string  \"Ping  Player  Score\" "); // faf
 	}
 	else
 	{
-		strcat(string, "xv -316  yv 267 string  \"Ping  Player\" ");	// faf
-		strcat(string, "xv  484  yv 267 string  \"Ping  Player\" "); // faf
+		strcat(string, "xl  3   yb -124 string  \"Ping  Player\" ");	// faf
+		strcat(string, "xr -155 yb -124 string  \"Ping  Player\" "); // faf
 	}
 
 	// pbowens: team victory pix
@@ -1359,8 +1359,8 @@ void DDayScoreboardMessage (edict_t *ent)
 			if (player_scores->value)
 			{
 				sprintf(string + strlen(string),
-						"xv -317 yv %d string \"%3d %-12.12s%3d\"",
-						287 + i * 8,
+						"xl 2 yb %d string \"%3d %-12.12s%3d\"",
+						-104 + i * 8,
 						game.clients[sorted[TEAM1][i]].ping,
 						game.clients[sorted[TEAM1][i]].pers.netname,
 						game.clients[sorted[TEAM1][i]].resp.score);
@@ -1368,8 +1368,8 @@ void DDayScoreboardMessage (edict_t *ent)
 			else
 			{
 				sprintf(string + strlen(string),
-						"xv -317 yv %d string \"%3d %-12.12s\"",
-						287 + i * 8,
+						"xl 2 yb %d string \"%3d %-12.12s\"",
+						-104 + i * 8,
 						game.clients[sorted[TEAM1][i]].ping,
 						game.clients[sorted[TEAM1][i]].pers.netname);
 			}
@@ -1386,8 +1386,8 @@ void DDayScoreboardMessage (edict_t *ent)
 			if (player_scores->value)
 			{
 				sprintf(string + strlen(string),
-						"xv 485 yv %d string \"%3d %-12.12s%3d\"",
-						287 + i * 8,
+						"xr -154 yb %d string \"%3d %-12.12s%3d\"",
+						-104 + i * 8,
 						game.clients[sorted[TEAM2][i]].ping,
 						game.clients[sorted[TEAM2][i]].pers.netname,
 						game.clients[sorted[TEAM2][i]].resp.score);
@@ -1395,8 +1395,8 @@ void DDayScoreboardMessage (edict_t *ent)
 			else
 			{
 				sprintf(string + strlen(string),
-						"xv 485 yv %d string \"%3d %-12.12s\"",
-						287 + i * 8,
+						"xr -154 yb %d string \"%3d %-12.12s\"",
+						-104 + i * 8,
 						game.clients[sorted[TEAM2][i]].ping,
 						game.clients[sorted[TEAM2][i]].pers.netname);
 			}
@@ -1407,16 +1407,16 @@ void DDayScoreboardMessage (edict_t *ent)
 
 	if (stoppedat[TEAM1] > -1)
 	{
-		sprintf(string + strlen(string), "xv -320 yv %d string%s \"..and %d/%d more\" ",
-				242 + (stoppedat[TEAM1] * 8),
+		sprintf(string + strlen(string), "xl 2 yb %d string%s \"..and %d/%d more\" ",
+				-40 + (stoppedat[TEAM1] * 8),
 				(totalalive[TEAM1] - totalaliveprinted[TEAM1]) ? "2" : "",
 				totalalive[TEAM1] - totalaliveprinted[TEAM1],
 				total[TEAM1] - stoppedat[TEAM1]);
 	}
 	if (stoppedat[TEAM2] > -1)
 	{
-		sprintf(string + strlen(string), "xv 480 yv %d string%s \"..and %d/%d more\" ",
-				242 + (stoppedat[TEAM2] * 8),
+		sprintf(string + strlen(string), "xr -154 yb %d string%s \"..and %d/%d more\" ",
+				-40 + (stoppedat[TEAM2] * 8),
 				(totalalive[TEAM2] - totalaliveprinted[TEAM2]) ? "2" : "",
 				totalalive[TEAM2] - totalaliveprinted[TEAM2],
 				total[TEAM2] - stoppedat[TEAM2]);
