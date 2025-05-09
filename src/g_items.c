@@ -1458,7 +1458,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 /*QUAKED weapon_Morphine(.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_Morphine",
+		"weapon_morphine",
 		Pickup_Weapon,
 		Use_Weapon,
 		NULL,
@@ -1544,7 +1544,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 /*QUAKED weapon_Antidote (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_Antidote",
+		"weapon_antidote",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,

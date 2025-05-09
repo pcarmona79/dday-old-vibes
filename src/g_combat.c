@@ -935,7 +935,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				if(randnum > DROP_SHOT && IsValidPlayer(targ) && 
 					targ->client->pers.weapon && targ->client->pers.weapon->classname &&
 					(strcmp(targ->client->pers.weapon->classname, "weapon_fists") && 
-					strcmp(targ->client->pers.weapon->classname, "weapon_Morphine") && 
+					strcmp(targ->client->pers.weapon->classname, "weapon_morphine") && 
 					strcmp(targ->client->pers.weapon->classname, "weapon_flamethrower") &&
 					strcmp(targ->client->pers.weapon->classname, "weapon_binoculars")))
 				{

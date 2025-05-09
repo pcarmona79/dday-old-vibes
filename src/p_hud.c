@@ -1139,7 +1139,10 @@ void G_SetStats (edict_t *ent)
 	// REGULAR CROSSHAIR
 	//
 	if (ent->client->resp.mos == MEDIC && ent->client->pers.weapon &&
-		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_morphine"))
+			!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_morphine"))
+		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
+	else if (ent->client->resp.mos == OFFICER && ent->client->pers.weapon && ent->client->aim &&
+			!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
 	else
 		ent->client->ps.stats[STAT_CROSSHAIR] = 0;
@@ -1149,12 +1152,16 @@ void G_SetStats (edict_t *ent)
 	//
 	if (ent->client->crosshair && ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_SNIPER)
 		// kernel: scope will follow weapon original team
-		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex (va("scope_%s", ent->client->pers.weapon->dllname));
+		ent->client->ps.stats[STAT_SNIPER_SCOPE] = gi.imageindex (va("scope_%s", ent->client->pers.weapon->dllname));
 	else
-		ent->client->ps.stats[STAT_CROSSHAIR] = 0;
+		ent->client->ps.stats[STAT_SNIPER_SCOPE] = 0;
 
+	// kernel: this allows to show the same crosshair in observer mode
 	if (ent->client->chasetarget && ent->client->chasetarget->client->aim && ent->client->aim)
+	{
 		ent->client->ps.stats[STAT_CROSSHAIR] = ent->client->chasetarget->client->ps.stats[STAT_CROSSHAIR];
+		ent->client->ps.stats[STAT_SNIPER_SCOPE] = ent->client->chasetarget->client->ps.stats[STAT_SNIPER_SCOPE];
+	}
 
 	//
 	// SELECTED ITEM
