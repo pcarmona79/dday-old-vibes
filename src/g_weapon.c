@@ -3298,7 +3298,7 @@ void Weapon_Sniper_Fire (edict_t *ent)
 		ent->client->ps.gunframe = guninfo->LastFire + 1; // first idle
 		ent->client->weaponstate = WEAPON_READY;
 		ent->client->aim = false;
-		
+		check_unscope(ent);//faf
 
 		//Make the user change weapons MANUALLY!
 
@@ -3326,6 +3326,8 @@ void Weapon_Sniper_Fire (edict_t *ent)
 
 		if (ent->client->ps.gunframe == (guninfo->AFO[1] - 2) ||  ent->client->next_fire_frame > level.framenum)
 		{
+			check_unscope(ent);//faf
+
 			ent->client->ps.fov = STANDARD_FOV;
 			ent->client->crosshair = false;
 			ent->client->weaponstate = WEAPON_LOWER;

@@ -468,6 +468,9 @@ void ChangeWeapon (edict_t *ent)
 	ent->client->pers.weapon = ent->client->newweapon;
 	ent->client->newweapon = NULL;
 	ent->client->machinegun_shots = 0;
+
+	check_unscope(ent);//faf
+
 	ent->client->ps.fov = STANDARD_FOV;
 
 	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo) {
