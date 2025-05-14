@@ -1445,7 +1445,15 @@ void Blade_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 		gi.multicast (self->s.origin, MULTICAST_PVS);*/
 
 	}
-	if(other->client) 
+
+	if (other->client && (other->health <= 0 ||
+		other->health == 100))//helmet
+	{
+		Drop_Item (self, item);
+		G_FreeEdict (self);
+		return;
+	}
+	else if (other->client) 
 	{
 		other->client->pers.inventory[ITEM_INDEX(item)]++;
 		G_FreeEdict(self);
