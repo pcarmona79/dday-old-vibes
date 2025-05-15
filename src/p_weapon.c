@@ -686,205 +686,144 @@ Drop_Weapon
 ================
 */
 
-void Drop_Weapon (edict_t *ent, gitem_t *item)
+void Drop_Weapon(edict_t *ent, gitem_t *item)
 {
-	int		index;
-	int		item_rounds;
+	int index;
+	int item_rounds = 0;
 
 	if ((int)(dmflags->value) & DF_WEAPONS_STAY)
 		return;
 
 	index = ITEM_INDEX(item);
-	
+
 	// pbowens: fix in not drop weapon/while prone
-	if ( !item || 
-		((item == ent->client->newweapon)) && (ent->client->pers.inventory[index] == 1))// && (ent->stanceflags != STANCE_STAND))
+	if (!item ||
+		((item == ent->client->newweapon)) && (ent->client->pers.inventory[index] == 1)) // && (ent->stanceflags != STANCE_STAND))
 	{
-		//gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
+		// gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
 		return;
 	}
 
-	//pbowens: This is one disgusting, ugly hack to get the weapons to retain their current
+	// pbowens: This is one disgusting, ugly hack to get the weapons to retain their current
 	//			round counts when dropped/picked up.
 
-	        //faf:  changed a bit for team dll support:
+	// faf:  changed a bit for team dll support:
 
-        //faf:  gonna leave this in for grm mauser/sniper using same ammo
-        if (!strcmp(item->ammo, "mauser98k_mag"))  // Both Rifle and Sniper ammo
-        {
-                item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
-                ent->client->mags[1].rifle_rnd = ent->client->mags[1].sniper_rnd = 0;
-        }
-
-
-        else if (!strcmp(item->dllname, team_list[1]->teamid))  //faf: if team 1 weap... usually axis
-        {
-                if (item->position == LOC_PISTOL)
-                {
-                        item_rounds = ent->client->mags[1].pistol_rnd;
-                        ent->client->mags[1].pistol_rnd = 0;
-                }
-        //faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use the same ammo)
-                else if (item->position == LOC_RIFLE)
-                {
-                        item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
-                        ent->client->mags[1].rifle_rnd = 0;
-                }
-                else if (item->position == LOC_SNIPER)
-                {
-                        item_rounds = ent->client->mags[1].sniper_rnd + ent->client->mags[1].rifle_rnd;
-                        ent->client->mags[1].sniper_rnd = 0;
-                }
-                else if (item->position == LOC_SUBMACHINEGUN)
-                {
-                        item_rounds = ent->client->mags[1].submg_rnd;
-                        ent->client->mags[1].submg_rnd = 0;
-                }
-                else if (item->position == LOC_L_MACHINEGUN)
-                {
-                        item_rounds = ent->client->mags[1].lmg_rnd;
-                        ent->client->mags[1].lmg_rnd = 0;
-                }
-                else if (item->position == LOC_H_MACHINEGUN)
-                {
-                        item_rounds = ent->client->mags[1].hmg_rnd;
-                        ent->client->mags[1].hmg_rnd = 0;
-                }
-                else if (item->position == LOC_ROCKET)
-                {
-                        item_rounds = ent->client->mags[1].antitank_rnd;
-                        ent->client->mags[1].antitank_rnd = 0;
-                }
-				else if (item->position == LOC_SHOTGUN)
-				{
-					item_rounds = ent->client->mags[1].shotgun_rnd;
-					ent->client->mags[1].shotgun_rnd = 0;
-				}
-
-				else if (item->position == LOC_SUBMACHINEGUN2)
-				{
-					item_rounds = ent->client->mags[1].submg_rnd;
-					ent->client->mags[1].submg2_rnd = 0;
-				}
-		}
-		else if (!strcmp(item->dllname, team_list[0]->teamid)) // faf:  if team 0 weap...usually allied
-		{
-                if (item->position == LOC_PISTOL)
-                {
-                item_rounds = ent->client->mags[0].pistol_rnd;
-                ent->client->mags[0].pistol_rnd = 0;
-                }
-                else if (item->position == LOC_SUBMACHINEGUN)
-                {
-                item_rounds = ent->client->mags[0].submg_rnd;
-                ent->client->mags[0].submg_rnd = 0;
-                }
-                else if (item->position == LOC_L_MACHINEGUN)
-                {
-                item_rounds = ent->client->mags[0].lmg_rnd;
-                ent->client->mags[0].lmg_rnd = 0;
-                }
-                else if (item->position == LOC_H_MACHINEGUN)
-                {
-                item_rounds = ent->client->mags[0].hmg_rnd;
-                ent->client->mags[0].hmg_rnd = 0;
-                }
-                else if (item->position == LOC_ROCKET)
-                {
-                item_rounds = ent->client->mags[0].antitank_rnd;
-                ent->client->mags[0].antitank_rnd = 0;
-                }
-        //faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use same ammo)
-                else if (item->position == LOC_SNIPER)
-                {
-                        item_rounds = ent->client->mags[0].sniper_rnd + ent->client->mags[0].rifle_rnd;
-                        ent->client->mags[0].sniper_rnd = 0;
-                }
-                else if (item->position == LOC_RIFLE)
-                { 
-                        item_rounds = ent->client->mags[0].rifle_rnd + ent->client->mags[0].sniper_rnd;
-                        ent->client->mags[0].rifle_rnd = 0;
-                }
-				else if (item->position == LOC_SHOTGUN)
-				{
-					item_rounds = ent->client->mags[0].shotgun_rnd;
-					ent->client->mags[0].shotgun_rnd = 0;
-				}
-				else if (item->position == LOC_SUBMACHINEGUN2)
-				{
-					item_rounds = ent->client->mags[0].submg2_rnd;
-					ent->client->mags[0].submg2_rnd = 0;
-				}
-		}
-        else if (!strcmp(item->ammo, "flame_mag"))
-        {
-                item_rounds = ent->client->flame_rnd;
-                ent->client->flame_rnd = 0;
-        }
-
-
-	/*
-	if (!strcmp(item->ammo, "p38_mag")) {
-		item_rounds = ent->client->mags[1].pistol_rnd;
-		ent->client->mags[1].pistol_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "mauser98k_mag")) { // Both Rifle and Sniper ammo
+	// faf:  gonna leave this in for grm mauser/sniper using same ammo
+	if (!strcmp(item->ammo, "mauser98k_mag")) // Both Rifle and Sniper ammo
+	{
 		item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
 		ent->client->mags[1].rifle_rnd = ent->client->mags[1].sniper_rnd = 0;
 	}
-	else if (!strcmp(item->ammo, "mp40_mag")) {
-		item_rounds = ent->client->mags[1].submg_rnd;
-		ent->client->mags[1].submg_rnd = 0;
+	else if (!strcmp(item->dllname, team_list[1]->teamid)) // faf: if team 1 weap... usually axis
+	{
+		if (item->position == LOC_PISTOL)
+		{
+			item_rounds = ent->client->mags[1].pistol_rnd;
+			ent->client->mags[1].pistol_rnd = 0;
+		}
+		// faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use the same ammo)
+		else if (item->position == LOC_RIFLE)
+		{
+			item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
+			ent->client->mags[1].rifle_rnd = 0;
+		}
+		else if (item->position == LOC_SNIPER)
+		{
+			item_rounds = ent->client->mags[1].sniper_rnd + ent->client->mags[1].rifle_rnd;
+			ent->client->mags[1].sniper_rnd = 0;
+		}
+		else if (item->position == LOC_SUBMACHINEGUN)
+		{
+			item_rounds = ent->client->mags[1].submg_rnd;
+			ent->client->mags[1].submg_rnd = 0;
+		}
+		else if (item->position == LOC_L_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[1].lmg_rnd;
+			ent->client->mags[1].lmg_rnd = 0;
+		}
+		else if (item->position == LOC_H_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[1].hmg_rnd;
+			ent->client->mags[1].hmg_rnd = 0;
+		}
+		else if (item->position == LOC_ROCKET)
+		{
+			item_rounds = ent->client->mags[1].antitank_rnd;
+			ent->client->mags[1].antitank_rnd = 0;
+		}
+		else if (item->position == LOC_SHOTGUN)
+		{
+			item_rounds = ent->client->mags[1].shotgun_rnd;
+			ent->client->mags[1].shotgun_rnd = 0;
+		}
+
+		else if (item->position == LOC_SUBMACHINEGUN2)
+		{
+			item_rounds = ent->client->mags[1].submg_rnd;
+			ent->client->mags[1].submg2_rnd = 0;
+		}
 	}
-	else if (!strcmp(item->ammo, "mp43_mag")) {
-		item_rounds = ent->client->mags[1].lmg_rnd;
-		ent->client->mags[1].lmg_rnd = 0;
+	else if (!strcmp(item->dllname, team_list[0]->teamid)) // faf:  if team 0 weap...usually allied
+	{
+		if (item->position == LOC_PISTOL)
+		{
+			item_rounds = ent->client->mags[0].pistol_rnd;
+			ent->client->mags[0].pistol_rnd = 0;
+		}
+		else if (item->position == LOC_SUBMACHINEGUN)
+		{
+			item_rounds = ent->client->mags[0].submg_rnd;
+			ent->client->mags[0].submg_rnd = 0;
+		}
+		else if (item->position == LOC_L_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[0].lmg_rnd;
+			ent->client->mags[0].lmg_rnd = 0;
+		}
+		else if (item->position == LOC_H_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[0].hmg_rnd;
+			ent->client->mags[0].hmg_rnd = 0;
+		}
+		else if (item->position == LOC_ROCKET)
+		{
+			item_rounds = ent->client->mags[0].antitank_rnd;
+			ent->client->mags[0].antitank_rnd = 0;
+		}
+		// faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use same ammo)
+		else if (item->position == LOC_SNIPER)
+		{
+			item_rounds = ent->client->mags[0].sniper_rnd + ent->client->mags[0].rifle_rnd;
+			ent->client->mags[0].sniper_rnd = 0;
+		}
+		else if (item->position == LOC_RIFLE)
+		{
+			item_rounds = ent->client->mags[0].rifle_rnd + ent->client->mags[0].sniper_rnd;
+			ent->client->mags[0].rifle_rnd = 0;
+		}
+		else if (item->position == LOC_SHOTGUN)
+		{
+			item_rounds = ent->client->mags[0].shotgun_rnd;
+			ent->client->mags[0].shotgun_rnd = 0;
+		}
+		else if (item->position == LOC_SUBMACHINEGUN2)
+		{
+			item_rounds = ent->client->mags[0].submg2_rnd;
+			ent->client->mags[0].submg2_rnd = 0;
+		}
 	}
-	else if (!strcmp(item->ammo, "mg42_mag")) {
-		item_rounds = ent->client->mags[1].hmg_rnd;
-		ent->client->mags[1].hmg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "grm_rockets")) {
-		item_rounds = ent->client->mags[1].antitank_rnd;
-		ent->client->mags[1].antitank_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "colt45_mag")) {
-		item_rounds = ent->client->mags[0].pistol_rnd;
-		ent->client->mags[0].pistol_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "m1_mag")) {
-		item_rounds = ent->client->mags[0].rifle_rnd;
-		ent->client->mags[0].rifle_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "thompson_mag")) {
-		item_rounds = ent->client->mags[0].submg_rnd;
-		ent->client->mags[0].submg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "bar_mag")) {
-		item_rounds = ent->client->mags[0].lmg_rnd;
-		ent->client->mags[0].lmg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "hmg_mag")) {
-		item_rounds = ent->client->mags[0].hmg_rnd;
-		ent->client->mags[0].hmg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "usa_rockets")) {
-		item_rounds = ent->client->mags[0].antitank_rnd;
-		ent->client->mags[0].antitank_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "m1903_mag")) {
-		item_rounds = ent->client->mags[0].sniper_rnd;
-		ent->client->mags[0].sniper_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "flame_mag")) {
+	else if (!strcmp(item->ammo, "flame_mag"))
+	{
 		item_rounds = ent->client->flame_rnd;
 		ent->client->flame_rnd = 0;
 	}
-*/
+
 	if (item->guninfo)
 		item->guninfo->rnd_count = item_rounds;
 
-	Drop_Item (ent, item);
+	Drop_Item(ent, item);
 
 	ent->client->pers.inventory[index] = 0;
 }
