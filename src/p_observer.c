@@ -163,7 +163,7 @@ void EndObserverMode(edict_t* ent)
 
 qboolean OpenSpot (edict_t *ent, mos_t class)
 {
-	int index, spots, taken;
+	int index, taken;
 	TeamS_t *team;
 
 	team=ent->client->resp.team_on;
@@ -193,52 +193,36 @@ qboolean OpenSpot (edict_t *ent, mos_t class)
 	switch (class)
 	{
 	case INFANTRY:
-		spots							= MAX_INFANTRY;
 		team->mos[INFANTRY]->available	= MAX_INFANTRY	- taken;
 		break;
 	case OFFICER:
-		spots							= MAX_OFFICERS;
 		team->mos[OFFICER]->available	= MAX_OFFICERS	- taken;
 		break;
 	case L_GUNNER:
-		spots							= MAX_L_GUNNER;
 		team->mos[L_GUNNER]->available	= MAX_L_GUNNER	- taken;
 		break;
 	case H_GUNNER:
-		spots							= MAX_H_GUNNER;				// Fix:  Used to say MAX_L_GUNNER
 		team->mos[H_GUNNER]->available	= MAX_H_GUNNER	- taken;
 		break;
 	case SNIPER:
-		spots							= MAX_SNIPER;
 		team->mos[SNIPER]->available	= MAX_SNIPER	- taken;
 		break;
 	case SPECIAL:
-		spots							= MAX_SPECIAL;
 		team->mos[SPECIAL]->available	= MAX_SPECIAL	- taken;
 		break;
 	case ENGINEER:
-		spots							= MAX_ENGINEER;
 		team->mos[ENGINEER]->available	= MAX_ENGINEER	- taken;
 		break;
 	case MEDIC:
-		spots							= MAX_MEDIC;
 		team->mos[MEDIC]->available		= MAX_MEDIC		- taken;
 		break;
 	case FLAMER:
-		spots							= MAX_FLAMER;
 		team->mos[FLAMER]->available	= MAX_FLAMER	- taken;
 		break;
 	default:
-		spots							= 0;
 		team->mos[class]->available		= 0;
 		break;
 	}
-
-/*	gi.bprintf(PRINT_HIGH, "class_stat %s: %s -- %i/%i (%i)\n",
-		ent->client->pers.netname,
-		team->mos[class]->name,
-		taken, spots, 
-		team->mos[class]->available);*/
 
 	if (team->mos[class]->available > 0)
 		return true;
@@ -422,48 +406,39 @@ void M_ChooseMOS(edict_t *ent)
 				taken++;
 		}
 
+		// kernel: mos[i]->available will be calculated in OpenSpot(), here we just need maxSlots
 		// Now set the available for this class
 		switch (ent->client->resp.team_on->mos[i]->mos)
 		{
 		case INFANTRY:
 			maxSlots = MAX_INFANTRY;
-			ent->client->resp.team_on->mos[i]->available = MAX_INFANTRY - taken;
 			break;
 		case OFFICER:
 			maxSlots = MAX_OFFICERS;
-			ent->client->resp.team_on->mos[i]->available = MAX_OFFICERS - taken;
 			break;
 		case L_GUNNER:
 			maxSlots = MAX_L_GUNNER;
-			ent->client->resp.team_on->mos[i]->available = MAX_L_GUNNER - taken;
 			break;
 		case H_GUNNER:
 			maxSlots = MAX_H_GUNNER;
-			ent->client->resp.team_on->mos[i]->available = MAX_H_GUNNER - taken;
 			break;
 		case SNIPER:
 			maxSlots = MAX_SNIPER;
-			ent->client->resp.team_on->mos[i]->available = MAX_SNIPER - taken;
 			break;
 		case SPECIAL:
 			maxSlots = MAX_SPECIAL;
-			ent->client->resp.team_on->mos[i]->available = MAX_SPECIAL - taken;
 			break;
 		case ENGINEER:
 			maxSlots = MAX_ENGINEER;
-			ent->client->resp.team_on->mos[i]->available = MAX_ENGINEER - taken;
 			break;
 		case MEDIC:
 			maxSlots = MAX_MEDIC;
-			ent->client->resp.team_on->mos[i]->available = MAX_MEDIC - taken;
 			break;
 		case FLAMER:
 			maxSlots = MAX_FLAMER;
-			ent->client->resp.team_on->mos[i]->available = MAX_FLAMER - taken;
 			break;
 		default:
 			maxSlots = 0;
-			ent->client->resp.team_on->mos[i]->available = 0;
 			break;
 		}
 
