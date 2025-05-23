@@ -27,6 +27,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 
+extern int countdownTimer;
+extern int countdownStart;
+
 int PlayerCountForTeam (int team_number);//faf
 
 void	Svcmd_Test_f (void)
@@ -44,7 +47,36 @@ void Svcmd_Mapinfo_f (void)
 	gi.dprintf("  Kills: %i/%i\n",	team_list[1]->kills, team_list[1]->need_kills);
 }
 
+void Svcmd_Countdown_f(void)
+{
+	if (gi.argc() < 3)
+	{
+		if (countdownStart == 0 && countdownTimer > 0)
+		{
+			// show countdown time left
+			int secs = countdownTimer / 10;
+			int mins = secs / 60;
+			secs = secs - mins * 60;
+			gi.bprintf(PRINT_HIGH, "Remaining time: %d mins %d secs.\n", mins, secs);
+		}
+		else
+		{
+			gi.cprintf(NULL, PRINT_HIGH, "Usage: sv countdown <minutes>\n");
+		}
+		return;
+	}
 
+	int minutes = atoi(gi.argv(2));
+	if (minutes <= 0)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Warning: the countdown must be at least 1 minute at least.\n");
+		return;
+	}
+
+	// this timer is in hundredths of a second
+	countdownTimer = minutes * 600 + 1;
+	countdownStart = 51; // 5 seconds to announce
+}
 
 /*
 =================
@@ -68,8 +100,8 @@ void	ServerCommand (void)
 		Svcmd_Maplist_f (); 
 	else if (Q_stricmp (cmd, "mapinfo") == 0)
 		Svcmd_Mapinfo_f ();
-	
-
+	else if (Q_stricmp(cmd, "countdown") == 0)
+		Svcmd_Countdown_f();
 	else
 		gi.cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
 }

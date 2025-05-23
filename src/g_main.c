@@ -120,6 +120,9 @@ cvar_t  *teamkills_check;
 cvar_t  *teamkills_max;
 cvar_t  *teamkills_time;
 
+int countdownTimer = 0;
+int countdownStart = 0;
+
 //cvar_t	*crosshair;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
@@ -427,7 +430,46 @@ void CheckDMRules (void)
 		return;
 	}
 
-	if (timelimit->value)
+	// kernel: countdown check
+	if (countdownTimer > 0)
+	{
+		// reduce timer
+		--countdownTimer;
+
+		// if the timer reaches zero, end the level
+		if (countdownTimer == 0)
+		{
+			gi.bprintf(PRINT_HIGH, "Countdown limit hit.\n");
+			EndDMLevel();
+			return;
+		}
+
+		// show alerts based on time remaining
+		if (countdownTimer == 3000)
+		{
+			centerprintall("ONLY 5 MINUTES REMAINING!");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/5_minute.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownTimer == 600)
+		{
+			centerprintall("ONLY ONE MINUTE REMAINING!");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/1_minute.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownTimer == 30)
+		{
+			centerprintall("3...");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/final_count.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownTimer == 20)
+		{
+			centerprintall("2...");
+		}
+		else if (countdownTimer == 10)
+		{
+			centerprintall("1...");
+		}
+	}
+	else if (countdownTimer == 0 && timelimit->value) // kernel: timelimit only when there is no countdown
 	{
 		if (level.time >= timelimit->value*60)
 		{
@@ -548,6 +590,35 @@ void G_RunFrame (void)
 		}
 
 		G_RunEntity (ent);
+	}
+
+	// kernel: check the countdown announce timer
+	if (countdownStart > 0)
+	{
+		// reduce the starting counter
+		--countdownStart;
+
+		if (countdownStart == 50)
+		{
+			centerprintall("PREPARE TO FIGHT!");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/first_count.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownStart == 30)
+		{
+			centerprintall("3...");
+		}
+		else if (countdownStart == 20)
+		{
+			centerprintall("2...");
+		}
+		else if (countdownStart == 10)
+		{
+			centerprintall("1...");
+		}
+		else if (countdownStart == 0)
+		{
+			centerprintall("FIGHT!");
+		}
 	}
 
 	// see if it is time to end a deathmatch
