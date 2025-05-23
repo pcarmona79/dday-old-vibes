@@ -312,6 +312,8 @@ void EndDMLevel (void)
 			ent->map = level.nextmap;
 		else
 			ent->map = level.mapname;
+
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	} 
 	
 	else if (Last_Team_Winner <= 1 && team_list[Last_Team_Winner] && team_list[Last_Team_Winner]->nextmap)
@@ -319,6 +321,7 @@ void EndDMLevel (void)
 		ent= G_Spawn();
 		ent->classname = "target_changelevel";
 		ent->map = team_list[Last_Team_Winner]->nextmap;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	}
 
 	else if (level.nextmap[0])
@@ -326,6 +329,7 @@ void EndDMLevel (void)
 		ent = G_Spawn ();
 		ent->classname = "target_changelevel";
 		ent->map = level.nextmap;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	}
 	else
 	{	// search for a changeleve
@@ -336,6 +340,7 @@ void EndDMLevel (void)
 			ent = G_Spawn ();
 			ent->classname = "target_changelevel";
 			ent->map = level.mapname;
+			gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 		}
 	}
 
@@ -353,6 +358,11 @@ void CheckDMRules (void)
 	float		delay=0.0;
 	qboolean Is_Game_Over=false;
 	gclient_t	*cl;
+
+	int allies_kills_win = 0;
+	int axis_kills_win = 0;
+	int allies_points_win = 0;
+	int axis_points_win = 0;
 
 	if (level.intermissiontime)
 		return;
@@ -387,34 +397,112 @@ void CheckDMRules (void)
 			else if (delay == 300)
 				gi.bprintf ( PRINT_HIGH, "5 minutes left before team %s wins the battle!\n", team_list[i]->teamname);
 		}
-
-		if ((team_list[i]->need_kills > 0) && team_list[i]->kills >= team_list[i]->need_kills) 
-		{
-			gi.bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n", 
-				team_list[i]->teamname, 
-				team_list[i]->kills,
-				team_list[i]->need_kills);
-
-			Last_Team_Winner=i;
-			EndDMLevel ();
-			break;
-		}
-
-		
-		if ((team_list[i]->need_points > 0) && team_list[i]->score >= team_list[i]->need_points) 
-		{
-			gi.bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n", 
-				team_list[i]->teamname, 
-				team_list[i]->score,
-				team_list[i]->need_points);
-
-			Last_Team_Winner=i;
-			EndDMLevel ();
-			break;
-		}
-
 	}
 
+	//faf:  rewrite this so tie games are announced correctly
+	if (team_list[0] && team_list[1])
+	{
+		if (team_list[0]->need_kills > 0 &&
+			team_list[0]->kills >= team_list[0]->need_kills) 
+			allies_kills_win++;
+
+		if (team_list[1]->need_kills > 0 &&
+			team_list[1]->kills >= team_list[1]->need_kills) 
+			axis_kills_win++;
+
+		if (team_list[0]->need_points > 0 && 
+			team_list[0]->score >= team_list[0]->need_points) 
+			allies_points_win++;
+
+		if (team_list[1]->need_points > 0 && 
+			team_list[1]->score >= team_list[1]->need_points) 
+			axis_points_win++;
+
+		if (team_list[0]->kills_and_points)
+		{
+			if (allies_kills_win + allies_points_win < 2)
+			{
+				allies_kills_win = 0;
+				allies_points_win = 0;
+			}
+		}
+		if (team_list[1]->kills_and_points)
+		{
+			if (axis_kills_win + axis_points_win < 2)
+			{
+				axis_kills_win = 0;
+				axis_points_win = 0;
+			}
+		}
+
+		if (allies_kills_win || allies_points_win ||
+			axis_kills_win || axis_points_win)
+		{
+			if (allies_kills_win + allies_points_win >
+				axis_kills_win + axis_points_win)
+			{
+				if (allies_kills_win)
+				{
+					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+							   team_list[0]->teamname,
+							   team_list[0]->kills,
+							   team_list[0]->need_kills);
+
+					Last_Team_Winner=0;
+					EndDMLevel ();
+					return;
+				}
+				else 
+				{
+					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+							   team_list[0]->teamname,
+							   team_list[0]->score,
+							   team_list[0]->need_points);
+
+					Last_Team_Winner=0;
+					EndDMLevel ();
+					return;
+				}
+			}
+			else if (allies_kills_win + allies_points_win <
+				axis_kills_win + axis_points_win)
+			{
+				if (axis_kills_win)
+				{
+					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+							   team_list[1]->teamname,
+							   team_list[1]->kills,
+							   team_list[1]->need_kills);
+
+					Last_Team_Winner=1;
+					EndDMLevel ();
+					return;
+				}
+				else 
+				{
+					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+							   team_list[1]->teamname,
+							   team_list[1]->score,
+							   team_list[1]->need_points);
+
+					Last_Team_Winner=1;
+					EndDMLevel ();
+					return;
+				}
+			}
+			else //faf:  for tie games
+			{
+				//lol centerprintall("TTTTTT III EEEE   GGG   AA  M   M EEEE !!!\n  TT    I  E     G     A  A MM MM E    !!!\n  TT    I  EEE   G  GG AAAA M M M EEE  !!!\n  TT    I  E     G   G A  A M   M E       \n  TT   III EEEE   GGG  A  A M   M EEEE !!!\n");
+				centerprintall("T I E   G A M E !");
+				Last_Team_Winner = -1;
+
+				EndDMLevel ();
+				return;
+			}
+		}
+	}
+
+	//faf: this is not used below
 	if(Is_Game_Over)
 	{
 		for(i=0;i<MAX_TEAMS;i++)

@@ -1169,6 +1169,8 @@ typedef struct
 	float	arty_fire_time;	// last time artillary was fired
 	int		arty_fire_count; // how many times the battary has been fired
 
+	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
+
 }TeamS_t;
 
 
