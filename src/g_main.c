@@ -276,6 +276,9 @@ void EndDMLevel (void)
 	edict_t		*ent;
 	int i = 0;
 
+	// kernel: clear countdown vars
+	countdownTimer = countdownStart = 0;
+
 	// stay on same level flag
 	if ((int)dmflags->value & DF_SAME_LEVEL)
 	{
@@ -535,12 +538,12 @@ void CheckDMRules (void)
 		// show alerts based on time remaining
 		if (countdownTimer == 3000)
 		{
-			centerprintall("ONLY 5 MINUTES REMAINING!");
+			centerprintall("5 MINUTES WARNING!");
 			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/5_minute.wav"), 1, ATTN_NONE, 0);
 		}
 		else if (countdownTimer == 600)
 		{
-			centerprintall("ONLY ONE MINUTE REMAINING!");
+			centerprintall("1 MINUTE WARNING!");
 			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/1_minute.wav"), 1, ATTN_NONE, 0);
 		}
 		else if (countdownTimer == 30)
