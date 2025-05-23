@@ -570,6 +570,7 @@ void CheckDMRules (void)
 		}
 	}
 
+	/* kernel: there is no reason to check fraglimit here, it will be already applied to need_kills
 	if (fraglimit->value)
 	{
 		for (i=0 ; i<maxclients->value ; i++)
@@ -585,7 +586,7 @@ void CheckDMRules (void)
 				return;
 			}
 		}
-	}
+	}*/
 }
 
 
