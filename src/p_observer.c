@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "p_menus.h"
+#include "g_cmds.h"
+
 void M_ChooseMOS(edict_t *ent);
 void Killed(edict_t * targ , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point ); 
 //this file is for all the stuff that relates to observer mode, particularly during the begingg
@@ -697,6 +699,11 @@ void ChooseTeam(edict_t *ent) {
 
 } 
 
+void M_Observe_Choose(edict_t *ent, pmenu_t *p, int choice)
+{
+	PMenu_Close(ent);
+	Cmd_FlyingNunMode_f(ent);
+}
 
 void MainMenu(edict_t *ent)
 {
@@ -710,7 +717,12 @@ void MainMenu(edict_t *ent)
 	client_menu(ent, 5,  "Choose a Team",	PMENU_ALIGN_LEFT,	NULL, M_Team_Choose );
 	client_menu(ent, 6,  "View Credits",	PMENU_ALIGN_LEFT,	NULL, M_View_Credits );
 //	client_menu(ent, 7,  NULL,				PMENU_ALIGN_RIGHT,	NULL, NULL );
-//	client_menu(ent, 8,  "*Spectate",		PMENU_ALIGN_LEFT,	NULL, NULL );
+
+	if (!ent->flyingnun)
+		client_menu(ent, 8,  "Observe",			PMENU_ALIGN_LEFT,	NULL, M_Observe_Choose );
+	else
+		client_menu(ent, 8,  "Stop Observing",	PMENU_ALIGN_LEFT,	NULL, M_Observe_Choose );
+
 	client_menu(ent, 25, "*Use [ and ] to select",			PMENU_ALIGN_CENTER,	NULL, NULL );
 
 
