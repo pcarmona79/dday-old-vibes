@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GBR_DEFINES_H__
+#define __GBR_DEFINES_H__
 
 #define WebleyMAG		6
 #define StenMAG		    32
@@ -52,3 +54,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define Vickers_FRAME		4
 #define PIAT_FRAME	5
 #define Enfields_FRAME	6
+
+#endif /* __GBR_DEFINES_H__ */

@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __USM_MAIN_H__
+#define __USM_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 #include "usm_defines.h"
 #include "../g_local.h"
@@ -102,3 +105,5 @@ void USM_Weapon_Thompson(edict_t *ent);
 
 // g_spawnn.c
 void (*SP_misc_banner_generic) (edict_t *ent, char *model);
+
+#endif /* __USM_MAIN_H__ */

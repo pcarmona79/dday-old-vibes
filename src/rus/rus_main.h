@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __RUS_MAIN_H__
+#define __RUS_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 
 #include "rus_defines.h"
@@ -72,7 +75,6 @@ gitem_t *(*FindItemByClassnameInTeam)(char *, char *);
 
 void (*Weapon_Generic)(edict_t *, int, int,int,int,int, int, int,int, int,int*, int*, void (*fire)(edict_t *ent));
 void (*Weapon_Grenade)(edict_t *);
-void (*ifchangewep)(edict_t *ent);
 void (*fire_bullet)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*ifchangewep)(edict_t *); 
 void (*AngleVectors)(vec3_t , vec3_t, vec3_t, vec3_t);
@@ -115,3 +117,4 @@ void (*rocket_touch) (edict_t *, edict_t *, cplane_t *, csurface_t *);
 edict_t *(*G_Spawn) (void);
 */
 
+#endif /* __RUS_MAIN_H__ */

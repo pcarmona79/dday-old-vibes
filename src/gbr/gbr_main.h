@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GBR_MAIN_H__
+#define __GBR_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 #include "gbr_defines.h"
 #include "../g_local.h"
@@ -66,7 +69,6 @@ gitem_t *(*FindItemByClassnameInTeam)(char *, char *);
 
 // p_weapon.c
 void (*Weapon_Generic)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent));
-void (*ifchangewep)(edict_t *ent);
 void (*fire_bullet)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*ifchangewep)(edict_t *); 
 void (*AngleVectors)(vec3_t , vec3_t, vec3_t, vec3_t);
@@ -105,7 +107,6 @@ void (*Play_WepSound)(edict_t *, char);
 void (*fire_gun)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 
 void (*fire_tracer)(edict_t *, vec3_t, vec3_t, int, int);
-void (*fire_bullet)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 
 //void L_fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 
@@ -119,3 +120,5 @@ int (*VectorCompare)(vec3_t, vec3_t);
 void (*G_FreeEdict)(edict_t *);
 void (*rocket_touch) (edict_t *, edict_t *, cplane_t *, csurface_t *);
 edict_t *(*G_Spawn) (void);
+
+#endif /* __GBR_MAIN_H__ */

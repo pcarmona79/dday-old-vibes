@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __G_LOCAL_H__
+#define __G_LOCAL_H__
+
 // g_local.h -- local definitions for game module
 #include "g_defines.h"
 #include "q_shared.h"
@@ -1735,3 +1738,4 @@ int axis_sandbags;
 
 int Surface2(char *name);
 
+#endif /* __G_LOCAL_H__ */

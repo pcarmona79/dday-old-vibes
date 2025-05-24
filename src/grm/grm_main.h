@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GRM_MAIN_H__
+#define __GRM_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 
 #include "grm_defines.h"
@@ -71,7 +74,6 @@ gitem_t *(*FindItemByClassnameInTeam)(char *, char *);
 
 void (*Weapon_Generic)(edict_t *, int, int,int,int,int, int, int,int, int,int*, int*, void (*fire)(edict_t *ent));
 void (*Weapon_Grenade)(edict_t *);
-void (*ifchangewep)(edict_t *ent);
 void (*fire_bullet)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*ifchangewep)(edict_t *); 
 void (*AngleVectors)(vec3_t , vec3_t, vec3_t, vec3_t);
@@ -97,3 +99,5 @@ void Weapon_MP43(edict_t *ent);
 void Weapon_MG42(edict_t *ent);
 void Weapon_Psk(edict_t *ent);
 void Weapon_m98ks(edict_t *ent);
+
+#endif /* __GRM_MAIN_H__ */

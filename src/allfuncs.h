@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __ALLFUNCS_H__
+#define __ALLFUNCS_H__
+
+#include "g_local.h"
+
 // File : \dday\source/g_ai.c
 void AI_SetSightClient(void );   // found @ line:31
 void ai_move(edict_t * self , float dist );   // found @ line:73
@@ -924,3 +929,5 @@ void dummy1(struct edict_s * i , struct gitem_s * ii );   // found @ line:90
 void dummy2(struct edict_s * i );   // found @ line:94
 spawn_t * InsertEntity(spawn_t * spawnInfo );   // found @ line:104
 int RemoveEntity(char * name );   // found @ line:132
+
+#endif /* __ALLFUNCS_H__ */

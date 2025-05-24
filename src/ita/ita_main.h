@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __ITA_MAIN_H__
+#define __ITA_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 
 #include "ita_defines.h"
@@ -72,7 +75,6 @@ gitem_t *(*FindItemByClassnameInTeam)(char *, char *);
 
 void (*Weapon_Generic)(edict_t *, int, int,int,int,int, int, int,int, int,int*, int*, void (*fire)(edict_t *ent));
 void (*Weapon_Grenade)(edict_t *);
-void (*ifchangewep)(edict_t *ent);
 void (*fire_gun)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*fire_bullet)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*ifchangewep)(edict_t *); 
@@ -111,3 +113,5 @@ void Weapon_Panzerfaust(edict_t *ent);
 void ITA_Weapon_m98ks(edict_t *ent);
 void Weapon_Breda(edict_t *ent);
 void Weapon_Panzerfaust(edict_t *ent);
+
+#endif /* __ITA_MAIN_H__ */

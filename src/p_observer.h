@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __P_OBSERVER_H__
+#define __P_OBSERVER_H__
+
+#include "g_local.h"
+
 void ChooseMOS(edict_t *ent,qboolean smos);
 void ChooseTeam(edict_t *ent);
 void SyncUserInfo(edict_t *ent, qboolean pers);
@@ -41,3 +46,5 @@ void M_View_Credits	(edict_t *ent, pmenu_t *p, int choice);
 void MainMenu(edict_t *ent);
 void M_View_Credits_Shaef (edict_t *ent, pmenu_t *p, int choice);
 void M_View_Credits_Vipersoft (edict_t *ent, pmenu_t *p, int choice);
+
+#endif /* __P_OBSERVER_H__ */

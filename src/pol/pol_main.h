@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __POL_MAIN_H__
+#define __POL_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 
 #include "pol_defines.h"
@@ -91,3 +94,4 @@ void POL_Weapon_PIAT(edict_t *ent);
 void Weapon_POL_m98ks(edict_t *ent);
 void Weapon_Sabre (edict_t *ent);
 
+#endif /* __POL_MAIN_H__ */

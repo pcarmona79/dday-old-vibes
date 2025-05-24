@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __JPN_MAIN_H__
+#define __JPN_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 
 #include "jpn_defines.h"
@@ -119,4 +122,4 @@ void JPN_Weapon_MG42(edict_t *ent);
 void Weapon_Katana (edict_t *ent);
 void Weapon_Molotov(edict_t *ent);
 
-
+#endif /* __JPN_MAIN_H__ */

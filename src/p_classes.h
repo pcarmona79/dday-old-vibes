@@ -24,6 +24,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+#ifndef __P_CLASSES_H__
+#define __P_CLASSES_H__
+
+#include "g_local.h"
 
 void Load_Weapon (edict_t *ent, gitem_t	*item);
 
@@ -211,3 +215,5 @@ SMos_t def_MOS_List[]=
 };
 	
 */
+
+#endif /* __P_CLASSES_H__ */
