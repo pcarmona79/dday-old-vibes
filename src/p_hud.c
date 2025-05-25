@@ -709,7 +709,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 //strcat (string,		"xv 0   yv 67 string  \" Ping Player         Ping Player\" "
 
 	// pbowens: team victory pix
-	if (level.intermissiontime && Last_Team_Winner > 0 && Last_Team_Winner != 99)
+	if (level.intermissiontime && Last_Team_Winner >= 0 && Last_Team_Winner != 99)
 	{
 		strcat(string, va("xv 0 yv -80 picn victory_%s ", 
 			team_list[Last_Team_Winner]->teamid ));
@@ -1327,7 +1327,7 @@ void DDayScoreboardMessage (edict_t *ent)
 	}
 
 	// pbowens: team victory pix
-	if (level.intermissiontime && Last_Team_Winner > 0 && Last_Team_Winner != 99)
+	if (level.intermissiontime && Last_Team_Winner >= 0 && Last_Team_Winner != 99)
 	{
 		strcat(string, va("xv 0 yv -80 picn victory_%s ", 
 			team_list[Last_Team_Winner]->teamid ));
