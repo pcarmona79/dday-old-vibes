@@ -76,6 +76,8 @@ void Svcmd_Countdown_f(void)
 	// this timer is in hundredths of a second
 	countdownTimer = minutes * 600 + 1;
 	countdownStart = 51; // 5 seconds to announce
+
+	gi.bprintf(PRINT_HIGH, "Starting countdown of %d minutes.\n", minutes);
 }
 
 /*
