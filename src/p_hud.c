@@ -100,7 +100,14 @@ void MoveClientToIntermission (edict_t *ent)
 			{
 				t->s.sound = 0;	
 			}
-			if (Last_Team_Winner != 99)
+			//faf:  tie game music
+			if (Last_Team_Winner == -1)
+			{
+				gi.sound(ent, (CHAN_NO_PHS_ADD | CHAN_RELIABLE), gi.soundindex("evil/draw.wav"), 1, ATTN_NONE, 0);
+				gi.sound(ent, (CHAN_NO_PHS_ADD | CHAN_RELIABLE), gi.soundindex("evil/draw.wav"), 1, ATTN_NONE, 0);
+				gi.sound(ent, (CHAN_NO_PHS_ADD | CHAN_RELIABLE), gi.soundindex("evil/draw.wav"), 1, ATTN_NONE, 0);
+			}
+			else if (Last_Team_Winner != 99)
 			{
 				//faf:  playing this 3 times so it's loud enough.  It would be better to edit the wav file of course
 				gi.sound (ent, (CHAN_NO_PHS_ADD|CHAN_RELIABLE), gi.soundindex(va("%s/victory.wav", team_list[Last_Team_Winner]->teamid)), 1, ATTN_NONE, 0);
@@ -702,11 +709,15 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 //strcat (string,		"xv 0   yv 67 string  \" Ping Player         Ping Player\" "
 
 	// pbowens: team victory pix
-	if (level.intermissiontime && Last_Team_Winner != 99) {
+	if (level.intermissiontime && Last_Team_Winner > 0 && Last_Team_Winner != 99)
+	{
 		strcat(string, va("xv 0 yv -80 picn victory_%s ", 
 			team_list[Last_Team_Winner]->teamid ));
 	}
-
+	else if (level.intermissiontime && Last_Team_Winner < 0)
+	{
+		strcat(string, "xv 0 yv -80 picn victory_none ");
+	}
 
                 len = strlen(string);
 
@@ -1316,9 +1327,14 @@ void DDayScoreboardMessage (edict_t *ent)
 	}
 
 	// pbowens: team victory pix
-	if (level.intermissiontime && Last_Team_Winner != 99) {
+	if (level.intermissiontime && Last_Team_Winner > 0 && Last_Team_Winner != 99)
+	{
 		strcat(string, va("xv 0 yv -80 picn victory_%s ", 
 			team_list[Last_Team_Winner]->teamid ));
+	}
+	else if (level.intermissiontime && Last_Team_Winner < 0)
+	{
+		strcat(string, "xv 0 yv -80 picn victory_none ");
 	}
 
 	len = strlen(string);
