@@ -350,6 +350,55 @@ void EndDMLevel (void)
 	BeginIntermission (ent);
 }
 
+int CheckWinningTeam(int allies_kills_win, int axis_kills_win, int allies_points_win, int axis_points_win)
+{
+	if (allies_kills_win + allies_points_win >
+		axis_kills_win + axis_points_win)
+	{
+		if (allies_kills_win)
+		{
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+					   team_list[0]->teamname,
+					   team_list[0]->kills,
+					   team_list[0]->need_kills);
+			return 0;
+		}
+		else
+		{
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+					   team_list[0]->teamname,
+					   team_list[0]->score,
+					   team_list[0]->need_points);
+			return 0;
+		}
+	}
+	else if (allies_kills_win + allies_points_win <
+			 axis_kills_win + axis_points_win)
+	{
+		if (axis_kills_win)
+		{
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+					   team_list[1]->teamname,
+					   team_list[1]->kills,
+					   team_list[1]->need_kills);
+			return 1;
+		}
+		else
+		{
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+					   team_list[1]->teamname,
+					   team_list[1]->score,
+					   team_list[1]->need_points);
+			return 1;
+		}
+	}
+	else //faf:  for tie games
+	{
+		centerprintall("T I E   G A M E !");
+		return -1;
+	}
+}
+
 /*
 =================
 CheckDMRules
@@ -441,67 +490,9 @@ void CheckDMRules (void)
 		if (allies_kills_win || allies_points_win ||
 			axis_kills_win || axis_points_win)
 		{
-			if (allies_kills_win + allies_points_win >
-				axis_kills_win + axis_points_win)
-			{
-				if (allies_kills_win)
-				{
-					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
-							   team_list[0]->teamname,
-							   team_list[0]->kills,
-							   team_list[0]->need_kills);
-
-					Last_Team_Winner=0;
-					EndDMLevel ();
-					return;
-				}
-				else 
-				{
-					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
-							   team_list[0]->teamname,
-							   team_list[0]->score,
-							   team_list[0]->need_points);
-
-					Last_Team_Winner=0;
-					EndDMLevel ();
-					return;
-				}
-			}
-			else if (allies_kills_win + allies_points_win <
-				axis_kills_win + axis_points_win)
-			{
-				if (axis_kills_win)
-				{
-					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
-							   team_list[1]->teamname,
-							   team_list[1]->kills,
-							   team_list[1]->need_kills);
-
-					Last_Team_Winner=1;
-					EndDMLevel ();
-					return;
-				}
-				else 
-				{
-					gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
-							   team_list[1]->teamname,
-							   team_list[1]->score,
-							   team_list[1]->need_points);
-
-					Last_Team_Winner=1;
-					EndDMLevel ();
-					return;
-				}
-			}
-			else //faf:  for tie games
-			{
-				//lol centerprintall("TTTTTT III EEEE   GGG   AA  M   M EEEE !!!\n  TT    I  E     G     A  A MM MM E    !!!\n  TT    I  EEE   G  GG AAAA M M M EEE  !!!\n  TT    I  E     G   G A  A M   M E       \n  TT   III EEEE   GGG  A  A M   M EEEE !!!\n");
-				centerprintall("T I E   G A M E !");
-				Last_Team_Winner = -1;
-
-				EndDMLevel ();
-				return;
-			}
+			Last_Team_Winner = CheckWinningTeam(allies_kills_win, axis_kills_win, allies_points_win, axis_points_win);
+			EndDMLevel();
+			return;
 		}
 	}
 
@@ -531,6 +522,7 @@ void CheckDMRules (void)
 		if (countdownTimer == 0)
 		{
 			gi.bprintf(PRINT_HIGH, "Countdown limit hit.\n");
+			Last_Team_Winner = CheckWinningTeam(allies_kills_win, axis_kills_win, allies_points_win, axis_points_win);
 			EndDMLevel();
 			return;
 		}
@@ -565,6 +557,7 @@ void CheckDMRules (void)
 		if (level.time >= timelimit->value*60)
 		{
 			gi.bprintf (PRINT_HIGH, "Timelimit hit.\n");
+			Last_Team_Winner = CheckWinningTeam(allies_kills_win, axis_kills_win, allies_points_win, axis_points_win);
 			EndDMLevel ();
 			return;
 		}
