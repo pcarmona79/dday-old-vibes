@@ -25,7 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "g_defines.h"
 #include "g_local.h"
+#include "q_shared.h"
 
 extern int countdownTimer;
 extern int countdownStart;
@@ -80,6 +82,21 @@ void Svcmd_Countdown_f(void)
 	gi.bprintf(PRINT_HIGH, "Starting countdown of %d minutes.\n", minutes);
 }
 
+void Svcmd_ResetScore_f()
+{
+	for (int i; i < MAX_TEAMS; ++i)
+	{
+		if (team_list[i])
+		{
+			if (team_list[i]->kills > 0)
+				team_list[i]->kills = 0;
+			if (team_list[i]->score > 0)
+				team_list[i]->score = 0;
+		}
+	}
+	gi.bprintf(PRINT_HIGH, "The scores has been resetted.\n");
+}
+
 /*
 =================
 ServerCommand
@@ -104,6 +121,8 @@ void	ServerCommand (void)
 		Svcmd_Mapinfo_f ();
 	else if (Q_stricmp(cmd, "countdown") == 0)
 		Svcmd_Countdown_f();
+	else if (Q_stricmp(cmd, "resetscore") == 0)
+		Svcmd_ResetScore_f();
 	else
 		gi.cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
 }
