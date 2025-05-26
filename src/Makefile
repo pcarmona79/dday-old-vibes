@@ -27,8 +27,14 @@
 #this nice line comes from the linux kernel makefile
 ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)
 
+# version to build
+DEVVERSION := "4.4k"
+
+# get the hash and date of the current commit
+COMMITINFO := $(shell git show -s --format='%h %cs')
+
 CC=gcc -fcommon
-BASE_CFLAGS=-Dstricmp=strcasecmp
+BASE_CFLAGS=-Dstricmp=strcasecmp -DDEVVERSION='\"$(DEVVERSION)\"' -DCOMMITINFO='\"$(COMMITINFO)\"'
 CFLAGS_RELEASE=$(BASE_CFLAGS) -march=native -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 CFLAGS_DEBUG=$(BASE_CFLAGS) -g -DDEBUG
 

@@ -258,12 +258,8 @@ void InitGame (void)
 	// latched vars
 	sv_cheats = gi.cvar ("cheats",	"0",			CVAR_SERVERINFO | CVAR_LATCH);
 				gi.cvar ("gamename", GAMEVERSION ,	CVAR_SERVERINFO | CVAR_LATCH);
-				gi.cvar ("gamedate", __DATE__ ,		CVAR_SERVERINFO | CVAR_LATCH);
 
-
-//	gi.cvar ("dll_version", "v .08b",  CVAR_SERVERINFO | CVAR_LATCH); //faf
-
-
+	gi.cvar ("dll_version", RELEASE_VERSION, CVAR_SERVERINFO | CVAR_LATCH);
 
 	maxclients  = gi.cvar ("maxclients",	"8",	CVAR_SERVERINFO | CVAR_LATCH);
 	deathmatch  = gi.cvar ("deathmatch",	"1",	CVAR_LATCH);

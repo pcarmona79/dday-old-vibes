@@ -49,10 +49,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-//#define DEVVERSION	"4.1"
-//#define DEVVERSION "4.2s"//faf
-#define DEVVERSION "4.4k"
-//#define	DEBUG		1
+
+// this values will be defined by make
+#define RELEASE_VERSION DEVVERSION " " COMMITINFO
 
 // protocol bytes that can be directly added to messages
 #define	svc_muzzleflash		1
