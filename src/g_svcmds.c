@@ -34,6 +34,61 @@ extern int countdownStart;
 
 int PlayerCountForTeam (int team_number);//faf
 
+void Svcmd_Teams_f (void)
+{
+	int i;
+	edict_t *e;
+
+	if (!team_list[0] || !team_list[1])
+		return;
+
+	gi.dprintf("HEALTH--SCORE--NAME--CLASS\n");
+	gi.dprintf("%s (%i)\n", team_list[0]->teamname, PlayerCountForTeam(0));
+	for (i=0 ; i< maxclients->value ; i++)
+	{
+		e = g_edicts + 1 + i;
+		if (!e->client)
+			continue;
+		if (!e->inuse)
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (e->client->resp.team_on->index != 0)
+			continue;
+		gi.dprintf("%i  %i  %s  %s\n", e->client->pers.health, e->client->resp.score, e->client->pers.netname,
+				   e->client->resp.team_on->mos[e->client->resp.mos]->name);
+	}
+
+	gi.dprintf("%s (%i)\n", team_list[1]->teamname, PlayerCountForTeam(1));
+	for (i=0 ; i< maxclients->value ; i++)
+	{
+		e = g_edicts + 1 + i;
+		if (!e->client)
+			continue;
+		if (!e->inuse)
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (e->client->resp.team_on->index != 1)
+			continue;
+		gi.dprintf("%i  %i  %s  %s\n", e->client->pers.health, e->client->resp.score, e->client->pers.netname,
+				   e->client->resp.team_on->mos[e->client->resp.mos]->name);
+	}
+
+	gi.dprintf("Not on team:\n");
+	for (i=0 ; i< maxclients->value ; i++)
+	{
+		e = g_edicts + 1 + i;
+		if (!e->client)
+			continue;
+		if (!e->inuse)
+			continue;
+		if (e->client->resp.team_on)
+			continue;
+		gi.dprintf("%s\n", e->client->pers.netname);
+	}
+}
+
 void	Svcmd_Test_f (void)
 {
 	gi.cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
@@ -84,9 +139,11 @@ void Svcmd_Countdown_f(void)
 	gi.bprintf(PRINT_HIGH, "Starting countdown of %d minutes.\n", minutes);
 }
 
-void Svcmd_ResetScore_f()
+void Svcmd_ResetScore_f(void)
 {
-	for (int i; i < MAX_TEAMS; ++i)
+	int i;
+
+	for (i = 0; i < MAX_TEAMS; ++i)
 	{
 		if (team_list[i])
 		{
@@ -96,6 +153,7 @@ void Svcmd_ResetScore_f()
 				team_list[i]->score = 0;
 		}
 	}
+
 	gi.bprintf(PRINT_HIGH, "The scores has been resetted.\n");
 }
 
@@ -121,6 +179,8 @@ void	ServerCommand (void)
 		Svcmd_Maplist_f (); 
 	else if (Q_stricmp (cmd, "mapinfo") == 0)
 		Svcmd_Mapinfo_f ();
+	else if (Q_stricmp (cmd, "teams") == 0)
+		Svcmd_Teams_f();
 	else if (Q_stricmp(cmd, "countdown") == 0)
 		Svcmd_Countdown_f();
 	else if (Q_stricmp(cmd, "resetscore") == 0)
