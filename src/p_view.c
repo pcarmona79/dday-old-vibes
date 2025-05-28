@@ -1839,10 +1839,11 @@ void ClientEndServerFrame (edict_t *ent)
 				ent->client->showscores = true;
 			}
 
-			if (!ent->flyingnun)
+			// kernel: just use regular scoreboard
+			//if (!ent->flyingnun)
 				A_ScoreboardMessage(ent);
-			else
-				DDayScoreboardMessage(ent);
+			//else
+			//	DDayScoreboardMessage(ent);
 			gi.unicast (ent, true);
 		}
 
