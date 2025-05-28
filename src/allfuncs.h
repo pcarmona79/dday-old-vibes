@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define __ALLFUNCS_H__
 
 #include "g_local.h"
+#include "g_cmds.h"
 
 // File : \dday\source/g_ai.c
 void AI_SetSightClient(void );   // found @ line:31

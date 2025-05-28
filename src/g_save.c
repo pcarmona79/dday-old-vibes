@@ -298,6 +298,8 @@ void InitGame (void)
 	teamkills_max = gi.cvar ("teamkills_max", "5", CVAR_SERVERINFO);
 	teamkills_time = gi.cvar ("teamkills_time", "60", CVAR_SERVERINFO);
 
+	observer_bscore = gi.cvar("observer_bscore", "0", 0);
+
 	// pbowens: reduce lag by manipulating userinfo on server basis
 //	crosshair	= gi.cvar ("crosshair", "0", CVAR_USERINFO); 
 

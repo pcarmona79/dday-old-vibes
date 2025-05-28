@@ -730,6 +730,8 @@ extern cvar_t  *teamkills_check;
 extern cvar_t  *teamkills_max;
 extern cvar_t  *teamkills_time;
 
+extern cvar_t *observer_bscore;
+
 //extern	cvar_t	*crosshair;
 
 #define world	(&g_edicts[0])

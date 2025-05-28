@@ -1291,29 +1291,66 @@ void DDayScoreboardMessage (edict_t *ent)
 				cl_ent->deadflag != DEAD_DEAD)
 			totalalive[team]++;
 	} 
-        
-	// display the split graphics
-	sprintf(string,
-			"xl 0 yb -190 picn %s_score_top  " // scoretopleftpic
-			"     xr -160 picn %s_score_top  " // scoretoprightpic
-			"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
-			"     xr -160 picn %s_score  ",	  // scorerightpic
-			team_list[0]->teamid,
-			team_list[1]->teamid,
-			team_list[0]->teamid,
-			team_list[1]->teamid);
 
-	sprintf(string2,
-			// TEAM1
-			"xl 37  yb -152 string \"%4d/%-3d\" "
-			"xl 100 yb -152 string \"%4d/%-3d\" "
-			//  TEAM2
-			"xr -128 yb -152 string \"%4d/%-3d\" "
-			"xr -65  yb -152 string \"%4d/%-3d\" ",
-			team_list[TEAM1]->kills, team_list[TEAM1]->need_kills, team_list[TEAM1]->score, team_list[TEAM1]->need_points,
-			team_list[TEAM2]->kills, team_list[TEAM2]->need_kills, team_list[TEAM2]->score, team_list[TEAM2]->need_points);
-	
+	// display the split graphics
+	if (observer_bscore->value)
+	{
+		sprintf(string,
+				"xv 0 yb -58 picn %s_score_top  " // scoretopleftpic
+				"     xv 160 picn %s_score_top  " // scoretoprightpic
+				"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+				"     xr -160 picn %s_score  ",	  // scorerightpic
+				team_list[0]->teamid,
+				team_list[1]->teamid,
+				team_list[0]->teamid,
+				team_list[1]->teamid);
+	}
+	else
+	{
+		sprintf(string,
+				"xl 0 yb -190 picn %s_score_top  " // scoretopleftpic
+				"     xr -160 picn %s_score_top  " // scoretoprightpic
+				"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+				"     xr -160 picn %s_score  ",	  // scorerightpic
+				team_list[0]->teamid,
+				team_list[1]->teamid,
+				team_list[0]->teamid,
+				team_list[1]->teamid);
+	}
+
+	if (observer_bscore->value)
+	{
+		sprintf(string2,
+				// TEAM1
+				"xv 37  yb -20 string \"%4d/%-3d\" "
+				"xv 97  yb -20 string \"%4d/%-3d\" "
+				//  TEAM2
+				"xv  191  yb -20 string \"%4d/%-3d\" "
+				"xv  250  yb -20 string \"%4d/%-3d\" ",
+				team_list[TEAM1]->kills, team_list[TEAM1]->need_kills, team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+				team_list[TEAM2]->kills, team_list[TEAM2]->need_kills, team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+	}
+	else
+	{
+		sprintf(string2,
+				// TEAM1
+				"xl 37  yb -152 string \"%4d/%-3d\" "
+				"xl 100 yb -152 string \"%4d/%-3d\" "
+				//  TEAM2
+				"xr -128 yb -152 string \"%4d/%-3d\" "
+				"xr -65  yb -152 string \"%4d/%-3d\" ",
+				team_list[TEAM1]->kills, team_list[TEAM1]->need_kills, team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+				team_list[TEAM2]->kills, team_list[TEAM2]->need_kills, team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+	}
+
 	strcat(string, string2);
+
+	if (observer_bscore->value)
+	{
+		// kernel: this mode requires header pics
+		strcat(string, "xl  0    yb -128 picn score_left_h  ");
+		strcat(string, "xr -160  yb -128 picn score_right_h  ");
+	}
 
 	if (player_scores->value)
 	{

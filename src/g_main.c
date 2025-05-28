@@ -120,6 +120,8 @@ cvar_t  *teamkills_check;
 cvar_t  *teamkills_max;
 cvar_t  *teamkills_time;
 
+cvar_t *observer_bscore;
+
 int countdownTimer = 0;
 int countdownStart = 0;
 

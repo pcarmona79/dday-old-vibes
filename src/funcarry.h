@@ -28,6 +28,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __FUNCARRY_H__
 #define __FUNCARRY_H__
 
+#include "allfuncs.h"
+#include "u_findfunc.h"
+
 /*
 	kernel: Keep this list in alphabetical order, capitalized first, or FindGameFunction (u_findutil.c) will fail.
 	        Use "LC_ALL=C sort" to use ASCII order on this content.

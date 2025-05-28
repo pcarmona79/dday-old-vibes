@@ -1055,6 +1055,10 @@ void SP_worldspawn (edict_t *ent)
 	gi.imageindex ("scoreleft");
 	gi.imageindex ("scoreright");
 
+	// kernel: score on bottom screen
+	gi.imageindex("score_left_h");
+	gi.imageindex("score_right_h");
+
 	gi.imageindex ("inventory");
 
 	// pbowens: stamina bar
