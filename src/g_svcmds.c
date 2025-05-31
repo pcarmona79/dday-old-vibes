@@ -183,6 +183,8 @@ void	ServerCommand (void)
 		Svcmd_Teams_f();
 	else if (Q_stricmp(cmd, "countdown") == 0)
 		Svcmd_Countdown_f();
+	else if (Q_stricmp(cmd, "startcount") == 0)
+		Svcmd_Countdown_f();
 	else if (Q_stricmp(cmd, "resetscore") == 0)
 		Svcmd_ResetScore_f();
 	else
