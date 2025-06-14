@@ -42,6 +42,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define HEIGHT 2
 
 #define SPAWN_CAMP_TIME	10 //seconds
+
+void check_unscope (edict_t *ent);
+
 /*
 ============
 CanDamage
@@ -237,6 +240,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 
 		//targ->client->resp.mos=targ->client->resp.bkupmos;
 		//targ->client->limbo_mode=true;
+		check_unscope(targ);
 
 		if (!targ->deadflag)
 			targ->client->forcespawn = (level.framenum + FORCE_RESPAWN);

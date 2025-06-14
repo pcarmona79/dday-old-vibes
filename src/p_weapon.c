@@ -1758,6 +1758,7 @@ void Weapon_Binoculars(edict_t *ent)
 					gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
 					ent->client->arty_called = 0;
 					ent->client->arty_num--;
+					check_unscope(ent);
 					return;
 				}
 			}
