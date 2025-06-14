@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "u_entmgr.h"
 
 #include <ctype.h>
+#include <dlfcn.h>
 
 // g_dll.linux.c
 // D-Day: Normandy DLL interaction code
@@ -48,6 +49,32 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 static void *team0_library;
 static void *team1_library;
+
+void *Sys_LoadLibrary(const char* userlib)
+{
+	char libname[128];
+	void *lib = NULL;
+
+	// kernel: try to load from q2pro directories
+	if (sys_homedir->string[0])
+	{
+		sprintf(libname, "%s/%s", sys_homedir->string, userlib);
+		lib = dlopen(libname, RTLD_LAZY);
+	}
+
+	// kernel: try libdir instead
+	if (lib == NULL && sys_libdir->string[0])
+	{
+		sprintf(libname, "%s/%s", sys_libdir->string, userlib);
+		lib = dlopen(libname, RTLD_LAZY);
+	}
+
+	// kernel: if all failed then try local directory
+	if (lib == NULL)
+		lib = dlopen(userlib, RTLD_LAZY);
+
+	return lib;
+}
 
 userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team)
 {
@@ -127,11 +154,11 @@ userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team)
 
         //if (team == 0 && !(team0_library))
 	//{
-		team0_library = dlopen(unode->libname, RTLD_LAZY);
+	team0_library = Sys_LoadLibrary(unode->libname);
 	//}
 	//else if (team == 1 && !(team1_library))
 	//{
-		team1_library = dlopen(unode->libname, RTLD_LAZY);
+	team1_library = Sys_LoadLibrary(unode->libname);
 	//}
 	//unode->hDLL = dlopen(unode->libname, (RTLD_LAZY | RTLD_LOCAL) );
 #else
