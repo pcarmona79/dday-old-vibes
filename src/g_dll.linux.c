@@ -38,17 +38,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // D-Day: Normandy DLL interaction code
 // LINUX
 //
-/*
-  int LoadUserDLLs(char *)
-
-  This function takes the name of the ini file that it is to open and read.
-  The file contains entries in it that are built the following way -
-
-  filename  {entrypoint_name|entrypoint_index} version [message_digest]
-*/
-
-static void *team0_library;
-static void *team1_library;
 
 void *Sys_LoadLibrary(const char* userlib)
 {
@@ -78,31 +67,26 @@ void *Sys_LoadLibrary(const char* userlib)
 
 userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team)
 {
-    //char buffer[512];
-    //char libname[128];
-    char entryname[256];
-    //char MD5Sig[64];
-    //char version[32];
-    //char *ptr, *tmp;
-    void *lib = NULL;
-    int  i;
-    userdll_list_node_t *unode;
+	char entryname[256];
+	int i;
+	userdll_list_node_t *unode;
 
- 	qboolean IsDLLName=false;
+	qboolean IsDLLName = false;
 
-	if(!ent->pathtarget)
+	if (!ent->pathtarget)
 	{//if no dll name, use generic usa
-		if(!(ent->pathtarget=gi.TagMalloc(sizeof("usa\0"), TAG_LEVEL))) return NULL;
-		strcpy(ent->pathtarget,"usa\0");
-		IsDLLName=true;
+		if (!(ent->pathtarget = gi.TagMalloc(4, TAG_LEVEL)))
+			return NULL;
+		strcpy(ent->pathtarget, "usa\0");
+		IsDLLName = true;
 	} else {
-        // forces to use lowercase
-        char *p = ent->pathtarget;
-        for ( ; *p; ++p)
-            *p = tolower(*p);
-    }
+		// forces to use lowercase
+		char *p = ent->pathtarget;
+		for ( ; *p; ++p)
+			*p = tolower(*p);
+	}
 
-	if(!(unode = (userdll_list_node_t*)
+	if (!(unode = (userdll_list_node_t*)
 		//gi.TagMalloc(sizeof(userdll_list_node_t), TAG_LEVEL)))
 		gi.TagMalloc(508000, 0)))
 //		malloc(508000)))
@@ -110,91 +94,55 @@ userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team)
 		gi.dprintf("memory allocation failed for library <%s>\n",ent->pathtarget);
 		return NULL;
 	}
-	strncpy(unode->libname,(GAMEVERSION "/"),sizeof((GAMEVERSION "/")));
-    strcat(unode->libname,ent->pathtarget);
+	strncpy(unode->libname, (GAMEVERSION "/"), sizeof((GAMEVERSION "/")));
+	strcat(unode->libname, ent->pathtarget);
 
-#if defined __linux__
-#  if defined __x86_64__
-    strcat(unode->libname,"x86_64.so"); //kernel: follow suit with gamex86_64.dll
-#  elif defined __aarch64__
-    strcat(unode->libname,"aarch64.so"); //kernel: follow suit with gameaarch64.dll
-#  else
-    strcat(unode->libname,"i386.so"); //follow suit with gamei386.dll
-#  endif
+#if defined __x86_64__
+	strcat(unode->libname,"x86_64.so"); //kernel: follow suit with gamex86_64.dll
+#elif defined __aarch64__
+	strcat(unode->libname,"aarch64.so"); //kernel: follow suit with gameaarch64.dll
 #else
-	strcat(unode->libname,"i386"); //follow suit with gamei386.dll
+	strcat(unode->libname,"i386.so"); //follow suit with gamei386.dll
 #endif
 
-    strncpy(entryname,ent->pathtarget,sizeof(ent->pathtarget));
-	if(IsDLLName)
+	strncpy(entryname, ent->pathtarget, 4); // kernel: team's dll name is just 3 chars length plus null
+	if (IsDLLName)
 		gi.TagFree(ent->pathtarget);
 
-	for(i=0;i<=strlen(entryname);i++) entryname[i]=toupper(entryname[i]);
-	strcat(entryname,"GetAPI");
-	strncpy(unode->entryname,entryname,sizeof(entryname));
-    strncpy(unode->version,"1",3);
-    strncpy(unode->MD5Sig,"1",3);
+	for (i = 0; i <= strlen(entryname); i++)
+		entryname[i] = toupper(entryname[i]);
+	strcat(entryname, "GetAPI");
+	strncpy(unode->entryname, entryname, strlen(entryname));
+	strncpy(unode->version, "1", 3);
+	strncpy(unode->MD5Sig, "1", 3);
 
-    unode->next = GlobalUserDLLList;
-    GlobalUserDLLList = unode;
-
+	unode->next = GlobalUserDLLList;
+	GlobalUserDLLList = unode;
 
 	unode = GlobalUserDLLList;
 //print out the results
 #ifdef DEBUG
 	gi.dprintf("+= list_node\n");
-    gi.dprintf(" |-- library <%s>\n",unode->libname);
-    gi.dprintf(" |-- entry   <%s>\n",unode->entryname);
-    gi.dprintf(" |-- md5     <%s>\n\n",unode->MD5Sig);
+	gi.dprintf(" |-- library <%s>\n", unode->libname);
+	gi.dprintf(" |-- entry   <%s>\n", unode->entryname);
+	gi.dprintf(" |-- md5     <%s>\n\n", unode->MD5Sig);
 #endif // DEBUG
-	//this is the system dependent portion of the code. Currently it is set up
-//for windows. This portion would be different for Linux.
 
-#ifdef __linux__
+	unode->hDLL = Sys_LoadLibrary(unode->libname);
 
-        //if (team == 0 && !(team0_library))
-	//{
-	team0_library = Sys_LoadLibrary(unode->libname);
-	//}
-	//else if (team == 1 && !(team1_library))
-	//{
-	team1_library = Sys_LoadLibrary(unode->libname);
-	//}
-	//unode->hDLL = dlopen(unode->libname, (RTLD_LAZY | RTLD_LOCAL) );
-#else
-	unode->hDLL = LoadLibrary(unode->libname);
-#endif
-
-#ifdef __linux__
-	if (!(team0_library) && !(team1_library))
-	{
-                gi.dprintf("Couldn't load library %s, errorcode = %s\n",unode->libname,dlerror());
-#else
 	if(unode->hDLL == NULL)
 	{
-		gi.dprintf("Couldn't load library %s, errorcode = %d\n",unode->libname,GetLastError());
-#endif
+		gi.dprintf("Couldn't load library %s, errorcode = %s\n", unode->libname, dlerror());
 		return NULL;
-        }
-	else
-	{
-		//unode->EntryPoint = (userdll_export_t (*)(userdll_import_t))
-#ifdef __linux__
-        if (team == 0)
-	{
-               unode->EntryPoint = (userdll_export_t (*)(userdll_import_t))dlsym(team0_library, unode->entryname);
 	}
 	else
 	{
-               unode->EntryPoint = (userdll_export_t (*)(userdll_import_t))dlsym(team1_library, unode->entryname);
-        }
-#else
-	unode->EntryPoint = (userdll_export_t (*)(userdll_import_t)) GetProcAddress(unode->hDLL,unode->entryname);
-#endif
-        if(unode->EntryPoint == NULL)
+		unode->EntryPoint = (userdll_export_t (*)(userdll_import_t)) dlsym(unode->hDLL, unode->entryname);
+
+		if (unode->EntryPoint == NULL)
 		{
 			gi.dprintf("Could not get entry point %s for library %s\n",
-				unode->entryname,unode->libname);
+					   unode->entryname, unode->libname);
 			return NULL;
 		}
 	}
@@ -208,125 +156,112 @@ void (*FindGameFunction(char *t));
 
 int InitializeUserDLLs(userdll_list_node_t *unode,int teamindex)
 {
+	int numLibsInit, version;
+	userdll_import_t UserDLLImports;
 
-        int numLibsInit, version;
-		userdll_import_t  UserDLLImports;
+	numLibsInit = 1;
+	if (!unode)
+		return 0;
 
-        numLibsInit = 1;
-		if(!unode) return 0;
+	//set up the UserDLLImports
+	UserDLLImports.game = &game;
+	UserDLLImports.level = &level;
+	UserDLLImports.gi = &gi;
+	UserDLLImports.globals = &globals;
 
-        //set up the UserDLLImports
-        UserDLLImports.game = &game;
-        UserDLLImports.level = &level;
-        UserDLLImports.gi = &gi;
-        UserDLLImports.globals = &globals;
-
-        UserDLLImports.InsertCommands = InsertCmds;
-		UserDLLImports.FindFunction = FindGameFunction;
-		UserDLLImports.InsertItem = InsertItem;
-		UserDLLImports.InsertEntity = InsertEntity;
-		UserDLLImports.RemoveEntity = RemoveEntity;
-		UserDLLImports.g_edicts=g_edicts;
-		UserDLLImports.is_silenced=&is_silenced;
-//		UserDLLImports.scope_setting=&scope_setting->value;
-		UserDLLImports.team_index=teamindex;
+	UserDLLImports.InsertCommands = InsertCmds;
+	UserDLLImports.FindFunction = FindGameFunction;
+	UserDLLImports.InsertItem = InsertItem;
+	UserDLLImports.InsertEntity = InsertEntity;
+	UserDLLImports.RemoveEntity = RemoveEntity;
+	UserDLLImports.g_edicts = g_edicts;
+	UserDLLImports.is_silenced = &is_silenced;
+//	UserDLLImports.scope_setting = &scope_setting->value;
+	UserDLLImports.team_index = teamindex;
 
 #ifdef DEBUG
-        //ok, run through the list of libraries and get their export structures
-		gi.dprintf("+= initialize\n");
-        gi.dprintf(" |-- library <%s>\n",unode->libname);
-        gi.dprintf(" |-- entry   <%s>\n",unode->entryname);
-        gi.dprintf(" |-- md5     <%s>\n",unode->MD5Sig);
+	//ok, run through the list of libraries and get their export structures
+	gi.dprintf("+= initialize\n");
+	gi.dprintf(" |-- library <%s>\n", unode->libname);
+	gi.dprintf(" |-- entry   <%s>\n", unode->entryname);
+	gi.dprintf(" |-- md5     <%s>\n", unode->MD5Sig);
 #endif //DEBUG
-		version=atoi(unode->version);
+	version = atoi(unode->version);
 
-		unode->dll_funcs = (unode->EntryPoint)(UserDLLImports);
+	unode->dll_funcs = (unode->EntryPoint)(UserDLLImports);
 #ifdef DEBUG
-        gi.dprintf("  |-- [%s]\n",unode->dll_funcs.creator);
-        gi.dprintf("  |-- dll_funcs.apiversion = %d\n",unode->dll_funcs.apiversion);
-		gi.dprintf("  |--       unode->version = %d\n",version);
+	gi.dprintf("  |-- [%s]\n", unode->dll_funcs.creator);
+	gi.dprintf("  |-- dll_funcs.apiversion = %d\n", unode->dll_funcs.apiversion);
+	gi.dprintf("  |--       unode->version = %d\n", version);
 #endif //DEBUG
-        if(unode->dll_funcs.apiversion != version)
-			gi.dprintf("Library %s has invalid version %d\n",
-				unode->libname, unode->dll_funcs.apiversion);
-        else
+	if(unode->dll_funcs.apiversion != version)
+		gi.dprintf("Library %s has invalid version %d\n",
+				   unode->libname, unode->dll_funcs.apiversion);
+	else
+	{
+		//ok, we have a valid api, call initialization function.
+		//gi.dprintf("Library has valid version\n");
+		if (!unode->dll_funcs.UserDLLInit)
+			gi.dprintf("Could not initialize library %s\n", unode->libname);
+		else
 		{
-			//ok, we have a valid api, call initialization function.
-				//gi.dprintf("Library has valid version\n");
-				if(!unode->dll_funcs.UserDLLInit)
-					gi.dprintf("Could not initialize library %s\n",unode->libname);
-                else
-				{
-					numLibsInit++;
-					unode->dll_funcs.UserDLLInit();  //whew, finally initialize the library
-					InitMOS_List(team_list[teamindex],unode->dll_funcs.mos_list);
+			numLibsInit++;
+			unode->dll_funcs.UserDLLInit();  //whew, finally initialize the library
+			InitMOS_List(team_list[teamindex], unode->dll_funcs.mos_list);
 
-					strcpy (team_list[teamindex]->playermodel, unode->dll_funcs.playermodel);
-					strcpy (team_list[teamindex]->teamid, unode->dll_funcs.teamid);
-				}
-
+			strcpy(team_list[teamindex]->playermodel, unode->dll_funcs.playermodel);
+			strcpy(team_list[teamindex]->teamid, unode->dll_funcs.teamid);
 		}
 
-		SetItemNames (); // do this again so we can get the team item strings loaded into CS_ITEMS
+	}
 
-        return numLibsInit;
+	SetItemNames (); // do this again so we can get the team item strings loaded into CS_ITEMS
+
+	return numLibsInit;
 }
 
 void ClearUserDLLs()
 {
-        userdll_list_node_t *unode, *tmp;
+	userdll_list_node_t *unode, *tmp;
 
-        gi.dprintf("Clearing user DLLs\n");
-        unode = GlobalUserDLLList;
-        while(unode)
-        {
-                //this should close the reference to the dll
-#ifdef __linux__
+	gi.dprintf("Clearing user DLLs\n");
+	unode = GlobalUserDLLList;
+	while (unode)
+	{
+		//this should close the reference to the dll
+		if (unode->hDLL)
+			dlclose(unode->hDLL);
 
-       if (team0_library) {
-               dlclose(team0_library);
-	       team0_library = NULL;
-       }
-
-       if (team1_library) {
-               dlclose(team1_library);
-	       team1_library = NULL;
-       }
-
-#else
-		if(unode->hDLL)
-                        FreeLibrary(unode->hDLL);
-#endif
-
-                tmp = unode;
-                unode = unode->next;
-                gi.TagFree(tmp);
-        }
+		tmp = unode;
+		unode = unode->next;
+		gi.TagFree(tmp);
+	}
 }
 
 
 void LevelStartUserDLLs(edict_t *ent)
 {
-        userdll_list_node_t *unode;
+	userdll_list_node_t *unode;
 
-        unode = GlobalUserDLLList;
-        while(unode)
-        {
-			if(unode->hDLL) unode->dll_funcs.UserDLLStartLevel(ent);
-            unode = unode->next;
-        }
+	unode = GlobalUserDLLList;
+	while (unode)
+	{
+		if (unode->hDLL)
+			unode->dll_funcs.UserDLLStartLevel(ent);
+		unode = unode->next;
+	}
 }
 
 void LevelExitUserDLLs()
 {
-     userdll_list_node_t *unode;
+	userdll_list_node_t *unode;
 
-     unode = GlobalUserDLLList;
-     while(unode)
-     {
-        unode->dll_funcs.UserDLLLeaveLevel();
-        unode = unode->next;
-     }
+	unode = GlobalUserDLLList;
+	while (unode)
+	{
+		unode->dll_funcs.UserDLLLeaveLevel();
+		unode = unode->next;
+	}
 
 	//ClearUserDLLs();
 }
@@ -334,25 +269,24 @@ void LevelExitUserDLLs()
 
 void PlayerSpawnUserDLLs(edict_t *ent)
 {
-        userdll_list_node_t *unode;
+	userdll_list_node_t *unode;
 
-        unode = GlobalUserDLLList;
-        while(unode)
-        {
-        unode->dll_funcs.UserDLLPlayerSpawns(ent);
-                unode = unode->next;
-        }
+	unode = GlobalUserDLLList;
+	while (unode)
+	{
+		unode->dll_funcs.UserDLLPlayerSpawns(ent);
+		unode = unode->next;
+	}
 }
 
 void PlayerDiesUserDLLs(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
-        userdll_list_node_t *unode;
+	userdll_list_node_t *unode;
 
-        unode = GlobalUserDLLList;
-        while(unode)
-        {
-        unode->dll_funcs.UserDLLPlayerDies (self, inflictor, attacker, damage, point);
-
-                unode = unode->next;
-        }
+	unode = GlobalUserDLLList;
+	while (unode)
+	{
+		unode->dll_funcs.UserDLLPlayerDies(self, inflictor, attacker, damage, point);
+		unode = unode->next;
+	}
 }
