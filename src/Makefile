@@ -35,13 +35,12 @@ COMMITINFO := $(shell git show -s --format='%h %cs')
 
 CC=gcc -fcommon
 BASE_CFLAGS=-Dstricmp=strcasecmp -DDEVVERSION='\"$(DEVVERSION)\"' -DCOMMITINFO='\"$(COMMITINFO)\"'
-CFLAGS_RELEASE=$(BASE_CFLAGS) -march=native -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
+CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 CFLAGS_DEBUG=$(BASE_CFLAGS) -g -DDEBUG
 
 # uncomment for ARM64 cross-compilation
 #ARCH=aarch64
 #CC=aarch64-linux-gnu-gcc -fcommon
-#CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 
 # Always uncommented
 LDFLAGS=-ldl -lm
