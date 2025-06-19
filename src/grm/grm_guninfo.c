@@ -62,7 +62,7 @@ GunInfo_t grmguninfo[]=
 
 		MOD_RIFLE,
 		DAMAGE_M98K, 0,
-		17//,
+		13 //17,
 		//"grm/m98ks/bolt.wav", 67
 	},
 	{//MP40 
@@ -130,7 +130,7 @@ GunInfo_t grmguninfo[]=
 		0
 	},
 	{//Sniper (M98ks) 
-		{4},{52,60,75,80}, 26,80, 43,43,
+		{4},{53,63,75,80}, 26,80, 43,43, //{4},{52,60,75,80}, 26,80, 43,43,
 
 			"grm/m98ks/unload.wav",
 				{29,40},//{31,42},

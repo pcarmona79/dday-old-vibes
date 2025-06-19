@@ -25,7 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-
+#ifndef __U_FINDFUNC_H__
+#define __U_FINDFUNC_H__
 
 /*
   u_findfunc.h
@@ -40,4 +41,6 @@ struct FuncArrayStruct
     void    (*func)();
 };
 
-void (*FindGameFunction(char *t));
+void *FindGameFunction(char *t);
+
+#endif /* __U_FINDFUNC_H__ */

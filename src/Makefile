@@ -24,14 +24,23 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-ARCH=x86_64
+#this nice line comes from the linux kernel makefile
+ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)
+
+# version to build
+DEVVERSION := "4.4k"
+
+# get the hash and date of the current commit
+COMMITINFO := $(shell git show -s --format='%h %cs')
+
 CC=gcc -fcommon
-BASE_CFLAGS=-Dstricmp=strcasecmp
-
-CFLAGS_RELEASE=$(BASE_CFLAGS) -march=x86-64 -O3 -ffast-math -funroll-loops \
-	-fomit-frame-pointer -fexpensive-optimizations
-
+BASE_CFLAGS=-Dstricmp=strcasecmp -DDEVVERSION='\"$(DEVVERSION)\"' -DCOMMITINFO='\"$(COMMITINFO)\"'
+CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 CFLAGS_DEBUG=$(BASE_CFLAGS) -g -DDEBUG
+
+# uncomment for ARM64 cross-compilation
+#ARCH=aarch64
+#CC=aarch64-linux-gnu-gcc -fcommon
 
 # Always uncommented
 LDFLAGS=-ldl -lm
@@ -103,12 +112,40 @@ GAME_OBJS =	\
 
 #	g_so.o # this file is a shared library thingie needed for Solaris
 
-game$(ARCH).$(SHLIBEXT) : $(GAME_OBJS)
-	$(MAKE) usa$(ARCH).$(SHLIBEXT) -C usa
-	$(MAKE) grm$(ARCH).$(SHLIBEXT) -C grm
-	$(MAKE) rus$(ARCH).$(SHLIBEXT) -C rus
-	$(MAKE) gbr$(ARCH).$(SHLIBEXT) -C gbr
+game$(ARCH).$(SHLIBEXT): $(GAME_OBJS) \
+		usa$(ARCH).$(SHLIBEXT) \
+		grm$(ARCH).$(SHLIBEXT) \
+		rus$(ARCH).$(SHLIBEXT) \
+		gbr$(ARCH).$(SHLIBEXT) \
+		ita$(ARCH).$(SHLIBEXT) \
+		pol$(ARCH).$(SHLIBEXT) \
+		jpn$(ARCH).$(SHLIBEXT) \
+		usm$(ARCH).$(SHLIBEXT)
 	$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(GAME_OBJS) $(LDFLAGS)
+
+usa$(ARCH).$(SHLIBEXT):
+	$(MAKE) usa$(ARCH).$(SHLIBEXT) -C usa
+
+grm$(ARCH).$(SHLIBEXT):
+	$(MAKE) grm$(ARCH).$(SHLIBEXT) -C grm
+
+rus$(ARCH).$(SHLIBEXT):
+	$(MAKE) rus$(ARCH).$(SHLIBEXT) -C rus
+
+gbr$(ARCH).$(SHLIBEXT):
+	$(MAKE) gbr$(ARCH).$(SHLIBEXT) -C gbr
+
+ita$(ARCH).$(SHLIBEXT):
+	$(MAKE) ita$(ARCH).$(SHLIBEXT) -C ita
+
+pol$(ARCH).$(SHLIBEXT):
+	$(MAKE) pol$(ARCH).$(SHLIBEXT) -C pol
+
+jpn$(ARCH).$(SHLIBEXT):
+	$(MAKE) jpn$(ARCH).$(SHLIBEXT) -C jpn
+
+usm$(ARCH).$(SHLIBEXT):
+	$(MAKE) usm$(ARCH).$(SHLIBEXT) -C usm
 
 #############################################################################
 # MISC
@@ -121,6 +158,10 @@ clean:
 	$(MAKE) clean -C grm
 	$(MAKE) clean -C rus
 	$(MAKE) clean -C gbr
+	$(MAKE) clean -C ita
+	$(MAKE) clean -C pol
+	$(MAKE) clean -C jpn
+	$(MAKE) clean -C usm
 
 depend:
 	gcc -MM $(GAME_OBJS:.o=.c)

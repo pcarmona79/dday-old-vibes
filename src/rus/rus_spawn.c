@@ -33,81 +33,79 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //no fancy spawning stuff here, just nice and easy
 
 void SP_item_weapon_tt33(edict_t *self)
-
 {
-    SpawnItem(self,FindItem("weapon_tt33"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_tt33", "rus"));
 }
 
 void SP_item_weapon_m9130(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_m9130"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_m9130", "rus"));
 }
 
 void SP_item_weapon_ppsh41(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_ppsh41"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_ppsh41", "rus"));
 }
 
 void SP_item_weapon_pps43(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_pps43"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_pps43", "rus"));
 }
 
 void SP_item_weapon_dpm(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_dpm"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_dpm", "rus"));
 }
 
 void SP_item_weapon_rpg1(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_rpg1"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_rpg1", "rus"));
 }
 
 void SP_item_weapon_m9130s(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_m9130s"));
+    SpawnItem(self, FindItemByClassnameInTeam("weapon_m9130s", "rus"));
 }
 
 //ammo
 
 void SP_item_ammo_grenades_rus(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_rus"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_grenades_rus", "rus"));
 }
 void SP_item_ammo_tt33(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_tt33"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_tt33", "rus"));
 }
 
 void SP_item_ammo_m9130(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_m9130"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_m9130", "rus"));
 }
 
 void SP_item_ammo_ppsh41(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_ppsh41"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_ppsh41", "rus"));
 }
 
 void SP_item_ammo_pps43(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_pps43"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_pps43", "rus"));
 }
 
 void SP_item_ammo_dpm(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_dpm"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_dpm", "rus"));
 }
 
 void SP_item_ammo_rocketsG(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_rocketsG"));
+    SpawnItem(self, FindItemByClassnameInTeam("ammo_rocketsG", "rus"));
 }
 
 
 
 spawn_t sp_rus[] =
-
 {
     "weapon_tt33", SP_item_weapon_tt33,
 	"weapon_m9130",SP_item_weapon_m9130,

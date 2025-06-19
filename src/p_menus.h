@@ -25,6 +25,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __P_MENUS_H__
+#define __P_MENUS_H__
+
+#include "p_menu.h"
+#include "q_shared.h"
+#include "p_observer.h"
 
 pmenu_t menu_teams[] = {
 	{ "*D-DAY: NORMANDY",				PMENU_ALIGN_CENTER, NULL, NULL },
@@ -92,3 +98,5 @@ pmenu_t menu_credits[] = {
 	{ NULL,								PMENU_ALIGN_CENTER,	NULL, NULL },
 	{ "Main Menu",						PMENU_ALIGN_CENTER,	NULL, M_Main_Menu },
 };
+
+#endif /* __P_MENUS_H__ */

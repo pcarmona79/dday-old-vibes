@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "x_fire.h"
 
+#include <ctype.h>
 
 //faf
 void Remove_Gib (edict_t *ent)
@@ -2717,3 +2718,144 @@ qboolean Surface(char *name, int type)
 	}
 	return false;
 }
+
+int Surface2(char *name)
+{
+	if (strcmpwld (name, "metal"))
+		return SURF_METAL;
+	if (strcmpwld (name, "hedgehog"))
+		return SURF_METAL;
+	if (strcmpwld (name, "pantheriv"))
+		return SURF_METAL;
+	if (strcmpwld (name, "base_bkup"))
+		return SURF_METAL;
+	if (strcmpwld (name, "trk_bed"))
+		return SURF_METAL;
+/*		if (strcmpwld (name, "tile10"))
+		return SURF_METAL;
+	if (strcmpwld (name, "tile11"))
+		return SURF_METAL;   */
+	if (strcmpwld (name, "duct"))
+		return SURF_METAL;
+/*		if (strcmpwld (name, "glider"))
+		return SURF_METAL;*/
+	if (strcmpwld (name, "barrel"))
+		return SURF_METAL;
+	if (strcmpwld (name, "colpiron"))
+		return SURF_METAL;
+	if (strcmpwld (name, "lcp"))
+		return SURF_METAL;
+	if (strcmpwld (name, "ammo"))
+		return SURF_METAL;
+	if (strcmpwld (name, "door1"))
+		return SURF_METAL;
+	if (strcmpwld (name, "trk"))
+		return SURF_METAL;
+	if (strcmpwld (name, "pipe"))
+		return SURF_METAL;
+	if (strcmpwld (name, "tile10"))
+		return SURF_METAL;
+	if (strcmpwld (name, "boat"))
+		return SURF_METAL;
+	if (strcmpwld (name, "mtlpanel"))
+		return SURF_METAL;
+	if (strcmpwld (name, "lcvp"))
+		return SURF_METAL;
+
+
+
+	if (strcmpwld (name, "grass"))
+		return SURF_GRASS;
+	if (strcmpwld (name, "ground1"))
+		return SURF_GRASS;
+	if (strcmpwld (name, "hedge"))
+		return SURF_GRASS;
+	if (strcmpwld (name, "redcarp"))
+		return SURF_GRASS;
+	if (strcmpwld (name, "carpet"))
+		return SURF_GRASS;
+	if (strcmpwld (name, "rug"))
+		return SURF_GRASS;
+	if (strcmpwld (name, "bush"))
+		return SURF_GRASS;
+
+
+
+	if (strcmpwld (name, "wood"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "wdfence"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "k_roof01"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "roof1"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "floor3"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "mr_floor10"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "a3"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "wdv256c"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "base_bkend"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "sandyrockboard"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "rf_sr_mw1"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "crate"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "ladder"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "bark"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "glider"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "box"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "shutter"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "k2x_woo"))
+		return SURF_WOOD;
+	if (strcmpwld (name, "door") &&
+		!strcmpwld (name, "dday3/door1"))
+		return SURF_WOOD;
+
+
+
+	if (strcmpwld (name, "sand"))
+		return SURF_SAND;
+	if (strcmpwld (name, "cf_m_asphalt1"))
+		return SURF_SAND;
+	if (strcmpwld (name, "mr_rock3"))
+		return SURF_SAND;
+	if (strcmpwld (name, "rubble"))
+		return SURF_SAND;
+	if (strcmpwld (name, "dirt"))
+		return SURF_SAND;
+	if (strcmpwld (name, "mud"))
+		return SURF_SAND;
+	if (strcmpwld (name, "white"))
+		return SURF_SAND;
+	if (strcmpwld (name, "snow"))
+		return SURF_SAND;
+	if (strcmpwld (name, "leave"))
+		return SURF_SAND;
+
+
+
+	if (strcmpwld (name, "window") && 
+		!(strcmpwld (name, "dday2/window2")))
+		return SURF_GLASS;
+	if (strcmpwld (name, "glass"))
+		return SURF_GLASS;
+	if (strcmpwld (name, "staing"))
+		return SURF_GLASS;
+	if (strcmpwld (name, "winlight"))
+		return SURF_GLASS;
+	if (strcmpwld (name, "dday2/a10"))
+		return SURF_GLASS;
+
+	return -1;
+}
+

@@ -36,6 +36,8 @@ void PMenu_Open(edict_t *ent, pmenu_t *entries, int cur, int num)
 	if (!ent->client)
 		return;
 
+	ent->client->chasetarget = NULL;
+
 	if (ent->client->menu) {
 		gi.dprintf("warning, ent already has a menu\n");
 		PMenu_Close(ent);

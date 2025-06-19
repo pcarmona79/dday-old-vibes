@@ -261,7 +261,7 @@ void Weapon_Bren (edict_t *ent)
 		69, 69, 73,
 		76, 78, 89,
 		
-		pause_frames, fire_frames, Weapon_Bren_Fire);
+		pause_frames, fire_frames, Weapon_LMG_Fire);
 }
 
 
@@ -1033,7 +1033,7 @@ void Weapon_Enfield_Fire (edict_t *ent)
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	// rezmoth - changed for new firing system
 	//VectorSet(offset, 0, (ent->client->aim)?0:7,  ent->viewheight-8);
-	if (ent->client->pers.weapon->position = LOC_RIFLE)
+	if (ent->client->pers.weapon->position == LOC_RIFLE)
 		VectorSet(offset, 0, 0, ent->viewheight - 0);	//2
 	else
 		ptrgi->dprintf("*** Firing System Error\n");

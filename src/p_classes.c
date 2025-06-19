@@ -33,43 +33,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // this file is for definitions for classes in DDay.
 
 
-
-void Give_Class_Weapon(edict_t *ent)
+//fills a gun with bullets
+void Load_Weapon (edict_t *ent, gitem_t	*item)
 {
-	gitem_t		*item;
-	gclient_t	*client;
-	gitem_t		*ammo_item;
+	gitem_t	*ammo_item;
 
-	client=ent->client;
-
-	//give everyone a knife & fists & helmet
-	// UNLESS invuln_medic
-	if (client->resp.mos == MEDIC && invuln_medic->value == 1)
-	{
-		item = FindItem("Morphine");
-		client->pers.inventory[ITEM_INDEX(item)] = 1;
-	}
-	else
-	{
-		item = FindItem("Helmet");
-		client->pers.inventory[ITEM_INDEX(item)] = 1;
-		item = FindItem("Fists");
-		client->pers.inventory[ITEM_INDEX(item)] = 1;
-		item = FindItem("Knife");
-		client->pers.inventory[ITEM_INDEX(item)] = 1;
-	}
-
-	item=FindItem(client->resp.team_on->mos[client->resp.mos]->weapon1);
 	// Loads primary weapon when spawning
-	ammo_item = FindItem(item->ammo);
+	ammo_item = FindItemInTeam(item->ammo, item->dllname);
 	if (!ammo_item)
 	{
 		gi.dprintf("WARNING: in Give_Class_Weapon %s spawned with no ammo for %s -> %s\n", ent->client->pers.netname, item->pickup_name, item->ammo);
 		return;
 	}
 
-//	if (!strcmp(item->ammo, "p38_mag"))
-//		ent->client->mags[1].pistol_rnd = ammo_item->quantity;
 
 	if (!strcmp(item->ammo, "mauser98k_mag") && !strcmp(item->pickup_name, "Mauser 98k"))
 		ent->client->mags[1].rifle_rnd = ammo_item->quantity;
@@ -92,7 +68,11 @@ void Give_Class_Weapon(edict_t *ent)
                         ent->client->mags[1].rifle_rnd = ammo_item->quantity;
                 else if ((item->position == LOC_SNIPER))
                         ent->client->mags[1].sniper_rnd = ammo_item->quantity;
-        }
+                else if ((item->position == LOC_SHOTGUN))
+                        ent->client->mags[1].shotgun_rnd = ammo_item->quantity;
+                 else if (item->position == LOC_SUBMACHINEGUN2)
+                        ent->client->mags[1].submg2_rnd = ammo_item->quantity;
+       }
 
         else if (!strcmp(item->dllname, team_list[0]->teamid))  //usually allied weapons here...
         {
@@ -101,7 +81,7 @@ void Give_Class_Weapon(edict_t *ent)
                 else if (item->position ==  LOC_RIFLE)
                         ent->client->mags[0].rifle_rnd = ammo_item->quantity;
                 else if (item->position == LOC_SNIPER)
-                        ent->client->mags[0].sniper_rnd = ammo_item->quantity;  //faf:  not used for usa but so plugin team 1 can use sane ammo for inf rifle and sniper rifle
+                        ent->client->mags[0].sniper_rnd = ammo_item->quantity;  //faf:  not used for usa but so plugin team 1 can use same ammo for inf rifle and sniper rifle
                 else if (item->position == LOC_SUBMACHINEGUN)
                         ent->client->mags[0].submg_rnd = ammo_item->quantity;
                 else if (item->position == LOC_L_MACHINEGUN)
@@ -112,80 +92,89 @@ void Give_Class_Weapon(edict_t *ent)
                         ent->client->mags[0].antitank_rnd = ammo_item->quantity;
                 else if (item->position == LOC_SNIPER)
                         ent->client->mags[0].sniper_rnd = ammo_item->quantity;
-        }
+                else if (item->position == LOC_SHOTGUN)
+                        ent->client->mags[0].shotgun_rnd = ammo_item->quantity;
+                 else if (item->position == LOC_SUBMACHINEGUN2)
+                        ent->client->mags[0].submg2_rnd = ammo_item->quantity;
+       }
 
         else if (!strcmp(item->ammo, "flame_mag"))
                 ent->client->flame_rnd = ammo_item->quantity;
-		
-		/*
-	else if (!strcmp(item->ammo, "mp40_mag"))
-		ent->client->mags[1].submg_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "mp43_mag"))
-		ent->client->mags[1].lmg_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "mg42_mag"))
-		ent->client->mags[1].hmg_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "grm_rockets"))
-		ent->client->mags[1].antitank_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "colt45_mag"))
-		ent->client->mags[0].pistol_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "m1_mag"))
-		ent->client->mags[0].rifle_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "thompson_mag"))
-		ent->client->mags[0].submg_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "bar_mag"))
-		ent->client->mags[0].lmg_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "hmg_mag"))
-		ent->client->mags[0].hmg_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "usa_rockets"))
-		ent->client->mags[0].antitank_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "m1903_mag"))
-		ent->client->mags[0].sniper_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "flame_mag"))
-		ent->client->flame_rnd = ammo_item->quantity;
-*/
+	
+}
 
+void Give_Class_Weapon(edict_t *ent)
+{
+	gitem_t		*item;
+	gclient_t	*client;
+	gitem_t		*ammo_item;
+
+	client=ent->client;
+
+	if (client->resp.mos == ENGINEER)
+	{
+		item = FindItem("Sandbags");
+		client->pers.inventory[ITEM_INDEX(item)]= 2;
+
+	}
+
+	//give everyone a knife & fists & helmet
+	// UNLESS invuln_medic
+	if (client->resp.mos == MEDIC && invuln_medic->value == 1)
+	{
+		item = FindItem("Morphine");
+		client->pers.inventory[ITEM_INDEX(item)] = 1;
+	}
+	else
+	{
+		item = FindItem("Helmet");
+		client->pers.inventory[ITEM_INDEX(item)] = 1;
+		item = FindItem("Fists");
+		client->pers.inventory[ITEM_INDEX(item)] = 1;
+		item = FindItem("Knife");
+		client->pers.inventory[ITEM_INDEX(item)] = 1;
+	}
+
+	item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->weapon1,
+						  client->resp.team_on->teamid);
+	
 	if (!item) { //pbowens: prevents from crashing the game
 		gi.cprintf(ent, PRINT_HIGH, "weapon1 item not found!\n");
 		return;
 	}
+
+	// Loads primary weapon when spawning
+	Load_Weapon (ent, item);
 
 	client->pers.selected_item=ITEM_INDEX(item);
 	client->newweapon=item;
 	client->pers.inventory[client->pers.selected_item]=1;
 
 	item = NULL;
-	//if(client->resp.team_on->mos[client->resp.mos]->weapon2)
-	//{
-		if(item=FindItem(client->resp.team_on->mos[client->resp.mos]->weapon2))
-		client->pers.inventory[ITEM_INDEX(item)]=1;
+
+	if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->weapon2,
+							  client->resp.team_on->teamid))
+		client->pers.inventory[ITEM_INDEX(item)] = 1;
 
 	// Loads secondary weapon, if existant, when spawning
 	if (item)
 	{
-		ammo_item = FindItem(item->ammo);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
 		if (!strcmp(item->dllname, team_list[1]->teamid) && item->position == LOC_PISTOL)
 			ent->client->mags[1].pistol_rnd = ammo_item->quantity;
 		else if (!strcmp(item->dllname, team_list[0]->teamid) && item->position == LOC_PISTOL)
 			ent->client->mags[0].pistol_rnd = ammo_item->quantity;
-
-		/*
-		ammo_item = FindItem(item->ammo);
-		if (!strcmp(item->ammo, "p38_mag"))
-			ent->client->mags[1].pistol_rnd = ammo_item->quantity;
-		else if (!strcmp(item->ammo, "colt45_mag"))
-			ent->client->mags[0].pistol_rnd = ammo_item->quantity;
-		*/
 	}
 
-	//}
-	//if(client->resp.team_on->mos[client->resp.mos]->grenades)
-	//{
-		if(item=FindItem(client->resp.team_on->mos[client->resp.mos]->grenades) )
+	// kernel: this forces team id when assigns grenades (italians has potato masher like germans)
+	if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->grenades,
+				client->resp.team_on->teamid))
 			client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->grenadenum;
 	//}
 	//if(client->resp.team_on->mos[client->resp.mos]->special)
 	//{
-		if(item=FindItem(client->resp.team_on->mos[client->resp.mos]->special) )
+		if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->special,
+				client->resp.team_on->teamid))
 		client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->specnum;
 	//}
 
@@ -197,23 +186,25 @@ void Give_Class_Weapon(edict_t *ent)
 //this function is for giving the player ammo...
 void Give_Class_Ammo(edict_t *ent)
 {
-	gitem_t *item,*item2;
+	gitem_t *item, *ammo_item;
 	
 	if (ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1 )
 	{
-		item=FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
-		item2=FindItem(item->ammo);
-		Add_Ammo(ent,item2,ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1);
+		item = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+							  ent->client->resp.team_on->teamid);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
+		if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1))
+			gi.cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
 	}
 
 	if (ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2 )
 	{
-		item=FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2);
-		item2=FindItem(item->ammo);
-		Add_Ammo(ent,item2,ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2);
+		item = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+							  ent->client->resp.team_on->teamid);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
+		if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2))
+			gi.cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
 	}
-	
-	
 }
 
 

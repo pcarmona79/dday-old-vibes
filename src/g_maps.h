@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __G_MAPS_H__
+#define __G_MAPS_H__
+
+#include "g_local.h"
+
 FILE *DDay_OpenFile (char *filename_ptr); 
 void DDay_CloseFile (FILE *fp);
 
@@ -55,3 +60,5 @@ void Cmd_Maplist_f       (edict_t *ent);
 void Svcmd_Maplist_f     (); 
 void DisplayMaplistUsage (edict_t *ent); 
 void ShowCurrentMaplist  (edict_t *ent);
+
+#endif /* __G_MAPS_H__ */

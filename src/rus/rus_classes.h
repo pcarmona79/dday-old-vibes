@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __RUS_CLASSES_H__
+#define __RUS_CLASSES_H__
+
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
@@ -56,7 +61,7 @@ SMos_t rus_MOS_List[]=
 		"Infantry",
 		"class_infantry",
 		"M91/30",
-		3,
+		6,
 		NULL,
 		0,
 		"F1 Grenade",
@@ -76,9 +81,9 @@ SMos_t rus_MOS_List[]=
 		"Officer",
 		"class_officer",
 		"ppsh41",
-		1,
-		"Tokarev TT33",
 		2,
+		"Tokarev TT33",
+		3,
 		"F1 Grenade",
 		STARTING_GRENADES,
 		"Binoculars",
@@ -96,7 +101,7 @@ SMos_t rus_MOS_List[]=
 		"Light Gunner",
 		"class_lmg",
 		"PPS43",
-		3,
+		4,
 		"Tokarev TT33",
 		2,
 		"F1 Grenade",
@@ -156,7 +161,7 @@ SMos_t rus_MOS_List[]=
 		"Airborne",
 		"class_special",
 		"ppsh41",
-		1,
+		2,
 		"Tokarev TT33",
 		3,
 		"F1 Grenade",
@@ -197,8 +202,8 @@ SMos_t rus_MOS_List[]=
 		"class_medic",
 		"Morphine",
 		1,
-		NULL,
-		0,
+		"Tokarev TT33",
+		2,
 		NULL,
 		0,
 		NULL,
@@ -217,7 +222,7 @@ SMos_t rus_MOS_List[]=
 		"Flamethrower",
 		0,
 		"Tokarev TT33",
-		2,
+		3,
 		"F1 Grenade",
 		STARTING_GRENADES,
 		NULL,
@@ -226,11 +231,10 @@ SMos_t rus_MOS_List[]=
 		MAX_FLAMER,
 		STANDARD_NORMAL+5,
 		STANDARD_MAX,
-		(STANDARD_SPEED_MOD * 0.80),
+		(STANDARD_SPEED_MOD * 0.85),
 		0.70,
 		"info_flamethrower_start"
 	}
 };
 
-
-
+#endif /* __RUS_CLASSES_H__ */

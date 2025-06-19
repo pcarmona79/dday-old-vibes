@@ -25,6 +25,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __ALLFUNCS_H__
+#define __ALLFUNCS_H__
+
+#include "g_local.h"
+#include "g_cmds.h"
+
 // File : \dday\source/g_ai.c
 void AI_SetSightClient(void );   // found @ line:31
 void ai_move(edict_t * self , float dist );   // found @ line:73
@@ -217,6 +223,7 @@ void reinforcement_think(edict_t * ent );   // found @ line:2032
 gitem_t * GetItemByIndex(int index );   // found @ line:40
 gitem_t * FindItemByClassname(char * classname );   // found @ line:55
 gitem_t * FindItem(char * pickup_name );   // found @ line:78
+gitem_t	* FindItemByClassnameInTeam(char *classname, char *dllname);
 void DoRespawn(edict_t * ent );   // found @ line:97
 void SetRespawn(edict_t * ent , float delay );   // found @ line:124
 qboolean Pickup_Powerup(edict_t * ent , edict_t * other );   // found @ line:137
@@ -341,6 +348,7 @@ void SP_misc_banner_1(edict_t * ent );   // found @ line:1182
 void SP_misc_banner_2(edict_t * ent );   // found @ line:1182
 void SP_misc_banner_3(edict_t * ent );   // found @ line:1182
 void SP_misc_banner_4(edict_t * ent );   // found @ line:1182
+void SP_misc_banner_generic (edict_t *ent, char *model);
 //bcass end
 void misc_deadsoldier_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point );   // found @ line:1197
 void SP_misc_deadsoldier(edict_t * ent );   // found @ line:1212
@@ -561,9 +569,13 @@ void Shrapnel_Explode(edict_t * ent );   // found @ line:486
 //bcass start - TNT
 void TNT_Explode(edict_t * ent );
 //bcass end
+void Play_Ricochet_Noise (edict_t *ent, vec3_t origin);
+void Play_WepSound(edict_t *ent, char *sound);
+void Smoke_Effect (vec3_t origin, float strength);
 // static void Shrapnel_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:559
 //void fire_grenade(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius );   // found @ line:605
 void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float time , float damage_radius , int team );   // found @ line:639
+void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 void rocket_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:693
 void fire_rocket(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:744
 void fire_shell(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:776
@@ -577,6 +589,19 @@ void Weapon_LMG_Fire(edict_t * ent );   // found @ line:1213
 void Weapon_HMG_Fire(edict_t * ent );   // found @ line:1294
 void Weapon_Rocket_Fire(edict_t * ent );   // found @ line:1421
 void Weapon_Sniper_Fire(edict_t * ent );   // found @ line:1465
+void Weapon_MG34_Fire (edict_t *ent);
+void Weapon_PIAT_Fire (edict_t *ent);
+void Weapon_Sabre_Fire (edict_t *ent);
+void Weapon_Bren_Fire (edict_t *ent);
+void Weapon_Katana_Fire (edict_t *ent);
+void Weapon_Molotov_Fire (edict_t *ent);
+void Weapon_MG42_Fire (edict_t *ent);
+void Shotgun_Reload (edict_t *ent, 
+	int FRAME_ACTIVATE_LAST,	int FRAME_LFIRE_LAST,	int FRAME_LIDLE_LAST, 
+	int FRAME_RELOAD_LAST,		int FRAME_LASTRD_LAST,	int FRAME_DEACTIVATE_LAST,
+	int FRAME_RAISE_LAST,		int FRAME_AFIRE_LAST,	int FRAME_AIDLE_LAST,
+	int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent));
+void Weapon_Shotgun_Fire (edict_t *ent);
 
 // File : \dday\source/m_actor.c
 void actor_stand(edict_t * self );   // found @ line:68
@@ -905,3 +930,5 @@ void dummy1(struct edict_s * i , struct gitem_s * ii );   // found @ line:90
 void dummy2(struct edict_s * i );   // found @ line:94
 spawn_t * InsertEntity(spawn_t * spawnInfo );   // found @ line:104
 int RemoveEntity(char * name );   // found @ line:132
+
+#endif /* __ALLFUNCS_H__ */

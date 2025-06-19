@@ -857,6 +857,26 @@ char *dday_statusbar =
 "   pic 28 "
 "endif "
 
+/*
+//autopickup
+"if 29 "
+"    xl 70 "
+"    yb -30 "
+"    string2 \"PICKUP\" "
+"    xl 65 "
+"    yb -20 "
+"    string2 \"ENABLED\" "
+"endif "
+*/
+//autopickup
+"if 30 "
+//"    xl 70 "
+//"    yb -30 "
+"   yb	-24 "
+"   xv	-60 "
+"pic 30 "
+"endif "
+
 // objectives	
 "if 16 "
 "   xl 0 " 
@@ -1034,6 +1054,10 @@ void SP_worldspawn (edict_t *ent)
 	gi.imageindex ("scorehead");
 	gi.imageindex ("scoreleft");
 	gi.imageindex ("scoreright");
+
+	// kernel: score on bottom screen
+	gi.imageindex("score_left_h");
+	gi.imageindex("score_right_h");
 
 	gi.imageindex ("inventory");
 

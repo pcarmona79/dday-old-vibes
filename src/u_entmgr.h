@@ -24,7 +24,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
- 
+
+#ifndef __U_ENTMGR_H__
+#define __U_ENTMGR_H__
+
  /*
   u_entmgr.h
 
@@ -46,3 +49,5 @@ spawn_t *InsertEntity(spawn_t *spawnInfo);
 //finds and removes the entity. returns the old index, -1 if not found
 
 int RemoveEntity(char *name);
+
+#endif /* __U_ENTMGR_H__ */

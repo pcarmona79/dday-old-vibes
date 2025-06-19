@@ -24,14 +24,17 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-ARCH=x86_64
+#this nice line comes from the linux kernel makefile
+ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)
+
 CC=gcc -fcommon
 BASE_CFLAGS=-Dstricmp=strcasecmp -I..
-
-CFLAGS_RELEASE=$(BASE_CFLAGS) -march=x86-64 -O3 -ffast-math -funroll-loops \
-	-fomit-frame-pointer -fexpensive-optimizations
-
+CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 CFLAGS_DEBUG=$(BASE_CFLAGS) -g -DDEBUG
+
+# uncomment for ARM64 cross-compilation
+#ARCH=aarch64
+#CC=aarch64-linux-gnu-gcc -fcommon
 
 # Always uncommented
 LDFLAGS=-ldl -lm
@@ -41,6 +44,8 @@ SHLIBCFLAGS=-fPIC
 SHLIBLDFLAGS=-shared
 
 DO_CC=$(CC) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
+
+all: build_release
 
 build_debug:
 	$(MAKE) rus$(ARCH).$(SHLIBEXT) CFLAGS="$(CFLAGS_DEBUG)"

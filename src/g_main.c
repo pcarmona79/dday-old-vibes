@@ -113,10 +113,21 @@ cvar_t  *force_auto_select;
 cvar_t  *allied_password;
 cvar_t  *axis_password;
 
+cvar_t *mashup;
+
 //kernel
 cvar_t  *teamkills_check;
 cvar_t  *teamkills_max;
 cvar_t  *teamkills_time;
+
+cvar_t *observer_bscore;
+
+// kernel: to get q2pro default directories
+cvar_t *sys_homedir;
+cvar_t *sys_libdir;
+
+int countdownTimer = 0;
+int countdownStart = 0;
 
 //cvar_t	*crosshair;
 
@@ -271,6 +282,9 @@ void EndDMLevel (void)
 	edict_t		*ent;
 	int i = 0;
 
+	// kernel: clear countdown vars
+	countdownTimer = countdownStart = 0;
+
 	// stay on same level flag
 	if ((int)dmflags->value & DF_SAME_LEVEL)
 	{
@@ -307,13 +321,26 @@ void EndDMLevel (void)
 			ent->map = level.nextmap;
 		else
 			ent->map = level.mapname;
+
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	} 
 	
-	else if (Last_Team_Winner <= 1 && team_list[Last_Team_Winner] && team_list[Last_Team_Winner]->nextmap)
+	else if (Last_Team_Winner >= 0 && Last_Team_Winner <= 1 &&
+			 team_list[Last_Team_Winner] && team_list[Last_Team_Winner]->nextmap)
 	{
 		ent= G_Spawn();
 		ent->classname = "target_changelevel";
 		ent->map = team_list[Last_Team_Winner]->nextmap;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
+	}
+
+	// kernel: tie game, repeat the same map
+	else if (Last_Team_Winner == -1)
+	{
+		ent= G_Spawn();
+		ent->classname = "target_changelevel";
+		ent->map = level.mapname;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	}
 
 	else if (level.nextmap[0])
@@ -321,6 +348,7 @@ void EndDMLevel (void)
 		ent = G_Spawn ();
 		ent->classname = "target_changelevel";
 		ent->map = level.nextmap;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	}
 	else
 	{	// search for a changeleve
@@ -331,10 +359,86 @@ void EndDMLevel (void)
 			ent = G_Spawn ();
 			ent->classname = "target_changelevel";
 			ent->map = level.mapname;
+			gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 		}
 	}
 
 	BeginIntermission (ent);
+}
+
+/*
+=================
+CheckWinningTeam: counts kills and points to get the team winner.
+=================
+*/
+int CheckWinningTeam(int allies_kills_win, int axis_kills_win, int allies_points_win, int axis_points_win)
+{
+	if (allies_kills_win + allies_points_win >
+		axis_kills_win + axis_points_win)
+	{
+		if (allies_kills_win)
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+					   team_list[0]->teamname,
+					   team_list[0]->kills,
+					   team_list[0]->need_kills);
+		else
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+					   team_list[0]->teamname,
+					   team_list[0]->score,
+					   team_list[0]->need_points);
+		return 0;
+	}
+	else if (allies_kills_win + allies_points_win <
+			 axis_kills_win + axis_points_win)
+	{
+		if (axis_kills_win)
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+					   team_list[1]->teamname,
+					   team_list[1]->kills,
+					   team_list[1]->need_kills);
+		else
+			gi.bprintf(PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+					   team_list[1]->teamname,
+					   team_list[1]->score,
+					   team_list[1]->need_points);
+		return 1;
+	}
+	else //faf:  for tie games
+	{
+		centerprintall("T I E   G A M E !");
+		return -1;
+	}
+}
+
+/*
+==================
+CheckUnfinishedMatch: check for winner when countdown has finished.
+==================
+*/
+int CheckUnfinishedMatch()
+{
+	int allies_kills_win = 0;
+	int axis_kills_win = 0;
+	int allies_points_win = 0;
+	int axis_points_win = 0;
+
+	if (team_list[0]->need_kills > 0 &&
+		team_list[0]->kills > team_list[1]->kills)
+		allies_kills_win++;
+
+	if (team_list[1]->need_kills > 0 &&
+		team_list[1]->kills > team_list[0]->kills)
+		axis_kills_win++;
+
+	if (team_list[0]->need_points > 0 &&
+		team_list[0]->score > team_list[1]->score)
+		allies_points_win++;
+
+	if (team_list[1]->need_points > 0 &&
+		team_list[1]->score > team_list[0]->score)
+		axis_points_win++;
+
+	return CheckWinningTeam(allies_kills_win, axis_kills_win, allies_points_win, axis_points_win);
 }
 
 /*
@@ -348,6 +452,11 @@ void CheckDMRules (void)
 	float		delay=0.0;
 	qboolean Is_Game_Over=false;
 	gclient_t	*cl;
+
+	int allies_kills_win = 0;
+	int axis_kills_win = 0;
+	int allies_points_win = 0;
+	int axis_points_win = 0;
 
 	if (level.intermissiontime)
 		return;
@@ -382,34 +491,54 @@ void CheckDMRules (void)
 			else if (delay == 300)
 				gi.bprintf ( PRINT_HIGH, "5 minutes left before team %s wins the battle!\n", team_list[i]->teamname);
 		}
-
-		if ((team_list[i]->need_kills > 0) && team_list[i]->kills >= team_list[i]->need_kills) 
-		{
-			gi.bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n", 
-				team_list[i]->teamname, 
-				team_list[i]->kills,
-				team_list[i]->need_kills);
-
-			Last_Team_Winner=i;
-			EndDMLevel ();
-			break;
-		}
-
-		
-		if ((team_list[i]->need_points > 0) && team_list[i]->score >= team_list[i]->need_points) 
-		{
-			gi.bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n", 
-				team_list[i]->teamname, 
-				team_list[i]->score,
-				team_list[i]->need_points);
-
-			Last_Team_Winner=i;
-			EndDMLevel ();
-			break;
-		}
-
 	}
 
+	//faf:  rewrite this so tie games are announced correctly
+	if (team_list[0] && team_list[1])
+	{
+		if (team_list[0]->need_kills > 0 &&
+			team_list[0]->kills >= team_list[0]->need_kills) 
+			allies_kills_win++;
+
+		if (team_list[1]->need_kills > 0 &&
+			team_list[1]->kills >= team_list[1]->need_kills) 
+			axis_kills_win++;
+
+		if (team_list[0]->need_points > 0 && 
+			team_list[0]->score >= team_list[0]->need_points) 
+			allies_points_win++;
+
+		if (team_list[1]->need_points > 0 && 
+			team_list[1]->score >= team_list[1]->need_points) 
+			axis_points_win++;
+
+		if (team_list[0]->kills_and_points)
+		{
+			if (allies_kills_win + allies_points_win < 2)
+			{
+				allies_kills_win = 0;
+				allies_points_win = 0;
+			}
+		}
+		if (team_list[1]->kills_and_points)
+		{
+			if (axis_kills_win + axis_points_win < 2)
+			{
+				axis_kills_win = 0;
+				axis_points_win = 0;
+			}
+		}
+
+		if (allies_kills_win || allies_points_win ||
+			axis_kills_win || axis_points_win)
+		{
+			Last_Team_Winner = CheckWinningTeam(allies_kills_win, axis_kills_win, allies_points_win, axis_points_win);
+			EndDMLevel();
+			return;
+		}
+	}
+
+	//faf: this is not used below
 	if(Is_Game_Over)
 	{
 		for(i=0;i<MAX_TEAMS;i++)
@@ -425,11 +554,52 @@ void CheckDMRules (void)
 		return;
 	}
 
-	if (timelimit->value)
+	// kernel: countdown check
+	if (countdownTimer > 0)
+	{
+		// reduce timer
+		--countdownTimer;
+
+		// if the timer reaches zero, end the level
+		if (countdownTimer == 0)
+		{
+			gi.bprintf(PRINT_HIGH, "Countdown limit hit.\n");
+			Last_Team_Winner = CheckUnfinishedMatch();
+			EndDMLevel();
+			return;
+		}
+
+		// show alerts based on time remaining
+		if (countdownTimer == 3000)
+		{
+			centerprintall("5 MINUTES WARNING!");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/5_minute.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownTimer == 600)
+		{
+			centerprintall("1 MINUTE WARNING!");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/1_minute.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownTimer == 30)
+		{
+			centerprintall("3...");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/final_count.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownTimer == 20)
+		{
+			centerprintall("2...");
+		}
+		else if (countdownTimer == 10)
+		{
+			centerprintall("1...");
+		}
+	}
+	else if (countdownTimer == 0 && timelimit->value) // kernel: timelimit only when there is no countdown
 	{
 		if (level.time >= timelimit->value*60)
 		{
 			gi.bprintf (PRINT_HIGH, "Timelimit hit.\n");
+			Last_Team_Winner = CheckWinningTeam(allies_kills_win, axis_kills_win, allies_points_win, axis_points_win);
 			EndDMLevel ();
 			return;
 		}
@@ -437,7 +607,13 @@ void CheckDMRules (void)
 
 	if (fraglimit->value)
 	{
-		for (i=0 ; i<maxclients->value ; i++)
+		// kernel: check if fraglimit changed its value to update need_kills properties
+		for (i = 0; i < MAX_TEAMS; ++i)
+		{
+			if (team_list[i]->need_kills != (int) fraglimit->value)
+				team_list[i]->need_kills = (int) fraglimit->value;
+		}
+		/*for (i=0 ; i<maxclients->value ; i++)
 		{
 			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
@@ -449,7 +625,7 @@ void CheckDMRules (void)
 				EndDMLevel ();
 				return;
 			}
-		}
+		}*/
 	}
 }
 
@@ -546,6 +722,35 @@ void G_RunFrame (void)
 		}
 
 		G_RunEntity (ent);
+	}
+
+	// kernel: check the countdown announce timer
+	if (countdownStart > 0)
+	{
+		// reduce the starting counter
+		--countdownStart;
+
+		if (countdownStart == 50)
+		{
+			centerprintall("PREPARE TO FIGHT!");
+			gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("misc/first_count.wav"), 1, ATTN_NONE, 0);
+		}
+		else if (countdownStart == 30)
+		{
+			centerprintall("3...");
+		}
+		else if (countdownStart == 20)
+		{
+			centerprintall("2...");
+		}
+		else if (countdownStart == 10)
+		{
+			centerprintall("1...");
+		}
+		else if (countdownStart == 0)
+		{
+			centerprintall("FIGHT!");
+		}
 	}
 
 	// see if it is time to end a deathmatch

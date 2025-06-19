@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __G_LOCAL_H__
+#define __G_LOCAL_H__
+
 // g_local.h -- local definitions for game module
 #include "g_defines.h"
 #include "q_shared.h"
@@ -41,12 +44,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 #include "p_menu.h"
 
+// 2024 - intptr_t is more apropiated for compatibility with both 64 and 32 bits - ZeRo
+#include <stdint.h>
+
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-//#define DEVVERSION	"4.1"
-//#define DEVVERSION "4.2s"//faf
-#define DEVVERSION "4.3k"
-//#define	DEBUG		1
+
+// this values will be defined by make
+#define RELEASE_VERSION DEVVERSION " " COMMITINFO
 
 // protocol bytes that can be directly added to messages
 #define	svc_muzzleflash		1
@@ -144,7 +149,8 @@ typedef enum
 	AMMO_HMG,
 	AMMO_RIFLE,
 	AMMO_SNIPER,
-	AMMO_FLAME
+	AMMO_FLAME,
+	AMMO_SHOTGUN
 } ammo_t;
 
 typedef enum
@@ -623,16 +629,20 @@ extern	int	body_armor_index;
 #define MOD_AIRSTRIKE_SPLASH  48//
 #define MOD_BAYONET			49//faf
 #define MOD_FRIENDLY_FIRE	0x8000000
+#define	MOD_BOTTLE			53
+#define	MOD_TANKHIT			54
+#define	MOD_SHOTGUN2		55
 
 extern	int	meansOfDeath;
 
 
 extern	edict_t			*g_edicts;
 
-#define	FOFS(x) (int)&(((edict_t *)0)->x)
-#define	STOFS(x) (int)&(((spawn_temp_t *)0)->x)
-#define	LLOFS(x) (int)&(((level_locals_t *)0)->x)
-#define	CLOFS(x) (int)&(((gclient_t *)0)->x)
+// 2024 - Modified from int to intptr_t - ZeRo
+#define	FOFS(x) (intptr_t)&(((edict_t *)0)->x)
+#define	STOFS(x) (intptr_t)&(((spawn_temp_t *)0)->x)
+#define	LLOFS(x) (intptr_t)&(((level_locals_t *)0)->x)
+#define	CLOFS(x) (intptr_t)&(((gclient_t *)0)->x)
 
 #define random()	((rand () & 0x7fff) / ((float)0x7fff))
 #define crandom()	(2.0 * (random() - 0.5))
@@ -713,10 +723,18 @@ extern  cvar_t  *force_auto_select;
 extern cvar_t  *allied_password;
 extern cvar_t  *axis_password;
 
+extern cvar_t *mashup;
+
 //kernel
 extern cvar_t  *teamkills_check;
 extern cvar_t  *teamkills_max;
 extern cvar_t  *teamkills_time;
+
+extern cvar_t *observer_bscore;
+
+// kernel: to get q2pro default directories
+extern cvar_t *sys_homedir;
+extern cvar_t *sys_libdir;
 
 //extern	cvar_t	*crosshair;
 
@@ -797,6 +815,8 @@ void InitItems (void);
 void SetItemNames (void);
 gitem_t	*FindItem (char *pickup_name);
 gitem_t	*FindItemByClassname (char *classname);
+gitem_t	*FindItemInTeam(char *pickup_name, char *dllname);
+gitem_t	*FindItemByClassnameInTeam (char *classname, char *dllname);
 #define	ITEM_INDEX(x) ((x)-itemlist)
 edict_t *Drop_Item (edict_t *ent, gitem_t *item);
 void SetRespawn (edict_t *ent, float delay);
@@ -1157,6 +1177,8 @@ typedef struct
 	float	arty_fire_time;	// last time artillary was fired
 	int		arty_fire_count; // how many times the battary has been fired
 
+	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
+
 }TeamS_t;
 
 
@@ -1260,7 +1282,14 @@ typedef struct
 
 		hmg_rnd,
 
-		antitank_rnd;		
+		antitank_rnd,	
+	
+		shotgun_rnd,
+		shotgun_fract,
+		
+		submg2_rnd,
+		submg2_fract
+;
 
 } mags_t;
 
@@ -1425,7 +1454,7 @@ struct gclient_s
 	//pbowens
 	int			dmgef_startframe;
 	int			dmgef_sway_value;
-	qboolean	dmgef_sway_switch;
+	int			dmgef_sway_switch;
 	float		dmgef_intensity;
 	qboolean	dmgef_flash;
 	float		dmgef_ablend;
@@ -1454,9 +1483,27 @@ struct gclient_s
 	float		last_shout_time;
 	float       footstep_framenum;
 
+	float		scopetime;//faf
+	float		unscopetime;//faf
 
+	float       last_fire_time;//faf
 
+	qboolean    tank_hit;//faf
 
+	edict_t     *chasetarget;//faf
+
+	float 		crosshair_offset_x;
+	float 		crosshair_offset_y;
+
+	float		gunwarntime;//stop warning spam
+
+	float		smoke_effect_goal;
+	float		smoke_effect_actual;
+
+	float		mg42_temperature;
+
+	edict_t		*sandbag_preview;
+	vec3_t		sandbag_pos;
 };
 
 
@@ -1656,6 +1703,7 @@ struct edict_s
 //	qboolean		ident;
 	
 	float			leave_limbo_time;//faf
+	int				oldstance;//faf
 
 };
 
@@ -1680,3 +1728,19 @@ extern qboolean	frame_output;
 #define DIZZYTIME 6 //seconds
 #define	flame_normal 0
 #define flame_gib 1
+
+typedef enum
+{
+	SOUND_WOOD,
+	SOUND_METAL,
+	SOUND_GLASS,
+	SOUND_SAND,
+	SOUND_CONCRETE
+} soundtype_t;
+
+int	allied_sandbags;
+int axis_sandbags;
+
+int Surface2(char *name);
+
+#endif /* __G_LOCAL_H__ */

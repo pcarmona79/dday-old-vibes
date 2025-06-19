@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "m_player.h"
 // g_arty.c
 // D-Day: Normandy Artillery and Airstrikes
 
@@ -39,6 +40,62 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	arty_time   -- seconds between each volley                 default: 60
 	arty_max    -- number of shots to be fired in each volley  default: 1
 */
+
+void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, char *wav, qboolean fists);
+void P_ProjectSource(gclient_t * client , vec3_t point , vec3_t distance , vec3_t forward , vec3_t right , vec3_t result );
+
+void Weapon_Bayonet_Fire1 (edict_t *ent)
+{
+	vec3_t  forward, right;
+    vec3_t  start;
+    vec3_t  offset;
+	vec3_t g_offset;
+	
+	VectorCopy (vec3_origin,g_offset);
+
+    AngleVectors (ent->client->v_angle, forward, right, NULL);
+    VectorSet(offset, 40, 8, ent->viewheight-8);
+    VectorAdd (offset, g_offset, offset);
+    P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+    VectorScale (forward, -2, ent->client->kick_origin);
+    ent->client->kick_angles[0] = -1;
+ 
+	//gi.dprintf("going to fire_knife\n");
+	fire_Knife (ent, start, forward, 0, 0, "gbr/bayonet/hit.wav", 0);
+
+	ent->client->ps.gunframe++;
+
+//	Play_WepSound(ent, (armedfists)?"fists/fire.wav":"knife/fire.wav");  //faf
+	gi.sound(ent, CHAN_WEAPON, gi.soundindex("gbr/bayonet/swipe.wav"), 1, ATTN_NORM, 0);//faf
+
+	//	gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
+	PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
+
+
+	// kernel: not sure if this will work
+	if (ent->oldstance == ent->stanceflags //faf: not changing stances
+		&& ent->client->pers.weapon && !ent->deadflag)
+	{
+		if (ent->stanceflags == STANCE_STAND)
+        {
+			ent->client->anim_priority = ANIM_REVERSE;
+	        ent->s.frame = FRAME_pain304+1;
+            ent->client->anim_end = FRAME_pain304;            
+        }
+        else if (ent->stanceflags == STANCE_DUCK)
+        {
+			ent->s.frame = FRAME_crwalk4;
+            ent->client->anim_end = FRAME_crwalk6;
+        }
+        else if (ent->stanceflags == STANCE_CRAWL)
+        {
+            ent->s.frame = FRAME_crawlpain01;
+            ent->client->anim_end = FRAME_crawlpain04;
+        }
+	}
+
+}
 
 /*
 =================
@@ -56,8 +113,91 @@ void Cmd_Arty_f (edict_t *ent)
 	trace_t	tr;
 	//int randnum;		
 
-	if (!IsValidPlayer)
+	if (!ent->client)
 		return;
+
+	if (!IsValidPlayer(ent))
+		return;
+
+	if (ent->deadflag)
+		return;
+
+	if (!ent->client->resp.team_on)
+		return;
+
+
+	if (ent->client &&
+		ent->client->pers.weapon &&
+		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_carcano"))
+	{
+		if (ent->client->weaponstate == WEAPON_READY &&
+			ent->client->ps.gunframe < 104 &&
+			!ent->client->aim)
+		{
+			ent->client->ps.gunframe = 104;
+			Weapon_Bayonet_Fire1 (ent);
+			return;
+		}
+		return;
+	}
+
+	if (ent->client &&
+		ent->client->pers.weapon &&
+		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_enfield"))
+	{
+		if (ent->client->weaponstate == WEAPON_READY &&
+			ent->client->ps.gunframe < 104 &&
+			!ent->client->aim)
+		{
+			ent->client->ps.gunframe = 104;
+			Weapon_Bayonet_Fire1 (ent);
+			return;
+		}
+		return;
+	}
+
+
+	if (ent->client &&
+		ent->client->pers.weapon &&
+		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_svt"))
+	{
+		if (ent->client->weaponstate == WEAPON_READY &&
+			ent->client->ps.gunframe < 89 &&
+			!ent->client->aim)
+		{
+			ent->client->ps.gunframe = 89;
+			Weapon_Bayonet_Fire1 (ent);
+			return;
+		}
+		return;
+	}
+
+
+	//faf:  moving this up so you dont have to look through binocs to cancel arty
+	// make sure artillary hasn't already been called
+	if (ent->client->arty_called && (ent->client->last_fire_time < level.time -.5))
+	{
+		ent->client->last_fire_time = level.time;
+		if (ent->client->arty_fired)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
+			return;
+		}
+		else
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
+			ent->client->arty_called = 0;
+			ent->client->arty_num--;
+			return;
+		}
+	}
+	else if (ent->client->pers.weapon &&
+			!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars") &&
+			!ent->client->aim)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Aim and then press fire to call an airstrike!\n");
+	}
+
 
 	if (ent->client->resp.mos != OFFICER) {
 		gi.cprintf(ent, PRINT_HIGH, "You're not an officer, soldier!\n");
@@ -72,42 +212,19 @@ void Cmd_Arty_f (edict_t *ent)
 
 
 
-	//faf:  moving this up so you dont have to look through binocs to cancel arty
-	// make sure artillary hasn't already been called
-	if ( ent->client->arty_called )
-	{
-		if (ent->client->arty_fired)
-		{
-			gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
-			return;
-		}
-		else
-		{
-			gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
-			ent->client->arty_called = 0;
-			ent->client->arty_num--;
-			return;
-		}
-	}
-
-
-
-
-
-
-	/* Wheaty: Officers can only call airstrikes with binoculars! */
+	// Wheaty: Officers can only call airstrikes with binoculars! 
 	if (strcmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 	{
 		gi.cprintf(ent, PRINT_HIGH, "What the hell are you aiming at? Use your binoculars!\n");
 		return;
 	}
-	else // pbowens: they have to be aiming, too
+	/* else // pbowens: they have to be aiming, too
 	{
 		if (!(ent->client->buttons & BUTTON_ATTACK)) {
 			gi.cprintf(ent, PRINT_HIGH, "Aim at the location, sir.\n");
 			return;
 		}
-	}
+	}*/
 
 
 
@@ -237,22 +354,23 @@ void Think_Arty (edict_t *ent)
     fire_rocket(ent, start, targetdir, 600, 240, 320, 480);
     */
 
-	fire_airstrike(ent, start, targetdir, 700, 250, 300, 450);
-	VectorSet(tempvec, 8, 8, 0);
-	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 450, 200, 430);
-	VectorSet(tempvec, 16, 16, 0);
-	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 400, 150, 400, 500);
-	VectorSet(tempvec, 24, 24, 0);
-	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 210, 250, 500);
+	// kernel: spread out and empower the airstrike
+	fire_airstrike(ent, start, targetdir, 700, 250, 400, 550);
 	VectorSet(tempvec, 32, 32, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 300, 430, 200, 450);
-	VectorSet(tempvec, 40, 40, 0);
+    fire_airstrike(ent, tempvec, targetdir, 600, 450, 300, 530);
+	VectorSet(tempvec, 64, 64, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 240, 320, 480);
+    fire_airstrike(ent, tempvec, targetdir, 400, 150, 500, 600);
+	VectorSet(tempvec, 96, 96, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 600, 210, 350, 600);
+	VectorSet(tempvec, 128, 128, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 300, 430, 300, 550);
+	VectorSet(tempvec, 160, 160, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 600, 240, 420, 580);
 
 	//fire_shell(ent, start, targetdir, 250, ((rand()%500)+900), 300, 75); 	
 	

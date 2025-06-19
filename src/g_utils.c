@@ -678,8 +678,12 @@ qboolean WeighPlayer(edict_t *ent)
 	if(ent->stanceflags==STANCE_DUCK)
 		ent->client->speedmod *= 0.60;
 	if(ent->stanceflags==STANCE_CRAWL)
-		ent->client->speedmod *= 0.45;		
-	
+	{
+		if (ent->waterlevel ==3)//swimming
+			ent->client->speedmod *= 1.1;		
+		else
+			ent->client->speedmod *= 0.45;		
+	}	
 
 	if( (ent->wound_location & LEG_WOUND) /*&& (!ent->arty_time)*/ )
 		ent->client->speedmod *= 0.75;
@@ -744,7 +748,11 @@ void centerprintall (char *mesg, ...)
 
 qboolean IsValidPlayer(edict_t *ent) {
 
-	if (ent && ent->client && ent->client->resp.team_on && ent->client->resp.mos)
+	if (ent && 
+		ent->client && 
+		ent->client->resp.team_on && 
+		ent->client->resp.mos &&
+		!ent->flyingnun)
 		return true;
 	else
 		return false;

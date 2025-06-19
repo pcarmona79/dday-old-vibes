@@ -38,6 +38,7 @@ void ClientUserinfoChanged(edict_t *ent, char *userinfo);
 void SwitchToObserver(edict_t *ent);
 void SyncUserInfo(edict_t *ent, qboolean pers);
 void ClientSetMaxSpeed (edict_t *ent, qboolean sync);
+void check_unscope (edict_t *ent);
 
 #define MEDIC_CALL_TIME 30
 
@@ -49,7 +50,7 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 	char* pw = NULL;
 	pw = gi.args();
 
-	if (ent->client->resp.AlreadySpawned)
+	/*if (ent->client->resp.AlreadySpawned)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Observer Mode is only available before you join a team.\n");
 		return;
@@ -59,7 +60,10 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "Observer Mode Not Available\n");
 		return;
-	} else if (Q_stricmp(flyingnun_password->string, pw) != 0) {
+	} else */
+	if (Q_stricmp(flyingnun_password->string, pw) != 0 
+		&& !ent->flyingnun) //faf
+	{
 		gi.cprintf(ent, PRINT_HIGH, "Observer Mode Password Incorrect\n");
 		return;
 	}
@@ -67,10 +71,72 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 	if (ent->flyingnun)
 	{
 		ent->flyingnun = false;
-		gi.bprintf(PRINT_CHAT, "***** %s is no longer an Observer *****\n", ent->client->pers.netname);
+		ent->client->chasetarget = NULL;
+		gi.bprintf (PRINT_HIGH, "%s is no longer an Observer.\n", ent->client->pers.netname);
+	
+		ent->client->resp.mos = NONE;
+		ent->client->resp.team_on = NULL;
+		ent->client->resp.AlreadySpawned = false;
+		InitClientResp (ent->client);
+		PutClientInServer (ent);
+		SwitchToObserver(ent);
 	} else {
+		if (!ent->deadflag && !ent->client->limbo_mode && ent->health > 0)
+		{
+			ent->flags &= ~FL_GODMODE;
+			ent->health = 0;
+			meansOfDeath = MOD_SUICIDE;
+			player_die (ent, ent, ent, 100000, vec3_origin);
+		}
+
+		ent->stance_view=20;//faf 22;
+		ent->stanceflags = STANCE_STAND;	
+
 		ent->flyingnun = true;
-		gi.bprintf(PRINT_CHAT, "***** %s is now an Observer *****\n", ent->client->pers.netname);
+		gi.bprintf(PRINT_HIGH, "%s is now an Observer.\n", ent->client->pers.netname);
+		gi.cprintf(ent,PRINT_HIGH, "Type \"Observer\" to leave observer mode.\n");
+		
+		//faf
+		//ent->client->layout_type = SHOW_NONE;
+	
+		//faf
+		ent->client->speedmax[0]=120;
+		ent->client->speedmax[1]=120;
+		ent->client->speedmax[2]=120;
+		ent->client->syncspeed = true;
+		ent->client->display_info = false;
+
+//		ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
+		/*faf: needs work
+
+		if (ent->health > 0)
+		{
+			ent->flags &= ~FL_GODMODE;
+			ent->health = 0;
+			meansOfDeath = MOD_SUICIDE;
+			player_die (ent, ent, ent, 100000, vec3_origin);
+		}
+
+
+		ent->s.sound = 0;
+		ent->s.modelindex = 0;
+		ent->movetype = MOVETYPE_NOCLIP; 
+		ent->solid = SOLID_NOT; 
+		ent->svflags |= SVF_NOCLIENT; 
+		ent->client->ps.gunindex = 0; 
+		ent->client->resp.team_on = 0;
+		ent->client->resp.mos = 0;
+		gi.linkentity (ent);  */
+
+
+		ent->s.sound = 0;
+		ent->s.modelindex = 0;
+		ent->movetype = MOVETYPE_NOCLIP; 
+		ent->solid = SOLID_NOT; 
+		ent->svflags |= SVF_NOCLIENT; 
+		ent->client->ps.gunindex = 0; 
+		ent->client->resp.team_on = NULL;
+		ent->client->resp.mos = NONE;
 	}
 }
 
@@ -132,6 +198,7 @@ g_cmds_t id_GameCmds[NUM_ID_CMDS] = // remember to set back to NUM_ID_COMDS
 	"stance",		1,	Cmd_Stance,
 //	"airstrike",	1,	Cmd_Airstrike_f,
 	"arty",			1,	Cmd_Arty_f,
+	"attack2",			1,	Cmd_Arty_f,
 	"class",		1,	Cmd_Menu_Class_f, //Cmd_MOS,
 //	"create_team",	1,	Cmd_Create_Team,
 	"join_team",	1,	Cmd_Menu_Team_f,//Cmd_Join_team,
@@ -176,12 +243,16 @@ void Cmd_Menu_Main_f(edict_t *ent)
 }
 void Cmd_Menu_Team_f(edict_t *ent) 
 { 
-	if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
+	if (ent->flyingnun)
+		Cmd_Menu_Main_f(ent);
+	else if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
 		ChooseTeam(ent); 
 }
 void Cmd_Menu_Class_f(edict_t *ent) 
 {	
-	if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
+	if (ent->flyingnun)
+		Cmd_Menu_Main_f(ent);
+	else if (!ent->client->display_info)//faf && level.framenum > ((int)level_wait->value * 10))
 		M_ChooseMOS(ent); 
 }
 
@@ -273,10 +344,10 @@ void Cmd_DDHelp_f(edict_t *ent)
 		"\n\n\n -- DDAY NORMANDY HELPFUL HINTS --\n\n"
 
 		"Useful binds:\n"
-		" arty        -- Call for artillery (officer class only).\n"
 		" autopickup  -- Toggle if you pickup items.\n"
 		" binds	      -- You are here.\n"
 		" drop ammo   -- Drop ammo for currently selected weapon.\n"
+		" arty/attack2- Use turret, use bayonet, cancel arty\n"
 		" drop gun    -- Drop your current weapon ONLY.\n"
 		" drop weapon -- Drop your current weapon AND all of its ammo.\n"
 		" id          -- Toggle player ID display.\n"
@@ -308,22 +379,80 @@ void Cmd_Scope_f(edict_t *ent);
 
 void Cmd_Scope_f(edict_t *ent)
 {
+	if (ent->client->chasetarget)
+	{
+		if(ent->client->aim == 0)
+		{
+			ent->client->aim = 1;
+			gi.centerprintf(ent,"(1) 1st person chase mode\n");
+		}
+		else if (ent->client->aim == 1)
+		{
+			ent->client->aim = 2;
+			gi.centerprintf(ent,"(2) 1st person chase with weapons mode\n");
+		}
+		else if (ent->client->aim == 2)
+		{
+			ent->client->aim = 3;
+			gi.centerprintf(ent,"(3) Auto 1st person with weapons/\n3rd person mode\n");
+		}
+		else if (ent->client->aim == 3)
+		{
+			ent->client->aim = 4;
+			gi.centerprintf(ent,"(4) Bird's eye view\n");
+		}
+		else if (ent->client->aim == 4)
+		{
+			ent->client->aim = 0;
+			gi.centerprintf(ent,"(5) 3rd person chase mode\n");
+		}
+
+		return;
+	}
 
 	if (!ent->client->pers.weapon ||
- 		 ent->client->pers.weapon->position== LOC_GRENADES ||
+ 		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbag") ||
+ 	//	 ent->client->pers.weapon->position== LOC_GRENADES ||
 		//bcass start - TNT
 		 ent->client->pers.weapon->position== LOC_TNT)
 		//bcass end
 		 return;
 
-
+	// kernel: copied from 5.x source
+	if (ent->client->pers.weapon->position == LOC_GRENADES)
+	{
+		if (!ent->client->aim) {
+			ent->client->aim = true;
+			gi.centerprintf(ent, "Long range throw!\n");
+		} else {
+			ent->client->aim = false;
+			gi.centerprintf(ent, "Short range throw!\n");
+		}
+		return;
+	}
+	
+	if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
+	{
+		if (ent->client->aim == true)
+		{
+			ent->client->aim = false;
+			ent->client->ps.gunframe = 8;
+		}
+		else
+		{
+			ent->client->aim = true;
+		}
+		//return true;
+		return;
+	}
+		 
 	// Nick - Hack to allow a bolt action Enfield reload animation to play the entirety.
-	if (!strcmp(ent->client->pers.weapon->classname, "weapon_Enfield") &&
+	/*if (!strcmp(ent->client->pers.weapon->classname, "weapon_Enfield") &&
 	(ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15 ||
 	ent->client->ps.gunframe >=88 && ent->client->ps.gunframe <=100))
 	{
 		return;
-	}
+	}*/
 		// End Nick
 
 
@@ -367,7 +496,7 @@ void Cmd_Scope_f(edict_t *ent)
 				ent->client->resp.scopewobble = 0;
 			}
 		}
-
+		return;
 	}
 
 	// pbowens: switched to WeighPlayer
@@ -405,6 +534,56 @@ char *ClientTeam (edict_t *ent)
 }
 
 
+void ChaseNext(edict_t *ent)
+{
+	int i;
+	edict_t *e;
+
+	if (!ent->client->chasetarget)
+		return;
+
+	i = ent->client->chasetarget - g_edicts;
+	do {
+		i++;
+		if (i > maxclients->value)
+			i = 1;
+		e = g_edicts + i;
+		if (!e->inuse)
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (!e->flyingnun)
+			break;
+	} while (e != ent->client->chasetarget);
+
+	ent->client->chasetarget = e;
+}
+
+void ChasePrev(edict_t *ent)
+{
+	int i;
+	edict_t *e;
+
+	if (!ent->client->chasetarget)
+		return;
+
+	i = ent->client->chasetarget - g_edicts;
+	do {
+		i--;
+		if (i < 1)
+			i = maxclients->value;
+		e = g_edicts + i;
+		if (!e->inuse)
+			continue;
+		if (!e->client->resp.team_on)
+			continue;
+		if (!e->flyingnun)
+			break;
+	} while (e != ent->client->chasetarget);
+
+	ent->client->chasetarget = e;
+}
+
 
 void SelectNextItem (edict_t *ent, int itflags)
 {
@@ -413,6 +592,12 @@ void SelectNextItem (edict_t *ent, int itflags)
 	gitem_t		*it;
 
 	cl = ent->client;
+
+	if (cl->chasetarget) 
+	{
+		ChaseNext(ent);
+		return;
+	}
 
    	if (cl->menu) {
 		PMenu_Next(ent);
@@ -446,6 +631,12 @@ void SelectPrevItem (edict_t *ent, int itflags)
 	gitem_t		*it;
 
 	cl = ent->client;
+
+	if (cl->chasetarget) 
+ 	{
+		ChasePrev(ent);
+		return;
+	}
 
    	if (cl->menu) {
 		PMenu_Prev(ent);
@@ -792,13 +983,19 @@ gitem_t	*FindNextPickup (edict_t *ent, int location)
 		else if (location)	// Skip the stuff below if its looking for a specific position
 			continue;
 
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1) )
+		// weapon1, weapon2, grenades y special son nombres de las armas del equipo
+		// agregar comprobacion de team para descartar que el arma recogida tenga el mismo nombre de otra en el inventario
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+				ent->client->resp.team_on->teamid))
 			continue;
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+				ent->client->resp.team_on->teamid))
 			continue;
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades,
+				ent->client->resp.team_on->teamid))
 			continue;
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+				ent->client->resp.team_on->teamid))
 			continue;
 		if (it == FindItem("Knife") )
 			continue;
@@ -831,7 +1028,13 @@ void Cmd_Use_f (edict_t *ent)
 	char		*s;
 
 	s = gi.args();
-	it = FindItem (s);
+	//it = FindItem (s); // kernel: I think this is unnecessary
+
+	if (ent->client->chasetarget)
+	{
+		if(Q_stricmp(s,"weapon")==0) 
+			Cmd_Scope_f(ent);
+	}
 
 	if (ent->client->limbo_mode || ent->deadflag)
 		return;
@@ -859,8 +1062,8 @@ void Cmd_Use_f (edict_t *ent)
 	}
 
 
-	if (!it)
-	{
+	//if (!it)
+	//{
 //////////////
 /// NEW USE SYSTEM
 //////////////
@@ -871,16 +1074,16 @@ void Cmd_Use_f (edict_t *ent)
 		}
 		else if (Q_stricmp(s,"weapon1")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"weapon2")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2);
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		/*
@@ -894,72 +1097,74 @@ void Cmd_Use_f (edict_t *ent)
 		*/
 		else if (Q_stricmp(s,"special")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->special);
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"grenades")==0) 
 		{
 			it = FindNextPickup(ent, LOC_GRENADES);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		else if (Q_stricmp(s,"melee")==0) 
 		{
 			it = FindNextPickup(ent, LOC_KNIFE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		else if (Q_stricmp(s,"pickup")==0) 
 		{
 			it = FindNextPickup(ent, LOC_NONE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name); // kernel: it could be null!
 		}	
 		
 		//faf
 		else if (Q_stricmp(s,"sniper")==0) 
 		{
 			it = FindNextPickup(ent, LOC_SNIPER);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name); // kernel: it could be null!
 		}					
 
 		else if (Q_stricmp(s,"pistol")==0) 
 		{
 			it = FindNextPickup(ent, LOC_PISTOL);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"rifle")==0) 
 		{
 			it = FindNextPickup(ent, LOC_RIFLE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 
 		else if (Q_stricmp(s,"smg")==0) 
 		{
+			it = FindNextPickup(ent, LOC_SUBMACHINEGUN2);
+			//strcpy(s, it->pickup_name);
 			it = FindNextPickup(ent, LOC_SUBMACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"lmg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_L_MACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"hmg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_H_MACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		else if (Q_stricmp(s,"rocket")==0) 
 		{
 			it = FindNextPickup(ent, LOC_ROCKET);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		else if (Q_stricmp(s,"flamer")==0)
 		{
 			it = FindNextPickup(ent, LOC_FLAME);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		//end faf
 
@@ -970,7 +1175,13 @@ void Cmd_Use_f (edict_t *ent)
 			return;
 		}
 				
+	//}
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Item '%s' not found\n", s);
+		return;
 	}
+
 	if (!it->use)
 	{
 		gi.cprintf (ent, PRINT_HIGH, "Item %s is not usable.\n", it->pickup_name);
@@ -1006,8 +1217,8 @@ void Cmd_Drop_f (edict_t *ent)
 	if (!ent->client->resp.team_on || !ent->client->resp.mos || ent->client->grenade || ent->client->grenade_index )
 		return;
 
-	s = gi.args();	
-	it = FindItem (s);
+	s = gi.args(); 
+	it = FindItemInTeam(s, ent->client->resp.team_on->teamid);
 
 //bcass start - drop
 	if (Q_stricmp(s, "gun") == 0 || //pbowens: do the same thing if it is the current weapon
@@ -1055,7 +1266,7 @@ void Cmd_Drop_f (edict_t *ent)
 			return;
 
 		// rezmoth - ammo_item definition has crashed the server twice
-		ammo_item	= FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index	= ITEM_INDEX(ammo_item);
 
 		if (!ent->client->pers.inventory[ammo_index] || !ammo_item->drop)
@@ -1113,7 +1324,7 @@ void Cmd_Drop_f (edict_t *ent)
 			gitem_t *ammo_item;
 			int		 ammo_index;
 
-			ammo_item	= FindItem(item->ammo);
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (ent->client->pers.inventory[ammo_index])
@@ -1255,6 +1466,14 @@ void Cmd_WeapPrev_f (edict_t *ent)
 
 	cl = ent->client;
 
+	if (cl->chasetarget) 
+	{
+		ChasePrev(ent);
+		return;
+	}
+	
+	check_unscope(ent);//faf
+
 	cl->ps.fov = STANDARD_FOV;
 
 	if (!cl->pers.weapon)
@@ -1301,6 +1520,13 @@ void Cmd_WeapNext_f (edict_t *ent)
 
 	cl = ent->client;
 
+
+	if (cl->chasetarget) 
+	{
+		ChaseNext(ent);
+		return;
+	}
+
 //	if (!cl->pers.weapon)
 //		return;
 
@@ -1312,6 +1538,7 @@ void Cmd_WeapNext_f (edict_t *ent)
 //blah		return;
 
 
+	check_unscope(ent);//faf
 
 	cl->ps.fov = STANDARD_FOV;
 
@@ -1351,6 +1578,14 @@ void Cmd_WeapLast_f (edict_t *ent)
 	gitem_t		*it;
 
 	cl = ent->client;
+
+	if (cl->chasetarget) 
+	{
+		ChasePrev(ent);
+		return;
+	}
+	check_unscope(ent);//faf
+
 	cl->ps.fov = STANDARD_FOV;
 
 	if (!cl->pers.weapon || !cl->pers.lastweapon)
@@ -2012,6 +2247,26 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		} 
 	}
 
+	if (ent->flyingnun || ent->deadflag || ent->health < 1)
+		return;
+
+	ent->client->anim_priority = ANIM_WAVE;
+	if (ent->stanceflags == STANCE_STAND)
+	{
+		ent->s.frame = FRAME_flip01-1;
+		ent->client->anim_end = FRAME_flip12;
+	}
+	else if (ent->stanceflags == STANCE_DUCK)
+	{
+		ent->s.frame = 168;
+		ent->client->anim_end = 171;
+	}
+	else if (ent->stanceflags == STANCE_CRAWL)
+	{
+		ent->s.frame = 229;
+		ent->client->anim_end = 232;
+	}
+	
 }
 
 
@@ -2392,7 +2647,7 @@ qboolean Cmd_Reload_f (edict_t *ent)
 
 	if (ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_ammount = &ent->client->pers.inventory[ammo_index];
 	}
@@ -2415,7 +2670,8 @@ qboolean Cmd_Reload_f (edict_t *ent)
 			return false;
 		}
 
-		mags_left= ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo))];
+		gitem_t *mags_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
+		mags_left = ent->client->pers.inventory[ITEM_INDEX(mags_item)];
 	} else
 		return false;
 
@@ -2622,10 +2878,12 @@ void Cmd_AutoPickUp_f (edict_t *ent) {
 	}
 
 	if (!ent->client->resp.autopickup) {
-		gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup enabled.\n");
+		// if (nohud->value) kernel: this cvar doesn't exist yet but it will be fun in the future
+		//	gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup enabled.\n");
 		ent->client->resp.autopickup = true;
 	} else {
-		gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup disabled.\n");
+		// if (nohud->value)
+		//	gi.cprintf(ent, PRINT_HIGH, "Auto Item pickup disabled.\n");
 		ent->client->resp.autopickup = false;
 	}
 }

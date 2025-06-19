@@ -25,6 +25,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __FUNCARRY_H__
+#define __FUNCARRY_H__
+
+#include "allfuncs.h"
+#include "u_findfunc.h"
+
+/*
+	kernel: Keep this list in alphabetical order, capitalized first, or FindGameFunction (u_findutil.c) will fail.
+	        Use "LC_ALL=C sort" to use ASCII order on this content.
+*/
 struct FuncArrayStruct GlobalGameFunctionArray[] =
 {
 "AI_SetSightClient", (void (*))AI_SetSightClient,   // void AI_SetSightClient(void )  \dday\source/g_ai.c:31
@@ -45,7 +55,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "BigFloat", (void (*))BigFloat,   // float BigFloat(float l )  \dday\source/q_shared.c:929
 "BigLong", (void (*))BigLong,   // int BigLong(int l )  \dday\source/q_shared.c:927
 "Blade_touch", (void (*))Blade_touch,   // void Blade_touch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/p_weapon.c:596
-"BoxOnPlaneSide", (void (*))BoxOnPlaneSide,   // int BoxOnPlaneSide(vec3_t emins , vec3_t emaxs , struct cplane_s * p )  \dday\source/q_shared.c:399
 "BoxOnPlaneSide", (void (*))BoxOnPlaneSide,   // int BoxOnPlaneSide(vec3_t emins , vec3_t emaxs , struct cplane_s * p )  \dday\source/q_shared.c:330
 "BoxOnPlaneSide2", (void (*))BoxOnPlaneSide2,   // int BoxOnPlaneSide2(vec3_t emins , vec3_t emaxs , struct cplane_s * p )  \dday\source/q_shared.c:291
 "COM_DefaultExtension", (void (*))COM_DefaultExtension,   // void COM_DefaultExtension(char * path , char * extension )  \dday\source/q_shared.c:888
@@ -57,11 +66,10 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "COM_StripExtension", (void (*))COM_StripExtension,   // void COM_StripExtension(char * in , char * out )  \dday\source/q_shared.c:807
 "CanDamage", (void (*))CanDamage,   // qboolean CanDamage(edict_t * targ , edict_t * inflictor )  \dday\source/g_combat.c:94
 "ChangeWeapon", (void (*))ChangeWeapon,   // void ChangeWeapon(edict_t * ent )  \dday\source/p_weapon.c:162
-// "CheckArmor", (void (*))CheckArmor,   // static int CheckArmor(edict_t * ent , vec3_t point , vec3_t normal , int damage , int te_sparks , int dflags )  \dday\source/g_combat.c:341
+//"CheckArmor", (void (*))CheckArmor,   // static int CheckArmor(edict_t * ent , vec3_t point , vec3_t normal , int damage , int te_sparks , int dflags )  \dday\source/g_combat.c:341
 "CheckDMRules", (void (*))CheckDMRules,   // void CheckDMRules(void )  \dday\source/g_main.c:255
-// "CheckPowerArmor", (void (*))CheckPowerArmor,   // static int CheckPowerArmor(edict_t * ent , vec3_t point , vec3_t normal , int damage , int dflags )  \dday\source/g_combat.c:257
+//"CheckPowerArmor", (void (*))CheckPowerArmor,   // static int CheckPowerArmor(edict_t * ent , vec3_t point , vec3_t normal , int damage , int dflags )  \dday\source/g_combat.c:257
 "CheckTeamDamage", (void (*))CheckTeamDamage,   // qboolean CheckTeamDamage(edict_t * targ , edict_t * attacker )  \dday\source/g_combat.c:447
-"M_ChooseMOS", (void (*))M_ChooseMOS,   // void ChooseMOS(edict_t * ent , qboolean smos )  \dday\source/observer.c:145
 "ChooseTeam", (void (*))ChooseTeam,   // void ChooseTeam(edict_t * ent )  \dday\source/observer.c:212
 "CleanUpCmds", (void (*))CleanUpCmds,   // void CleanUpCmds()  \dday\source/g_cmds.c:1441
 "ClearBounds", (void (*))ClearBounds,   // void ClearBounds(vec3_t mins , vec3_t maxs )  \dday\source/q_shared.c:631
@@ -118,11 +126,11 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Com_sprintf", (void (*))Com_sprintf,   // void Com_sprintf(char * dest , int size , char * fmt , ... )  \dday\source/q_shared.c:1205
 "CopyToBodyQue", (void (*))CopyToBodyQue,   // void CopyToBodyQue(edict_t * ent )  \dday\source/p_client.c:960
 "CrossProduct", (void (*))CrossProduct,   // void CrossProduct(vec3_t v1 , vec3_t v2 , vec3_t cross )  \dday\source/q_shared.c:734
+"DDayScoreboardMessage", (void (*))DDayScoreboardMessage,   // void DeathmatchScoreboardMessage(edict_t * ent , edict_t * killer )  \dday\source/p_hud.c:244
 "Damage_Loc", (void (*))Damage_Loc,   // int Damage_Loc(edict_t * targ , vec3_t point )  \dday\source/g_combat.c:468
 //"DeathmatchPlayerScore", (void (*))DeathmatchPlayerScore,   // void DeathmatchPlayerScore(edict_t * ent , edict_t * killer )  \dday\source/p_hud.c:147
 "DeathmatchScoreboard", (void (*))DeathmatchScoreboard,   // void DeathmatchScoreboard(edict_t * ent )  \dday\source/p_hud.c:316
 //"DeathmatchScoreboardMessage", (void (*))DeathmatchScoreboardMessage,   // void DeathmatchScoreboardMessage(edict_t * ent , edict_t * killer )  \dday\source/p_hud.c:244
-"DDayScoreboardMessage", (void (*))DDayScoreboardMessage,   // void DeathmatchScoreboardMessage(edict_t * ent , edict_t * killer )  \dday\source/p_hud.c:244
 "DoAnarchyStuff", (void (*))DoAnarchyStuff,   // int DoAnarchyStuff(edict_t * ent )  \dday\source/g_weapon.c:923
 "DoEndOM", (void (*))DoEndOM,   // void DoEndOM(edict_t * ent , qboolean calcOfficer )  \dday\source/observer.c:78
 "DoRespawn", (void (*))DoRespawn,   // void DoRespawn(edict_t * ent )  \dday\source/g_items.c:97
@@ -144,12 +152,13 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "FindCommand", (void (*))FindCommand,   // struct g_cmds_t * FindCommand(char * cmd )  \dday\source/g_cmds.c:1466
 "FindItem", (void (*))FindItem,   // gitem_t * FindItem(char * pickup_name )  \dday\source/g_items.c:78
 "FindItemByClassname", (void (*))FindItemByClassname,   // gitem_t * FindItemByClassname(char * classname )  \dday\source/g_items.c:55
+"FindItemByClassnameInTeam", (void (*))FindItemByClassnameInTeam, // gitem_t * FindItemByClassnameInTeam(char *classname, char *dllname)
 "FindNextPickup", (void (*))FindNextPickup,   // gitem_t * FindNextPos(edict_t * ent , int position )  \dday\source/g_cmds.c:450
 //"FindNextPos", (void (*))FindNextPos,   // gitem_t * FindNextPos(edict_t * ent , int position )  \dday\source/g_cmds.c:450
 //"FindTarget", (void (*))FindTarget,   // qboolean FindTarget(edict_t * self )  \dday\source/g_ai.c:388
 "Find_Mission_Start_Point", (void (*))Find_Mission_Start_Point,   // void Find_Mission_Start_Point(edict_t * ent , vec3_t origin , vec3_t angles )  \dday\source/p_client.c:908
-// "FireGrenade_Explode", (void (*))FireGrenade_Explode,   // static void FireGrenade_Explode(edict_t * ent )  \dday\source/x_fbomb.c:20
-// "FireGrenade_Touch", (void (*))FireGrenade_Touch,   // static void FireGrenade_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/x_fbomb.c:97
+//"FireGrenade_Explode", (void (*))FireGrenade_Explode,   // static void FireGrenade_Explode(edict_t * ent )  \dday\source/x_fbomb.c:20
+//"FireGrenade_Touch", (void (*))FireGrenade_Touch,   // static void FireGrenade_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/x_fbomb.c:97
 //"Fire_Arty", (void (*))Fire_Arty,   // void Fire_Arty(edict_t * battary , edict_t * ent )  \dday\source/g_arty.c:153
 "FloatNoSwap", (void (*))FloatNoSwap,   // float FloatNoSwap(float f )  \dday\source/q_shared.c:982
 "FloatSwap", (void (*))FloatSwap,   // float FloatSwap(float f )  \dday\source/q_shared.c:965
@@ -210,33 +219,35 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "LongNoSwap", (void (*))LongNoSwap,   // int LongNoSwap(int l )  \dday\source/q_shared.c:960
 "LongSwap", (void (*))LongSwap,   // int LongSwap(int l )  \dday\source/q_shared.c:948
 "LookAtKiller", (void (*))LookAtKiller,   // void LookAtKiller(edict_t * self , edict_t * inflictor , edict_t * attacker )  \dday\source/p_client.c:462
-"M_MOS_Join", (void (*))M_MOS_Join,   // void MOS_Join(edict_t * ent , int choice )  \dday\source/observer.c:126
 "M_CatagorizePosition", (void (*))M_CatagorizePosition,   // void M_CatagorizePosition(edict_t * ent )  \dday\source/g_monster.c:93
 "M_ChangeYaw", (void (*))M_ChangeYaw,   // void M_ChangeYaw(edict_t * ent )  \dday\source/m_move.c:285
 "M_CheckAttack", (void (*))M_CheckAttack,   // qboolean M_CheckAttack(edict_t * self )  \dday\source/g_ai.c:588
 "M_CheckBottom", (void (*))M_CheckBottom,   // qboolean M_CheckBottom(edict_t * ent )  \dday\source/m_move.c:18
 "M_CheckGround", (void (*))M_CheckGround,   // void M_CheckGround(edict_t * ent )  \dday\source/g_monster.c:51
+"M_ChooseMOS", (void (*))M_ChooseMOS,   // void ChooseMOS(edict_t * ent , qboolean smos )  \dday\source/observer.c:145
 //"M_FliesOff", (void (*))M_FliesOff,   // static void M_FliesOff(edict_t * self )  \dday\source/g_monster.c:17
 //"M_FliesOn", (void (*))M_FliesOn,   // static void M_FliesOn(edict_t * self )  \dday\source/g_monster.c:23
 "M_FlyCheck", (void (*))M_FlyCheck,   // void M_FlyCheck(edict_t * self )  \dday\source/g_monster.c:33
+"M_MOS_Join", (void (*))M_MOS_Join,   // void MOS_Join(edict_t * ent , int choice )  \dday\source/observer.c:126
 "M_MoveFrame", (void (*))M_MoveFrame,   // void M_MoveFrame(edict_t * self )  \dday\source/g_monster.c:271
 "M_MoveToGoal", (void (*))M_MoveToGoal,   // void M_MoveToGoal(edict_t * ent , float dist )  \dday\source/m_move.c:496
 "M_ReactToDamage", (void (*))M_ReactToDamage,   // void M_ReactToDamage(edict_t * targ , edict_t * attacker )  \dday\source/g_combat.c:381
 "M_SetEffects", (void (*))M_SetEffects,   // void M_SetEffects(edict_t * ent )  \dday\source/g_monster.c:242
+"M_Team_Join", (void (*))M_Team_Join,   // void Team_Join(edict_t * ent , int choice )  \dday\source/observer.c:179
 "M_WorldEffects", (void (*))M_WorldEffects,   // void M_WorldEffects(edict_t * ent )  \dday\source/g_monster.c:128
 "M_droptofloor", (void (*))M_droptofloor,   // void M_droptofloor(edict_t * ent )  \dday\source/g_monster.c:220
 "M_walkmove", (void (*))M_walkmove,   // qboolean M_walkmove(edict_t * ent , float yaw , float dist )  \dday\source/m_move.c:523
 "MegaHealth_think", (void (*))MegaHealth_think,   // void MegaHealth_think(edict_t * self )  \dday\source/g_items.c:476
-/*"Menu_Add", (void (*))Menu_Add,   // void Menu_Add(edict_t * ent , char * text )  \dday\source/Qmenu.c:243
-"Menu_Clear", (void (*))Menu_Clear,   // void Menu_Clear(edict_t * ent )  \dday\source/Qmenu.c:213
-"Menu_Close", (void (*))Menu_Close,   // void Menu_Close(edict_t * ent )  \dday\source/Qmenu.c:369
-"Menu_Dn", (void (*))Menu_Dn,   // void Menu_Dn(edict_t * ent )  \dday\source/Qmenu.c:417
-"Menu_Init", (void (*))Menu_Init,   // void Menu_Init(edict_t * ent )  \dday\source/Qmenu.c:188
-"Menu_Msg", (void (*))Menu_Msg,   // void Menu_Msg(edict_t * ent , char * message )  \dday\source/Qmenu.c:65
-"Menu_Open", (void (*))Menu_Open,   // void Menu_Open(edict_t * ent )  \dday\source/Qmenu.c:293
-"Menu_Sel", (void (*))Menu_Sel,   // void Menu_Sel(edict_t * ent )  \dday\source/Qmenu.c:443
-"Menu_Title", (void (*))Menu_Title,   // void Menu_Title(edict_t * ent , char * text )  \dday\source/Qmenu.c:270
-"Menu_Up", (void (*))Menu_Up,   // void Menu_Up(edict_t * ent )  \dday\source/Qmenu.c:391*/
+//"Menu_Add", (void (*))Menu_Add,   // void Menu_Add(edict_t * ent , char * text )  \dday\source/Qmenu.c:243
+//"Menu_Clear", (void (*))Menu_Clear,   // void Menu_Clear(edict_t * ent )  \dday\source/Qmenu.c:213
+//"Menu_Close", (void (*))Menu_Close,   // void Menu_Close(edict_t * ent )  \dday\source/Qmenu.c:369
+//"Menu_Dn", (void (*))Menu_Dn,   // void Menu_Dn(edict_t * ent )  \dday\source/Qmenu.c:417
+//"Menu_Init", (void (*))Menu_Init,   // void Menu_Init(edict_t * ent )  \dday\source/Qmenu.c:188
+//"Menu_Msg", (void (*))Menu_Msg,   // void Menu_Msg(edict_t * ent , char * message )  \dday\source/Qmenu.c:65
+//"Menu_Open", (void (*))Menu_Open,   // void Menu_Open(edict_t * ent )  \dday\source/Qmenu.c:293
+//"Menu_Sel", (void (*))Menu_Sel,   // void Menu_Sel(edict_t * ent )  \dday\source/Qmenu.c:443
+//"Menu_Title", (void (*))Menu_Title,   // void Menu_Title(edict_t * ent , char * text )  \dday\source/Qmenu.c:270
+//"Menu_Up", (void (*))Menu_Up,   // void Menu_Up(edict_t * ent )  \dday\source/Qmenu.c:391
 "MoveClientToIntermission", (void (*))MoveClientToIntermission,   // void MoveClientToIntermission(edict_t * ent )  \dday\source/p_hud.c:13
 "Move_Begin", (void (*))Move_Begin,   // void Move_Begin(edict_t * ent )  \dday\source/g_func.c:77
 "Move_Calc", (void (*))Move_Calc,   // void Move_Calc(edict_t * ent , vec3_t dest , void ( * func ) ( edict_t * ) )  \dday\source/g_func.c:95
@@ -291,6 +302,8 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Pickup_PowerArmor", (void (*))Pickup_PowerArmor,   // qboolean Pickup_PowerArmor(edict_t * ent , edict_t * other )  \dday\source/g_items.c:651
 "Pickup_Powerup", (void (*))Pickup_Powerup,   // qboolean Pickup_Powerup(edict_t * ent , edict_t * other )  \dday\source/g_items.c:137
 "Pickup_Weapon", (void (*))Pickup_Weapon,   // qboolean Pickup_Weapon(edict_t * ent , edict_t * other )  \dday\source/p_weapon.c:102
+"Play_Ricochet_Noise", (void (*))Play_Ricochet_Noise, // void Play_Ricochet_Noise (edict_t *ent, vec3_t origin)
+"Play_WepSound", (void (*))Play_WepSound, // void Play_WepSound(edict_t *ent, char *sound)
 "PlayerDiesUserDLLs", (void (*))PlayerDiesUserDLLs,   // void PlayerDiesUserDLLs(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point )  \dday\source/g_dll.c:200
 "PlayerNoise", (void (*))PlayerNoise,   // void PlayerNoise(edict_t * who , vec3_t where , int type )  \dday\source/p_weapon.c:42
 "PlayerSort", (void (*))PlayerSort,   // int PlayerSort(void const * a , void const * b )  \dday\source/g_cmds.c:843
@@ -324,8 +337,8 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "RemoveEntity", (void (*))RemoveEntity,   // int RemoveEntity(char * name )  \dday\source/u_entmgr.c:132
 "RotatePointAroundVector", (void (*))RotatePointAroundVector,   // void RotatePointAroundVector(vec3_t dst , const vec3_t dir , const vec3_t point , float degrees )  \dday\source/q_shared.c:13
 //"SMOS_Join", (void (*))SMOS_Join,   // void SMOS_Join(edict_t * ent , int choice )  \dday\source/observer.c:135
-// "SP_CreateCoopSpots", (void (*))SP_CreateCoopSpots,   // static void SP_CreateCoopSpots(edict_t * self )  \dday\source/p_client.c:59
-// "SP_FixCoopSpots", (void (*))SP_FixCoopSpots,   // static void SP_FixCoopSpots(edict_t * self )  \dday\source/p_client.c:28
+//"SP_CreateCoopSpots", (void (*))SP_CreateCoopSpots,   // static void SP_CreateCoopSpots(edict_t * self )  \dday\source/p_client.c:59
+//"SP_FixCoopSpots", (void (*))SP_FixCoopSpots,   // static void SP_FixCoopSpots(edict_t * self )  \dday\source/p_client.c:28
 //"SP_event_Arty_Strike", (void (*))SP_event_Arty_Strike,   // void SP_event_Arty_Strike(edict_t * ent )  \dday\source/g_ents.c:271
 "SP_func_areaportal", (void (*))SP_func_areaportal,   // void SP_func_areaportal(edict_t * ent )  \dday\source/g_misc.c:25
 "SP_func_button", (void (*))SP_func_button,   // void SP_func_button(edict_t * ent )  \dday\source/g_func.c:744
@@ -350,9 +363,9 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "SP_info_H_Gunner_Start", (void (*))SP_info_H_Gunner_Start,   // void SP_info_H_Gunner_Start(edict_t * ent )  \dday\source/p_client.c:165
 "SP_info_Infantry_Start", (void (*))SP_info_Infantry_Start,   // void SP_info_Infantry_Start(edict_t * ent )  \dday\source/p_client.c:163
 "SP_info_L_Gunner_Start", (void (*))SP_info_L_Gunner_Start,   // void SP_info_L_Gunner_Start(edict_t * ent )  \dday\source/p_client.c:164
-"SP_info_Officer_Start", (void (*))SP_info_Officer_Start,   // void SP_info_Officer_Start(edict_t * ent )  \dday\source/p_client.c:164
 "SP_info_Medic_Start", (void (*))SP_info_Medic_Start,   // void SP_info_Medic_Start(edict_t * ent )  \dday\source/p_client.c:168
 "SP_info_Mission_Results", (void (*))SP_info_Mission_Results,   // void SP_info_Mission_Results(edict_t * ent )  \dday\source/g_ents.c:94
+"SP_info_Officer_Start", (void (*))SP_info_Officer_Start,   // void SP_info_Officer_Start(edict_t * ent )  \dday\source/p_client.c:164
 //"SP_info_Skin", (void (*))SP_info_Skin,   // void SP_info_Skin(edict_t * ent )  \dday\source/g_ents.c:205
 "SP_info_Sniper_Start", (void (*))SP_info_Sniper_Start,   // void SP_info_Sniper_Start(edict_t * ent )  \dday\source/p_client.c:166
 "SP_info_Special_Start", (void (*))SP_info_Special_Start,   // void SP_info_Special_Start(edict_t * ent )  \dday\source/p_client.c:170
@@ -389,13 +402,12 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "SP_light_mine2", (void (*))SP_light_mine2,   // void SP_light_mine2(edict_t * ent )  \dday\source/g_misc.c:1472
 "SP_misc_actor", (void (*))SP_misc_actor,   // void SP_misc_actor(edict_t * self )  \dday\source/m_actor.c:406
 "SP_misc_banner", (void (*))SP_misc_banner,   // void SP_misc_banner(edict_t * ent )  \dday\source/g_misc.c:1182
-//bcass start - banner thing
-"SP_misc_banner_x", (void (*))SP_misc_banner_x,
 "SP_misc_banner_1", (void (*))SP_misc_banner_1,
 "SP_misc_banner_2", (void (*))SP_misc_banner_2,
 "SP_misc_banner_3", (void (*))SP_misc_banner_3,
 "SP_misc_banner_4", (void (*))SP_misc_banner_4,
-//bcass end
+"SP_misc_banner_generic", (void (*))SP_misc_banner_generic,
+"SP_misc_banner_x", (void (*))SP_misc_banner_x,
 "SP_misc_bigviper", (void (*))SP_misc_bigviper,   // void SP_misc_bigviper(edict_t * ent )  \dday\source/g_misc.c:1304
 "SP_misc_blackhole", (void (*))SP_misc_blackhole,   // void SP_misc_blackhole(edict_t * ent )  \dday\source/g_misc.c:1023
 "SP_misc_deadsoldier", (void (*))SP_misc_deadsoldier,   // void SP_misc_deadsoldier(edict_t * ent )  \dday\source/g_misc.c:1212
@@ -498,13 +510,12 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "ServerCommand", (void (*))ServerCommand,   // void ServerCommand(void )  \dday\source/g_svcmds.c:23
 "SetItemNames", (void (*))SetItemNames,   // void SetItemNames(void )  \dday\source/g_items.c:1690
 "SetRespawn", (void (*))SetRespawn,   // void SetRespawn(edict_t * ent , float delay )  \dday\source/g_items.c:124
+"Shotgun_Reload", (void (*))Shotgun_Reload,
 "Show_Mos", (void (*))Show_Mos,   // void Show_Mos(edict_t * ent )  \dday\source/p_classes.c:62
 "Shrapnel_Explode", (void (*))Shrapnel_Explode,   // void Shrapnel_Explode(edict_t * ent )  \dday\source/g_weapon.c:486
-//bcass start - tnt
-"TNT_Explode", (void (*))Shrapnel_Explode,   // void Shrapnel_Explode(edict_t * ent )  \dday\source/g_weapon.c:486
-//bcass end
-// "Shrapnel_Touch", (void (*))Shrapnel_Touch,   // static void Shrapnel_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_weapon.c:559
+//"Shrapnel_Touch", (void (*))Shrapnel_Touch,   // static void Shrapnel_Touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_weapon.c:559
 "ShutdownGame", (void (*))ShutdownGame,   // void ShutdownGame(void )  \dday\source/g_main.c:92
+"Smoke_Effect", (void (*))Smoke_Effect, // void Smoke_Effect (vec3_t origin, float strength)
 "SnapToEights", (void (*))SnapToEights,   // float SnapToEights(float x )  \dday\source/g_turret.c:18
 "SpawnDamage", (void (*))SpawnDamage,   // void SpawnDamage(int type , vec3_t origin , vec3_t normal , int damage )  \dday\source/g_combat.c:220
 "SpawnEntities", (void (*))SpawnEntities,   // void SpawnEntities(char * mapname , char * entities , char * spawnpoint )  \dday\source/g_spawn.c:556
@@ -514,9 +525,9 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "SwitchToObserver", (void (*))SwitchToObserver,   // void SwitchToObserver(edict_t * ent )  \dday\source/observer.c:10
 "Sys_Error", (void (*))Sys_Error,   // void Sys_Error(char * error , ... )  \dday\source/g_main.c:144
 "TH_viewthing", (void (*))TH_viewthing,   // void TH_viewthing(edict_t * ent )  \dday\source/g_misc.c:468
+"TNT_Explode", (void (*))Shrapnel_Explode,   // void Shrapnel_Explode(edict_t * ent )  \dday\source/g_weapon.c:486
 "T_Damage", (void (*))T_Damage,   // void T_Damage(edict_t * targ , edict_t * inflictor , edict_t * attacker , vec3_t dir , vec3_t point , vec3_t normal , int damage , int knockback , int dflags , int mod )  \dday\source/g_combat.c:512
 "T_RadiusDamage", (void (*))T_RadiusDamage,   // void T_RadiusDamage(edict_t * inflictor , edict_t * attacker , float damage , edict_t * ignore , float radius , int mod )  \dday\source/g_combat.c:724
-"M_Team_Join", (void (*))M_Team_Join,   // void Team_Join(edict_t * ent , int choice )  \dday\source/observer.c:179
 "Think_AccelMove", (void (*))Think_AccelMove,   // void Think_AccelMove(edict_t * ent )  \dday\source/g_func.c:315
 //"Think_Airstrike", (void (*))Think_Airstrike,   // void Think_Airstrike(edict_t * ent )  \dday\source/g_arty.c:379
 "Think_Arty", (void (*))Think_Arty,   // void Think_Arty(edict_t * ent )  \dday\source/g_arty.c:469
@@ -560,19 +571,27 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Weapon_Bandage_Use", (void (*))Weapon_Bandage_Use,   // void Weapon_Bandage_Use(edict_t * ent )  \dday\source/p_weapon.c:827
 "Weapon_Binoculars", (void (*))Weapon_Binoculars,   // void Weapon_Binoculars(edict_t * ent )  \dday\source/p_weapon.c:753
 "Weapon_Binoculars_Look", (void (*))Weapon_Binoculars_Look,   // void Weapon_Binoculars_Look(edict_t * ent )  \dday\source/p_weapon.c:737
+"Weapon_Bren_Fire", (void (*))Weapon_Bren_Fire, // void Weapon_Bren_Fire (edict_t *ent)
 "Weapon_Flamethrower", (void (*))Weapon_Flamethrower,   // void Weapon_Flamethrower(edict_t * ent )  \dday\source/p_weapon.c:944
 "Weapon_Generic", (void (*))Weapon_Generic,   // void Weapon_Generic(edict_t * ent , int FRAME_ACTIVATE_LAST , int FRAME_LFIRE_LAST , int FRAME_LIDLE_LAST ,  int FRAME_RELOAD_LAST , int FRAME_LASTRD_LAST , int FRAME_DEACTIVATE_LAST ,  int FRAME_RAISE_LAST , int FRAME_AFIRE_LAST , int FRAME_AIDLE_LAST ,  int * pause_frames , int * fire_frames , void ( * fire ) ( edict_t * ent ) )  \dday\source/p_generic_wep.c:29
 "Weapon_Grenade", (void (*))Weapon_Grenade,   // void Weapon_Grenade(edict_t * ent )  \dday\source/p_weapon.c:374
 "Weapon_HMG_Fire", (void (*))Weapon_HMG_Fire,   // void Weapon_HMG_Fire(edict_t * ent )  \dday\source/g_weapon.c:1294
+"Weapon_Katana_Fire", (void (*))Weapon_Katana_Fire, // void Weapon_Katana_Fire (edict_t *ent)
 "Weapon_Knife", (void (*))Weapon_Knife,   // void Weapon_Knife(edict_t * ent )  \dday\source/p_weapon.c:725
 "Weapon_Knife_Fire", (void (*))Weapon_Knife_Fire,   // void Weapon_Knife_Fire(edict_t * ent )  \dday\source/p_weapon.c:682
 "Weapon_LMG_Fire", (void (*))Weapon_LMG_Fire,   // void Weapon_LMG_Fire(edict_t * ent )  \dday\source/g_weapon.c:1213
+"Weapon_MG34_Fire", (void (*))Weapon_MG34_Fire, // void Weapon_MG34_Fire (edict_t *ent)
+"Weapon_MG42_Fire", (void (*))Weapon_MG42_Fire, // void Weapon_MG42_Fire (edict_t *ent)
 "Weapon_Mine", (void (*))Weapon_Mine,   // void Weapon_Mine(edict_t * ent )  \dday\source/p_weapon.c:535
+"Weapon_Molotov_Fire", (void (*))Weapon_Molotov_Fire, // void Weapon_Molotov_Fire (edict_t *ent)
 "Weapon_Morphine", (void (*))Weapon_Morphine,   // void Weapon_Morphine(edict_t * ent )  \dday\source/p_weapon.c:817
 "Weapon_Morphine_Use", (void (*))Weapon_Morphine_Use,   // void Weapon_Morphine_Use(edict_t * ent )  \dday\source/p_weapon.c:790
+"Weapon_PIAT_Fire", (void (*))Weapon_PIAT_Fire, // void Weapon_PIAT_Fire (edict_t *ent)
 "Weapon_Pistol_Fire", (void (*))Weapon_Pistol_Fire,   // void Weapon_Pistol_Fire(edict_t * ent )  \dday\source/g_weapon.c:982
 "Weapon_Rifle_Fire", (void (*))Weapon_Rifle_Fire,   // void Weapon_Rifle_Fire(edict_t * ent )  \dday\source/g_weapon.c:1067
 "Weapon_Rocket_Fire", (void (*))Weapon_Rocket_Fire,   // void Weapon_Rocket_Fire(edict_t * ent )  \dday\source/g_weapon.c:1421
+"Weapon_Sabre_Fire", (void (*))Weapon_Sabre_Fire, // void Weapon_Sabre_Fire (edict_t *ent)
+"Weapon_Shotgun_Fire", (void (*))Weapon_Shotgun_Fire, // void Weapon_Shotgun_Fire (edict_t *ent);
 "Weapon_Sniper_Fire", (void (*))Weapon_Sniper_Fire,   // void Weapon_Sniper_Fire(edict_t * ent )  \dday\source/g_weapon.c:1465
 "Weapon_Submachinegun_Fire", (void (*))Weapon_Submachinegun_Fire,   // void Weapon_Submachinegun_Fire(edict_t * ent )  \dday\source/g_weapon.c:1127
 "WriteClient", (void (*))WriteClient,   // void WriteClient(FILE * f , gclient_t * client )  \dday\source/g_save.c:374
@@ -647,7 +666,7 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "door_touch", (void (*))door_touch,   // void door_touch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_func.c:1106
 "door_use", (void (*))door_use,   // void door_use(edict_t * self , edict_t * other , edict_t * activator )  \dday\source/g_func.c:930
 "door_use_areaportals", (void (*))door_use_areaportals,   // void door_use_areaportals(edict_t * self , qboolean open )  \dday\source/g_func.c:833
-// "dopromote", (void (*))dopromote,   // void dopromote(TeamS_t * team , edict_t * ent )  \dday\source/g_combat.c:14
+//"dopromote", (void (*))dopromote,   // void dopromote(TeamS_t * team , edict_t * ent )  \dday\source/g_combat.c:14
 //"drop_make_touchable", (void (*))drop_make_touchable,   // static void drop_make_touchable(edict_t * ent )  \dday\source/g_items.c:743
 //"drop_temp_touch", (void (*))drop_temp_touch,   // static void drop_temp_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_items.c:735
 "droptofloor", (void (*))droptofloor,   // void droptofloor(edict_t * ent )  \dday\source/g_items.c:828
@@ -663,8 +682,9 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "fire_fragment", (void (*))fire_fragment,   // void fire_fragment(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick , int hspread , int vspread , int mod )  \dday\source/g_weapon.c:272
 //"fire_grenade", (void (*))fire_grenade,   // void fire_grenade(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius )  \dday\source/g_weapon.c:605
 "fire_grenade2", (void (*))fire_grenade2,   // void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius , qboolean held )  \dday\source/g_weapon.c:639
+"fire_gun", (void (*))fire_gun, // void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv)
 "fire_hit", (void (*))fire_hit,   // qboolean fire_hit(edict_t * self , vec3_t aim , int damage , int kick )  \dday\source/g_weapon.c:46
-// "fire_lead", (void (*))fire_lead,   // static void fire_lead(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick , int te_impact , int hspread , int vspread , int mod , qboolean calcv )  \dday\source/g_weapon.c:128
+//"fire_lead", (void (*))fire_lead,   // static void fire_lead(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick , int te_impact , int hspread , int vspread , int mod , qboolean calcv )  \dday\source/g_weapon.c:128
 "fire_rifle", (void (*))fire_rifle,   // void fire_rifle(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick )  \dday\source/g_weapon.c:812
 "fire_rocket", (void (*))fire_rocket,   // void fire_rocket(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage )  \dday\source/g_weapon.c:744
 "fire_shell", (void (*))fire_shell,   // void fire_shell(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage )  \dday\source/g_weapon.c:776
@@ -673,8 +693,8 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 //"fix_mos", (void (*))fix_mos,   // int fix_mos(char * argv )  \dday\source/g_cmds.c:1310
 "flymonster_start", (void (*))flymonster_start,   // void flymonster_start(edict_t * self )  \dday\source/g_monster.c:636
 "flymonster_start_go", (void (*))flymonster_start_go,   // void flymonster_start_go(edict_t * self )  \dday\source/g_monster.c:620
-// "func_clock_format_countdown", (void (*))func_clock_format_countdown,   // static void func_clock_format_countdown(edict_t * self )  \dday\source/g_misc.c:1636
-// "func_clock_reset", (void (*))func_clock_reset,   // static void func_clock_reset(edict_t * self )  \dday\source/g_misc.c:1621
+//"func_clock_format_countdown", (void (*))func_clock_format_countdown,   // static void func_clock_format_countdown(edict_t * self )  \dday\source/g_misc.c:1636
+//"func_clock_reset", (void (*))func_clock_reset,   // static void func_clock_reset(edict_t * self )  \dday\source/g_misc.c:1621
 "func_clock_think", (void (*))func_clock_think,   // void func_clock_think(edict_t * self )  \dday\source/g_misc.c:1663
 "func_clock_use", (void (*))func_clock_use,   // void func_clock_use(edict_t * self , edict_t * other , edict_t * activator )  \dday\source/g_misc.c:1728
 "func_conveyor_use", (void (*))func_conveyor_use,   // void func_conveyor_use(edict_t * self , edict_t * other , edict_t * activator )  \dday\source/g_func.c:1805
@@ -709,11 +729,9 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "insane_shake", (void (*))insane_shake,   // void insane_shake(edict_t * self )  \dday\source/m_insane.c:23
 "insane_stand", (void (*))insane_stand,   // void insane_stand(edict_t * self )  \dday\source/m_insane.c:527
 "insane_walk", (void (*))insane_walk,   // void insane_walk(edict_t * self )  \dday\source/m_insane.c:423
-// "light_use", (void (*))light_use,   // static void light_use(edict_t * self , edict_t * other , edict_t * activator )  \dday\source/g_misc.c:520
+//"light_use", (void (*))light_use,   // static void light_use(edict_t * self , edict_t * other , edict_t * activator )  \dday\source/g_misc.c:520
 "misc_banner_think", (void (*))misc_banner_think,   // void misc_banner_think(edict_t * ent )  \dday\source/g_misc.c:1176
-//bcass start - banner thing
 "misc_banner_x_think", (void (*))misc_banner_x_think,
-//bcass end
 "misc_blackhole_think", (void (*))misc_blackhole_think,   // void misc_blackhole_think(edict_t * self )  \dday\source/g_misc.c:1012
 "misc_blackhole_use", (void (*))misc_blackhole_use,   // void misc_blackhole_use(edict_t * ent , edict_t * other , edict_t * activator )  \dday\source/g_misc.c:1001
 "misc_deadsoldier_die", (void (*))misc_deadsoldier_die,   // void misc_deadsoldier_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point )  \dday\source/g_misc.c:1197
@@ -820,4 +838,8 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "weapon_grenadelauncher_fire", (void (*))weapon_grenadelauncher_fire,   // void weapon_grenadelauncher_fire(edict_t * ent )  \dday\source/p_weapon.c:504
 "", NULL    //End of functions
 };
-#define  FUNARRAYLEN   760
+
+// kernel: you can count lines with: grep '^"' funcarry.h | wc -l
+#define  FUNARRAYLEN   737
+
+#endif /* __FUNCARRY_H__ */

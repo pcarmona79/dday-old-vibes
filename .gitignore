@@ -1,0 +1,6 @@
+*.o
+*.so
+*~
+.vscode/settings.json
+src/compile_commands.json
+src/.cache/

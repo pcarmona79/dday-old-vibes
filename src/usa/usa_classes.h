@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __USA_CLASSES_H__
+#define __USA_CLASSES_H__
+
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
@@ -197,8 +202,8 @@ SMos_t USA_MOS_List[]=
 		"class_medic",
 		"Morphine",
 		1,
-		NULL,
-		0,
+		"colt45",
+		2,
 		NULL,
 		0,
 		NULL,
@@ -217,8 +222,8 @@ SMos_t USA_MOS_List[]=
 		"class_flamethrower",
 		"Flamethrower",
 		0,
-		NULL,
-		0,
+		"colt45",
+		3,
 		"USA Grenade",
 		STARTING_GRENADES,
 		NULL,
@@ -227,8 +232,10 @@ SMos_t USA_MOS_List[]=
 		MAX_FLAMER,
 		STANDARD_NORMAL+5,
 		STANDARD_MAX,
-		(STANDARD_SPEED_MOD * 0.80),
+		(STANDARD_SPEED_MOD * 0.85),
 		.66,
 		"info_flamethrower_start"
 	}
 };
+
+#endif /* __USA_CLASSES_H__ */

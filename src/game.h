@@ -25,7 +25,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GAME_H__
+#define __GAME_H__
 
+#include "q_shared.h"
 
 // game.h -- game dll information visible to server
 
@@ -243,3 +246,5 @@ typedef struct
 #ifndef USER_EXCLUDE_FUNCTIONS
 game_export_t *GetGameApi (game_import_t *import);
 #endif
+
+#endif /* __GAME_H__ */

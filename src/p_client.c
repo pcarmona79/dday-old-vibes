@@ -46,6 +46,7 @@ void change_stance(edict_t *self, int stance);
 void Cmd_Scope_f(edict_t *ent);
 void Drop_Weapon (edict_t *ent, gitem_t *item);
 void weapon_grenade_fire (edict_t *ent);
+void check_unscope (edict_t *ent);
 
 //kernel: to kick teamkillers
 void DropClient (edict_t *ent);
@@ -466,6 +467,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
 				break;
+			case MOD_SHOTGUN2:
+				message = "was shotgunned by";
+				break;
 			case MOD_RIFLE:
 				message = "was shot down by";
 				message2 = "'s rifle";
@@ -566,7 +570,12 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				break;
 /*-----------------------------------------------------------------*/
 			case MOD_KNIFE:
-				message = "was castrated by";
+				if (attacker->client->pers.weapon &&
+						(!Q_strcasecmp(attacker->client->pers.weapon->classname, "weapon_katana")
+						|| !Q_strcasecmp(attacker->client->pers.weapon->classname, "weapon_sabre")))
+					message = "was sliced in half by";
+				else
+					message = "was castrated by";
 				break;
 			case MOD_FISTS:
 				message = "was punched out by";
@@ -577,6 +586,12 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_BAYONET:
 				message = "was bayoneted by";
 				break;//faf
+			case MOD_BOTTLE:
+				message = "was molotoved by";
+				break;//faf
+			case MOD_TANKHIT:
+				message = "got blown up by";
+				break;
 
 
 
@@ -690,6 +705,7 @@ void TossClientWeapon (edict_t *self)
 		((Q_stricmp (item->pickup_name, "Morphine")   == 0) ||
 		 (Q_stricmp (item->pickup_name, "Fists")      == 0) ||
 		 (Q_stricmp (item->pickup_name, "TNT")      == 0) ||
+		 (Q_stricmp (item->pickup_name, "Sandbags")      == 0) ||
 		 (Q_stricmp (item->pickup_name, "Binoculars") == 0) ))
 		item = NULL;
 
@@ -724,7 +740,7 @@ void TossClientWeapon (edict_t *self)
 			gitem_t *ammo_item;
 			int		 ammo_index;
 
-			ammo_item	= FindItem(item->ammo);
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (self->client->pers.inventory[ammo_index])
@@ -872,6 +888,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		|| (meansOfDeath == MOD_G_SPLASH) 
 		|| (meansOfDeath == MOD_HG_SPLASH)		
 		|| (meansOfDeath == MOD_EXPLOSIVE)
+		|| (meansOfDeath == MOD_TANKHIT)
 		|| (meansOfDeath == MOD_TNT)
 		|| (meansOfDeath == MOD_TNT1)
 		|| (meansOfDeath == MOD_HELD_TNT)
@@ -972,6 +989,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		self->client->mags[i].sniper_rnd	= 0;
 		self->client->mags[i].submg_fract	= 0;
 		self->client->mags[i].submg_rnd		= 0;		
+		self->client->mags[i].submg2_rnd		= 0;		
+		self->client->mags[i].shotgun_rnd		= 0;		
 	}
 
 	self->client->last_wound_inflictor = NULL;//faf
@@ -1764,6 +1783,8 @@ void PutClientInServer (edict_t *ent)
 
 	ent->client->jump_stamina = JUMP_MAX;
 	ent->flyingnun = false;
+
+	ent->client->last_fire_time = 0;
 }
 
 /*
@@ -2438,9 +2459,18 @@ you can get the motd by typing MOTD at the console too
   //these are the premove routines needed to make sure things work the way they are supposed to...
 	if (client->limbo_mode && ent->flyingnun && !ent->client->resp.team_on)
 	{
-		ucmd->forwardmove *= 3;
-		ucmd->sidemove *= 3;
-		ucmd->upmove *= 3;
+		if (!client->chasetarget)
+		{
+			ucmd->forwardmove *= 3;
+			ucmd->sidemove *= 3;
+			ucmd->upmove *= 3;
+		}
+		else
+		{
+			ucmd->forwardmove	 = 0;
+			ucmd->sidemove		 = 0;
+			ucmd->upmove		 = 0;
+		}
 	}
 	else if (client->limbo_mode)
 	{
@@ -2624,6 +2654,15 @@ you can get the motd by typing MOTD at the console too
 	if (level.time >= ent->client->cmdtime || client->syncspeed == true) 
 	{
 		if (client->syncspeed) {
+			//faf : player properly frozen in death view
+			if (ent->client->limbo_mode &&
+					!ent->flyingnun) //observer mode
+			{
+				ent->client->speedmax[0]=0;
+				ent->client->speedmax[1]=0;
+				ent->client->speedmax[2]=0;
+			}
+
 			// be careful with this. it can overflow clients if used too much
 			Com_sprintf(cmd, sizeof(cmd), "cl_forwardspeed %i; cl_sidespeed %i; cl_upspeed %i;",
 				ent->client->speedmax[0],
@@ -2758,9 +2797,13 @@ you can get the motd by typing MOTD at the console too
 		//faf
 		if (ent->client->aim == true &&
 			ent->client->pers.weapon->position != LOC_KNIFE  &&
-			ent->client->pers.weapon->position != LOC_HELMET)
+			ent->client->pers.weapon->position != LOC_HELMET &&
+			Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 		{
 			ent->client->aim = false;
+
+			check_unscope(ent);//faf
+
 			ent->client->ps.fov = STANDARD_FOV;
 		}
 
@@ -2967,6 +3010,40 @@ you can get the motd by typing MOTD at the console too
 	//END DDAY
 }
 
+edict_t *Nearest_Player(edict_t *ent)
+{
+	int i;
+    edict_t *e;
+	edict_t *nearest = NULL;
+	float temp_distance, nearest_distance = 9999999;
+	vec3_t dist;
+
+
+	for (i=0 ; i < game.maxclients ; i++)
+	{
+		e = g_edicts + 1 + i;
+		if (!e->inuse || !e->client || !e->client->resp.team_on)
+			continue;
+		if (e == ent)
+			continue;
+		
+		VectorSubtract (e->s.origin, ent->s.origin, dist);
+		
+		temp_distance = VectorLength(dist);
+		if (temp_distance < nearest_distance)
+		{
+			nearest_distance = temp_distance;
+			nearest = e;
+		}
+	}
+
+	if (nearest)
+		return nearest;
+	else 
+		return NULL;
+}
+
+
 void EndObserverMode(edict_t *ent);
 /*
 ==============
@@ -2980,6 +3057,7 @@ void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;
+	edict_t *chase;
 
 	if (level.intermissiontime)
 		return;
@@ -2992,10 +3070,48 @@ void ClientBeginServerFrame (edict_t *ent)
 	else
 		client->weapon_thunk = false;
 
-	
+	if (ent->flyingnun)
+	{
+		if (ent->client->chasetarget && !ent->client->chasetarget->inuse)
+			ent->client->chasetarget=NULL;
+
+
+		if (client->latched_buttons & BUTTON_ATTACK)
+		{
+			if (ent->client->chasetarget)
+				ent->client->chasetarget = NULL;
+			else 
+			{
+				/*for (n = 1; n <= maxclients->value; n++)
+				{
+					player = &g_edicts[n];
+
+					if (!player->inuse)
+						continue;
+					if (!player->client)
+						continue;
+					if (!player->client->resp.team_on)
+						continue;
+
+					chase = player;
+				}*/
+				chase = Nearest_Player(ent);
+				if (!chase)
+				{
+					//gi.cprintf (ent, PRINT_HIGH, "No one to chase.\n");
+					ent->client->chasetarget = NULL;
+					
+				}
+				else
+					ent->client->chasetarget= chase;
+			}
+		}
+		client->latched_buttons = 0;
+		return;
+	}
 
 //faf:  players press fire to bring up class or team menu when they need it
-	if (ent->client->limbo_mode)
+	else if (ent->client->limbo_mode)
 	{
 		if (client->latched_buttons & BUTTON_ATTACK)
 		{

@@ -203,16 +203,83 @@ void SP_info_reinforcement_start(edict_t *ent)
 
 void SP_info_team_start(edict_t *ent)
 {
-	int i;
+	int i, k;
+	char *mashup_team, *mashup_name;
 	
 	i=ent->obj_owner;
 	
+	//fix for mappers who use capital letters for teamid
+	for (k = 0; ent->pathtarget[k]; k++)
+		ent->pathtarget[k] = tolower(ent->pathtarget[k]);
+		
 	team_list[i]=gi.TagMalloc(sizeof(TeamS_t),TAG_LEVEL);
-	team_list[i]->teamname=gi.TagMalloc(sizeof(ent->message + 2),TAG_LEVEL);
-	//strcpy(team_list[i]->teamname,ent->message);
-	team_list[i]->teamname = ent->message;
+
+	if (mashup->value)
+	{
+		int r;
+
+		if (i == 0)
+		{
+			r = (int)(random() * 4);
+			switch (r)
+			{
+			case 0:
+				mashup_team = "rus";
+				mashup_name = "Russians";
+				break;
+			case 1:
+				mashup_team = "gbr";
+				mashup_name = "British";
+				break;
+			case 2:
+				mashup_team = "pol";
+				mashup_name = "Polish";
+				break;
+			case 3:
+				mashup_team = "usm";
+				mashup_name = "US Marines";
+				break;
+			default:
+				mashup_team = "usa";
+				mashup_name = "US Army";
+				break;
+			}
+		}
+		else
+		{
+			r = (int)(random() * 2);
+			switch (r)
+			{
+			case 0:
+				mashup_team = "jpn";
+				mashup_name = "Japanese";
+				break;
+			case 1:
+				mashup_team = "ita";
+				mashup_name = "Italians";
+				break;
+			default:
+				mashup_team = "grm";
+				mashup_name = "Germans";
+				break;
+			}
+		}
+		strncpy (ent->pathtarget, mashup_team, 4);
+
+		team_list[i]->teamname = gi.TagMalloc(strlen(mashup_name) + 1, TAG_LEVEL);
+		strcpy(team_list[i]->teamname, mashup_name);
+	}
+	else
+	{
+		team_list[i]->teamname = gi.TagMalloc(strlen(ent->message) + 1, TAG_LEVEL);
+		strcpy(team_list[i]->teamname, ent->message);
+	}
+
 //	team_list[i]->playermodel = gi.TagMalloc( 64, TAG_LEVEL );
 //	team_list[i]->teamid = gi.TagMalloc( 64, TAG_LEVEL );
+	strcpy(team_list[i]->teamid , ent->pathtarget);
+	strcpy(team_list[i]->playermodel , ent->pathtarget);
+
 	team_list[i]->nextmap = gi.TagMalloc( 64, TAG_LEVEL );
 
 	team_list[i]->kills=0;
@@ -279,7 +346,10 @@ void SP_info_team_start(edict_t *ent)
 	else
 		team_list[i]->need_points = 0;
 
-	if (ent->dmg)
+	// kernel: applies fraglimit if setted
+	if (fraglimit->value > 0)
+		team_list[i]->need_kills = (int) fraglimit->value;
+	else if (ent->dmg)
 		team_list[i]->need_kills = ent->dmg;
 
 

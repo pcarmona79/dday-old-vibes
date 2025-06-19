@@ -82,6 +82,7 @@ void InitFunctions(void)
                    PlayerFindFunction("FindItem");
     SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
     FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
+	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
 	P_ProjectSource=(void(*)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t))
@@ -142,10 +143,7 @@ vec3_t vec3_origin = {0,0,0};
 
 /*this is a security function and supposed to return an MD5 hash of the code in radix64*/
 
-void
-
-UserDLLMD5(char *buf)
-
+void UserDLLMD5(char *buf)
 {
 
     buf[0]='\0';  /*do nothing for now*/

@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m_player.h"
 
 void NoAmmoWeaponChange (edict_t *ent);
-
+void check_unscope (edict_t *ent);//faf
 
 /*
 ================
@@ -76,7 +76,7 @@ void Weapon_Generic (edict_t *ent,
 
 	if(ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_ammount=&ent->client->pers.inventory[ammo_index];
 	}
@@ -89,11 +89,16 @@ void Weapon_Generic (edict_t *ent,
 			ent->client->ps.fov = TS_FOV;
 
 	else if (!ent->client->aim && ent->client->pers.weapon->position != LOC_SNIPER)		
+	{
+			check_unscope(ent);//faf
 			ent->client->ps.fov = STANDARD_FOV;
+	}
 
 	
 	if( ent->client->weaponstate == WEAPON_RELOADING)
 	{
+		check_unscope(ent);//faf
+
 		ent->client->ps.fov=STANDARD_FOV; // reset sniper
 
 		if (ent->client->pers.weapon->position == LOC_SNIPER)
@@ -206,6 +211,8 @@ void Weapon_Generic (edict_t *ent,
 	{
 		//gi.dprintf("%i - %i\n", FRAME_LASTRD_FIRST, FRAME_LASTRD_LAST);
 
+		check_unscope(ent);//faf
+
 		ent->client->ps.fov = STANDARD_FOV;
 
 		if (ent->client->pers.weapon->position == LOC_SNIPER)
@@ -290,7 +297,7 @@ void Weapon_Generic (edict_t *ent,
 				if((ent->client->p_fract)&&(*ent->client->p_fract));
 				else
 				{ //load the weapon initially.
-					ammo_item=FindItem(ent->client->pers.weapon->ammo);
+					//ammo_item=FindItem(ent->client->pers.weapon->ammo);
 
 					// Next two lines commented to fix reload bug.
 					// Forces user to load his own damn guns.
@@ -645,6 +652,8 @@ skip_anim:
 				ent->client->weaponstate = WEAPON_READY;
 				return;
 			}
+
+			check_unscope(ent);//faf
 
 			ent->client->ps.fov = STANDARD_FOV; //nt->client->ps.old_fov;
 			if(ent->client->ps.gunframe==FRAME_RAISE_FIRST)

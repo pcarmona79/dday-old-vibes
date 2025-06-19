@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __Q_SHARED_H__
+#define __Q_SHARED_H__
 	
 // q_shared.h -- included first by ALL program modules
 
@@ -1035,6 +1037,7 @@ typedef enum
 #define	STAT_STAMINA_CUR		28
 #define	STAT_CROSSHAIR			29
 //#define STAT_RESPAWNTIME		30
+#define STAT_AUTOPICKUP			30 //kernel
 
 
 #define	MAX_STATS				32
@@ -1228,3 +1231,5 @@ typedef struct
 extern int vidref_val;
 // PGM
 // ==================
+
+#endif /* __Q_SHARED_H__ */

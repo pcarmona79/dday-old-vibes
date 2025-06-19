@@ -67,13 +67,13 @@ void InitFunctions(void)
     fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
                    PlayerFindFunction("fire_bullet");
     ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
-	
+	SP_misc_banner_generic = (void (*)(edict_t *, char *)) PlayerFindFunction("SP_misc_banner_generic");
     Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int,int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
                    PlayerFindFunction("Weapon_Generic");
-    FindItem = (gitem_t * (*)(char *))
-                   PlayerFindFunction("FindItem");
+    FindItem = (gitem_t * (*)(char *)) PlayerFindFunction("FindItem");
     SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
     FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
+	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
 	P_ProjectSource=(void(*)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t))

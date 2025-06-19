@@ -29,6 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
+#include "p_classes.h"
+#include "g_cmds.h"
 
 /*-----/ PM /-----/ NEW:  Include new header files. /-----*/
 #include "x_fbomb.h"
@@ -42,7 +44,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define MEDICH		100
 //bcass end
 
-void Cmd_WeapNext_f (edict_t *ent);
 void weapon_grenade_fire (edict_t *ent);
 //bcass start - TNT
 void weapon_tnt_fire (edict_t *ent);
@@ -60,6 +61,7 @@ void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 //bcass end
 void Shrapnel_Dud (edict_t *ent);
 void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
+void check_unscope (edict_t *ent);//faf
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
@@ -176,11 +178,19 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		// give them some ammo with it
 		if(ent->item->ammo)
 		{
-			ammo = FindItem (ent->item->ammo);
-			if ( (int)dmflags->value & DF_INFINITE_AMMO )
-				Add_Ammo (other, ammo, 1000);
-			else
-				Add_Ammo (other, ammo, ammo->quantity);
+			ammo = FindItemInTeam(ent->item->ammo, ent->item->dllname);
+//			if ( (int)dmflags->value & DF_INFINITE_AMMO )
+//				Add_Ammo (other, ammo, 1000);
+//			else
+//				Add_Ammo (other, ammo, ammo->quantity);
+			if (ent->item->guninfo && ent->item->guninfo->rnd_count)
+			ent->item->guninfo->rnd_count = ammo->quantity;
+
+
+			//faf: put bullets in map spawned guns
+			if (other->client)
+				Load_Weapon (other, item);
+
 /*
 			if (ent->item->guninfo &&
 				ent->item->guninfo->rnd_count)
@@ -384,31 +394,54 @@ void ShowGun( edict_t *ent)
 	//faf:  this makes it so only 1 w_weapon is loaded per weapon, except russian
 	//      weapons have different player animations, so they need to be separate.  This
 	//      will have to be removed if Parts adds arm animations.
-	
-	if (extra_anims->value !=0)
-		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
-	else
-	{
-		
-		if (!strcmp(team_list[0]->teamid, "rus") || !strcmp(team_list[1]->teamid, "rus"))
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
 
-		//faf: non team specific weaps will just use the w_ md2s in players/usa folder
-		else if (ent->client->pers.weapon->position == LOC_KNIFE ||
-			ent->client->pers.weapon->position == LOC_HELMET ||
-			ent->client->pers.weapon->position == LOC_FLAME ||
-			ent->client->pers.weapon->position == LOC_TNT ||
-			strcmp( pszIcon, "w_binoc") == 0 ||
-			strcmp( pszIcon, "w_morphine") == 0
-			)
-			ent->s.modelindex2 = gi.modelindex (va("players/usa/%s.md2", pszIcon));
-		else if (weap_team)
-		{
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", weap_team, pszIcon));//faf
-		}
-		else  //this shouldnt happen...
-			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+//	if (extra_anims->value ==0)
+//		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+//	else
+//	{
+		
+//		if (!strcmp(team_list[0]->teamid, "rus") || !strcmp(team_list[1]->teamid, "rus"))
+//			ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+
+//		else 
+
+	if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_molotov"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/jpn/w_molotov.md2");
 	}
+	else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sandbag"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/usa/w_fists.md2");
+	}	
+	else if (ent->client->pers.weapon->position == LOC_FLAME && !strcmp(ent->client->resp.team_on->teamid, "gbr"))
+	{
+		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+	}
+	else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_katana"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/jpn/w_katana.md2");
+	}
+	else if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_sabre"))
+	{
+		ent->s.modelindex2 = gi.modelindex ("players/pol/w_sabre.md2");
+	}
+	//faf: non team specific weaps will just use the w_ md2s in players/usa folder
+	else if (ent->client->pers.weapon->position == LOC_KNIFE ||
+		ent->client->pers.weapon->position == LOC_HELMET ||
+		ent->client->pers.weapon->position == LOC_FLAME ||
+		ent->client->pers.weapon->position == LOC_TNT ||
+		strcmp( pszIcon, "w_binoc") == 0 ||
+		strcmp( pszIcon, "w_morphine") == 0
+		)
+		ent->s.modelindex2 = gi.modelindex (va("players/usa/%s.md2", pszIcon));
+	else if (weap_team)
+	{
+		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", weap_team, pszIcon));//faf
+	}
+	else  //this shouldnt happen...
+		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
+
+//	}
 //	gi.cprintf(ent, PRINT_HIGH, "%s.\n", weap_team);
 }
 
@@ -435,12 +468,24 @@ void ChangeWeapon (edict_t *ent)
 	ent->client->pers.weapon = ent->client->newweapon;
 	ent->client->newweapon = NULL;
 	ent->client->machinegun_shots = 0;
+
+	check_unscope(ent);//faf
+
 	ent->client->ps.fov = STANDARD_FOV;
 
-	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo)
-		ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
-	else
+	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo) {
+		//ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
+		// kernel: this will force to search in team's items first
+		gitem_t* item = FindItemInTeam(ent->client->pers.weapon->ammo,
+				ent->client->resp.team_on->teamid);
+
+		if (item)
+			ent->client->ammo_index = ITEM_INDEX(item);
+		else
+			ent->client->ammo_index = 0;
+	} else {
 		ent->client->ammo_index = 0;
+	}
 	//gi.dprintf("ammo_index: %i\n", ent->client->ammo_index);
 
 	if (!ent->client->pers.weapon || ent->s.modelindex != 255) //pbowens: v_wep
@@ -571,7 +616,7 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 
 	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
 	{
-		ammo_item = FindItem(item->ammo);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 
 		if (!strcmp(item->ammo, "p38_mag"))
@@ -621,11 +666,11 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 		*/
 
 		//pbowens: allows player to switch to empty gun now
-/*		if (!ent->client->pers.inventory[ammo_index] && !item_rounds)
+		if (!ent->client->pers.inventory[ammo_index] && !item_rounds)
 		{
 			gi.cprintf (ent, PRINT_HIGH, "No magazines or clips for %s.\n", item->pickup_name);
 			//return;
-		}*/
+		}
 
 	}
 
@@ -641,185 +686,144 @@ Drop_Weapon
 ================
 */
 
-void Drop_Weapon (edict_t *ent, gitem_t *item)
+void Drop_Weapon(edict_t *ent, gitem_t *item)
 {
-	int		index;
-	int		item_rounds;
+	int index;
+	int item_rounds = 0;
 
 	if ((int)(dmflags->value) & DF_WEAPONS_STAY)
 		return;
 
 	index = ITEM_INDEX(item);
-	
+
 	// pbowens: fix in not drop weapon/while prone
-	if ( !item || 
-		((item == ent->client->newweapon)) && (ent->client->pers.inventory[index] == 1))// && (ent->stanceflags != STANCE_STAND))
+	if (!item ||
+		((item == ent->client->newweapon)) && (ent->client->pers.inventory[index] == 1)) // && (ent->stanceflags != STANCE_STAND))
 	{
-		//gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
+		// gi.cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
 		return;
 	}
 
-	//pbowens: This is one disgusting, ugly hack to get the weapons to retain their current
+	// pbowens: This is one disgusting, ugly hack to get the weapons to retain their current
 	//			round counts when dropped/picked up.
 
-	        //faf:  changed a bit for team dll support:
+	// faf:  changed a bit for team dll support:
 
-        //faf:  gonna leave this in for grm mauser/sniper using same ammo
-        if (!strcmp(item->ammo, "mauser98k_mag"))  // Both Rifle and Sniper ammo
-        {
-                item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
-                ent->client->mags[1].rifle_rnd = ent->client->mags[1].sniper_rnd = 0;
-        }
-
-
-        else if (!strcmp(item->dllname, team_list[1]->teamid))  //faf: if team 1 weap... usually axis
-        {
-                if (item->position == LOC_PISTOL)
-                {
-                        item_rounds = ent->client->mags[1].pistol_rnd;
-                        ent->client->mags[1].pistol_rnd = 0;
-                }
-        //faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use the same ammo)
-                else if (item->position == LOC_RIFLE)
-                {
-                        item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
-                        ent->client->mags[1].rifle_rnd = 0;
-                }
-                else if (item->position == LOC_SNIPER)
-                {
-                        item_rounds = ent->client->mags[1].sniper_rnd + ent->client->mags[1].rifle_rnd;
-                        ent->client->mags[1].sniper_rnd = 0;
-                }
-                else if (item->position == LOC_SUBMACHINEGUN)
-                {
-                        item_rounds = ent->client->mags[1].submg_rnd;
-                        ent->client->mags[1].submg_rnd = 0;
-                }
-                else if (item->position == LOC_L_MACHINEGUN)
-                {
-                        item_rounds = ent->client->mags[1].lmg_rnd;
-                        ent->client->mags[1].lmg_rnd = 0;
-                }
-                else if (item->position == LOC_H_MACHINEGUN)
-                {
-                        item_rounds = ent->client->mags[1].hmg_rnd;
-                        ent->client->mags[1].hmg_rnd = 0;
-                }
-                else if (item->position == LOC_ROCKET)
-                {
-                        item_rounds = ent->client->mags[1].antitank_rnd;
-                        ent->client->mags[1].antitank_rnd = 0;
-                }
-
-        }
-        else if (!strcmp(item->dllname, team_list[0]->teamid))  //faf:  if team 0 weap...usually allied
-        {
-                if (item->position == LOC_PISTOL)
-                {
-                item_rounds = ent->client->mags[0].pistol_rnd;
-                ent->client->mags[0].pistol_rnd = 0;
-                }
-                else if (item->position == LOC_SUBMACHINEGUN)
-                {
-                item_rounds = ent->client->mags[0].submg_rnd;
-                ent->client->mags[0].submg_rnd = 0;
-                }
-                else if (item->position == LOC_L_MACHINEGUN)
-                {
-                item_rounds = ent->client->mags[0].lmg_rnd;
-                ent->client->mags[0].lmg_rnd = 0;
-                }
-                else if (item->position == LOC_H_MACHINEGUN)
-                {
-                item_rounds = ent->client->mags[0].hmg_rnd;
-                ent->client->mags[0].hmg_rnd = 0;
-                }
-                else if (item->position == LOC_ROCKET)
-                {
-                item_rounds = ent->client->mags[0].antitank_rnd;
-                ent->client->mags[0].antitank_rnd = 0;
-                }
-        //faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use same ammo)
-                else if (item->position == LOC_SNIPER)
-                {
-                        item_rounds = ent->client->mags[0].sniper_rnd + ent->client->mags[0].rifle_rnd;
-                        ent->client->mags[0].sniper_rnd = 0;
-                }
-                else if (item->position == LOC_RIFLE)
-                { 
-                        item_rounds = ent->client->mags[0].rifle_rnd + ent->client->mags[0].sniper_rnd;
-                        ent->client->mags[0].rifle_rnd = 0;
-                }
-        }
-        else if (!strcmp(item->ammo, "flame_mag"))
-        {
-                item_rounds = ent->client->flame_rnd;
-                ent->client->flame_rnd = 0;
-        }
-
-
-	/*
-	if (!strcmp(item->ammo, "p38_mag")) {
-		item_rounds = ent->client->mags[1].pistol_rnd;
-		ent->client->mags[1].pistol_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "mauser98k_mag")) { // Both Rifle and Sniper ammo
+	// faf:  gonna leave this in for grm mauser/sniper using same ammo
+	if (!strcmp(item->ammo, "mauser98k_mag")) // Both Rifle and Sniper ammo
+	{
 		item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
 		ent->client->mags[1].rifle_rnd = ent->client->mags[1].sniper_rnd = 0;
 	}
-	else if (!strcmp(item->ammo, "mp40_mag")) {
-		item_rounds = ent->client->mags[1].submg_rnd;
-		ent->client->mags[1].submg_rnd = 0;
+	else if (!strcmp(item->dllname, team_list[1]->teamid)) // faf: if team 1 weap... usually axis
+	{
+		if (item->position == LOC_PISTOL)
+		{
+			item_rounds = ent->client->mags[1].pistol_rnd;
+			ent->client->mags[1].pistol_rnd = 0;
+		}
+		// faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use the same ammo)
+		else if (item->position == LOC_RIFLE)
+		{
+			item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
+			ent->client->mags[1].rifle_rnd = 0;
+		}
+		else if (item->position == LOC_SNIPER)
+		{
+			item_rounds = ent->client->mags[1].sniper_rnd + ent->client->mags[1].rifle_rnd;
+			ent->client->mags[1].sniper_rnd = 0;
+		}
+		else if (item->position == LOC_SUBMACHINEGUN)
+		{
+			item_rounds = ent->client->mags[1].submg_rnd;
+			ent->client->mags[1].submg_rnd = 0;
+		}
+		else if (item->position == LOC_L_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[1].lmg_rnd;
+			ent->client->mags[1].lmg_rnd = 0;
+		}
+		else if (item->position == LOC_H_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[1].hmg_rnd;
+			ent->client->mags[1].hmg_rnd = 0;
+		}
+		else if (item->position == LOC_ROCKET)
+		{
+			item_rounds = ent->client->mags[1].antitank_rnd;
+			ent->client->mags[1].antitank_rnd = 0;
+		}
+		else if (item->position == LOC_SHOTGUN)
+		{
+			item_rounds = ent->client->mags[1].shotgun_rnd;
+			ent->client->mags[1].shotgun_rnd = 0;
+		}
+
+		else if (item->position == LOC_SUBMACHINEGUN2)
+		{
+			item_rounds = ent->client->mags[1].submg_rnd;
+			ent->client->mags[1].submg2_rnd = 0;
+		}
 	}
-	else if (!strcmp(item->ammo, "mp43_mag")) {
-		item_rounds = ent->client->mags[1].lmg_rnd;
-		ent->client->mags[1].lmg_rnd = 0;
+	else if (!strcmp(item->dllname, team_list[0]->teamid)) // faf:  if team 0 weap...usually allied
+	{
+		if (item->position == LOC_PISTOL)
+		{
+			item_rounds = ent->client->mags[0].pistol_rnd;
+			ent->client->mags[0].pistol_rnd = 0;
+		}
+		else if (item->position == LOC_SUBMACHINEGUN)
+		{
+			item_rounds = ent->client->mags[0].submg_rnd;
+			ent->client->mags[0].submg_rnd = 0;
+		}
+		else if (item->position == LOC_L_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[0].lmg_rnd;
+			ent->client->mags[0].lmg_rnd = 0;
+		}
+		else if (item->position == LOC_H_MACHINEGUN)
+		{
+			item_rounds = ent->client->mags[0].hmg_rnd;
+			ent->client->mags[0].hmg_rnd = 0;
+		}
+		else if (item->position == LOC_ROCKET)
+		{
+			item_rounds = ent->client->mags[0].antitank_rnd;
+			ent->client->mags[0].antitank_rnd = 0;
+		}
+		// faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use same ammo)
+		else if (item->position == LOC_SNIPER)
+		{
+			item_rounds = ent->client->mags[0].sniper_rnd + ent->client->mags[0].rifle_rnd;
+			ent->client->mags[0].sniper_rnd = 0;
+		}
+		else if (item->position == LOC_RIFLE)
+		{
+			item_rounds = ent->client->mags[0].rifle_rnd + ent->client->mags[0].sniper_rnd;
+			ent->client->mags[0].rifle_rnd = 0;
+		}
+		else if (item->position == LOC_SHOTGUN)
+		{
+			item_rounds = ent->client->mags[0].shotgun_rnd;
+			ent->client->mags[0].shotgun_rnd = 0;
+		}
+		else if (item->position == LOC_SUBMACHINEGUN2)
+		{
+			item_rounds = ent->client->mags[0].submg2_rnd;
+			ent->client->mags[0].submg2_rnd = 0;
+		}
 	}
-	else if (!strcmp(item->ammo, "mg42_mag")) {
-		item_rounds = ent->client->mags[1].hmg_rnd;
-		ent->client->mags[1].hmg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "grm_rockets")) {
-		item_rounds = ent->client->mags[1].antitank_rnd;
-		ent->client->mags[1].antitank_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "colt45_mag")) {
-		item_rounds = ent->client->mags[0].pistol_rnd;
-		ent->client->mags[0].pistol_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "m1_mag")) {
-		item_rounds = ent->client->mags[0].rifle_rnd;
-		ent->client->mags[0].rifle_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "thompson_mag")) {
-		item_rounds = ent->client->mags[0].submg_rnd;
-		ent->client->mags[0].submg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "bar_mag")) {
-		item_rounds = ent->client->mags[0].lmg_rnd;
-		ent->client->mags[0].lmg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "hmg_mag")) {
-		item_rounds = ent->client->mags[0].hmg_rnd;
-		ent->client->mags[0].hmg_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "usa_rockets")) {
-		item_rounds = ent->client->mags[0].antitank_rnd;
-		ent->client->mags[0].antitank_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "m1903_mag")) {
-		item_rounds = ent->client->mags[0].sniper_rnd;
-		ent->client->mags[0].sniper_rnd = 0;
-	}
-	else if (!strcmp(item->ammo, "flame_mag")) {
+	else if (!strcmp(item->ammo, "flame_mag"))
+	{
 		item_rounds = ent->client->flame_rnd;
 		ent->client->flame_rnd = 0;
 	}
-*/
+
 	if (item->guninfo)
 		item->guninfo->rnd_count = item_rounds;
 
-	Drop_Item (ent, item);
+	Drop_Item(ent, item);
 
 	ent->client->pers.inventory[index] = 0;
 }
@@ -867,7 +871,8 @@ void weapon_grenade_fire (edict_t *ent)
 		VectorCopy(ent->s.origin, ent->client->grenade->s.origin);
 		ent->client->grenade->s.modelindex = 0; // set model to null
 		//client->grenade_caught->touch = NULL;
-		ent->client->grenade->s.origin[2]+= 100;//faf:  this fixes nade slope bug (not)
+//		ent->client->grenade->s.origin[2]+= 100;//faf
+
 	}
 
 
@@ -879,9 +884,15 @@ void weapon_grenade_fire (edict_t *ent)
 
 	if (ent->client->ps.pmove.pm_type == PM_DEAD)
 		speed = 5; // drop the grenade
-	else
-		speed = GRENADE_MINSPEED + (int)(-(ent->client->grenade->nextthink - level.time) + 2.75) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
-	//gi.dprintf("speed: %i\n", speed);
+	else {
+		//speed = GRENADE_MINSPEED + (int)(-(ent->client->grenade->nextthink - level.time) + 2.75) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
+		//gi.dprintf("speed: %i\n", speed);
+		speed = 500;
+	}
+	if (ent->client->aim)
+		speed *=1.4;
+
+	ent->client->aim = false;
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -938,9 +949,10 @@ void weapon_grenade_prime (edict_t *ent, int team)
 
 	if (ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_GRENADES)
 		grenade->item = ent->client->pers.weapon;
-	else
-		grenade->item = FindItem(va("%s", (team) ? "Potato Masher" : "USA Grenade" ));
-	
+	else {
+		grenade->item = FindItemInTeam(va("%s", (team) ? "Potato Masher" : "USA Grenade" ),
+				ent->client->resp.team_on->teamid);
+	}
 	dudchance = rand() % 100;
 	//gi.dprintf("chance: %f", dudchance);
 
@@ -969,12 +981,15 @@ void Weapon_Grenade (edict_t *ent)
 	if(	(!ent->client->grenade_index && !ent->client->pers.inventory[ent->client->ammo_index]) || 
 		(ent->client->grenade_index && !ent->client->pers.inventory[ent->client->grenade_index] && ent->client->weaponstate != WEAPON_FIRING) )
 	{
-	//	gi.dprintf("next\n");
+		// kernel: switch to team's main weapon when no grenades
+		char *weapon1 = ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1;
+		gitem_t *weapon_item = FindItemInTeam(weapon1, ent->client->resp.team_on->teamid);
+		int weapon_index = ITEM_INDEX(weapon_item);
 		
-		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1 &&
-			ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))])
+		if (weapon1 && weapon_index >= 0 &&
+			ent->client->pers.inventory[weapon_index])
 		{
-			ent->client->newweapon = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
+			ent->client->newweapon = weapon_item;
 			ChangeWeapon(ent);
 		} else
 			Cmd_WeapNext_f(ent);
@@ -990,8 +1005,8 @@ void Weapon_Grenade (edict_t *ent)
 
 	ent->client->crosshair = false;
 
-	if (ent->client->aim)
-		ent->client->aim = false;
+//	if (ent->client->aim)
+//		ent->client->aim = false;
 
 	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
 	{
@@ -1074,8 +1089,35 @@ void Weapon_Grenade (edict_t *ent)
 		}
 	}
 
+	//animation for pulling pin
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
+
+		if (ent->client->ps.gunframe == 3)
+		{
+			//faf:  play part of wave animation when pulling pin
+			if (ent->client && ent->stanceflags == STANCE_STAND) 
+			{
+				ent->client->anim_priority = ANIM_WAVE;
+				ent->s.frame = 61;//(FRAME_wave05);
+				ent->client->anim_end = 65;// (FRAME_wave10);
+			} //end faf
+			else if (ent->stanceflags == STANCE_DUCK) 
+			{
+				ent->client->anim_priority = ANIM_WAVE;
+				ent->s.frame = 169;//(FRAME_crpain1);
+				ent->client->anim_end = 172;// (FRAME_crpain4);
+			} //end faf
+			else if (ent->stanceflags == STANCE_CRAWL) 
+			{
+				ent->client->anim_priority = ANIM_WAVE;
+				ent->s.frame = 222;//(FRAME_crawlattck02);
+				ent->client->anim_end = 225;// (FRAME_crawlattck05);
+			} //end faf
+		}
+
+
+
 		// Pull the pin, and prime the grenade
 //faf		if (ent->client->ps.gunframe == 5 && !ent->client->grenade)
 		//faf:  time pin pull sound better
@@ -1116,7 +1158,7 @@ void Weapon_Grenade (edict_t *ent)
 //			ent->client->grenade = NULL;
 		}
 
-		if (ent->client->ps.gunframe == 15) // throw the grenade
+		if (ent->client->ps.gunframe == 14) // throw the grenade
 			gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/throw.wav"), 1, ATTN_NORM, 0);
 		
 //		if ((ent->client->ps.gunframe == 17))
@@ -1188,7 +1230,7 @@ void Weapon_Mine (edict_t *ent)
 fire_knife
 =============
 */
-
+qboolean Cmd_Scope_f(edict_t *ent);
 void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, char *wav, qboolean fists)
 {    
     trace_t tr; //detect whats in front of you up to range "vec3_t end"
@@ -1210,9 +1252,26 @@ void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
             if (tr.ent->takedamage)            
             {
                 //This tells us to damage the thing that in our path...hehe
-                T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage,  (fists)?200:0   , 0,(fists)?MOD_FISTS:MOD_KNIFE);//faf:  adding knockback for fists
-                gi.sound (self, CHAN_AUTO, gi.soundindex((fists)?wav:"brain/melee3.wav") , 1, ATTN_NORM, 0); 
-
+				if (self->client && self->client->pers.weapon &&
+					(!Q_strcasecmp(self->client->pers.weapon->classname, "weapon_enfield")
+						|| !Q_strcasecmp(self->client->pers.weapon->classname, "weapon_svt")
+						|| !Q_strcasecmp(self->client->pers.weapon->classname, "weapon_carcano")))
+				{
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, 75, 50, 0,MOD_BAYONET);//faf
+				}
+				else //if (!OnSameTeam(tr.ent, self))
+				{
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage,  (fists)?200:0   , 0,(fists)?MOD_FISTS:MOD_KNIFE);//faf:  adding knockback for fists
+					if (tr.ent->client &&
+						tr.ent->client->aim)
+					{
+						//knock em out of truesight
+						Cmd_Scope_f(tr.ent);
+					}
+				}
+			//	else
+			//		T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_NO_KNOCKBACK,(fists)?MOD_FISTS:MOD_KNIFE);
+                //gi.sound (self, CHAN_AUTO, gi.soundindex((fists)?wav:"brain/melee3.wav") , 1, ATTN_NORM, 0); 
             }        
             else        
             {                
@@ -1325,7 +1384,15 @@ void Blade_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 		gi.multicast (self->s.origin, MULTICAST_PVS);*/
 
 	}
-	if(other->client) 
+
+	if (other->client && (other->health <= 0 ||
+		other->health == 100))//helmet
+	{
+		Drop_Item (self, item);
+		G_FreeEdict (self);
+		return;
+	}
+	else if (other->client) 
 	{
 		other->client->pers.inventory[ITEM_INDEX(item)]++;
 		G_FreeEdict(self);
@@ -1532,7 +1599,7 @@ void Weapon_Knife_Fire (edict_t *ent)
 		{
 			ent->client->aim=false;
 			ent->client->weaponstate=WEAPON_LOWER;
-			Use_Weapon (ent, FindItem("fists"));
+			Use_Weapon (ent, FindItem("Fists"));
 		}
 				
 	}
@@ -1597,7 +1664,7 @@ void Weapon_Binoculars_Look(edict_t *ent)
 
 
 
-void Weapon_Binoculars(edict_t *ent)
+void Weapon_Binoculars0(edict_t *ent)
 {
 	static int		pause_frames[] = {19,32,0};
 	static int		fire_frames[] = {6};
@@ -1607,6 +1674,105 @@ void Weapon_Binoculars(edict_t *ent)
 	ent->client->crosshair = false;
 
 	Weapon_Generic(ent,3,8,48,48,48,51,0,0,0,pause_frames,fire_frames,Weapon_Binoculars_Look);
+}
+
+
+void Weapon_Binoculars(edict_t *ent)
+{
+	if (ent->client->weaponstate == WEAPON_ACTIVATING)
+	{
+		if (ent->client->ps.gunframe< 3)
+		{
+			ent->client->ps.gunframe++;
+			return;
+		}
+		else 
+		{
+			ent->client->ps.gunframe = 8;
+			ent->client->weaponstate = WEAPON_READY;
+			return;
+		}
+	}
+
+	if (ent->client->weaponstate != WEAPON_DROPPING)
+	{
+		if ((ent->client->newweapon) && (ent->client->weaponstate != WEAPON_FIRING))
+		{
+			ent->client->weaponstate = WEAPON_DROPPING;
+			ent->client->ps.gunframe = 47;
+		}
+	}
+
+	if (ent->client->weaponstate == WEAPON_DROPPING)
+	{
+		if (ent->client->drop || ent->client->ps.gunframe == 51)
+		{
+			ent->client->drop = false;
+			ent->client->aim  = false;
+			ChangeWeapon (ent);
+			return;
+		}		
+		ent->client->ps.gunframe++;
+		return;
+	}
+	
+	//idle
+	if (ent->client->ps.gunframe >7 &&
+		ent->client->ps.gunframe < 48)
+		ent->client->ps.gunframe++;
+	
+	if (ent->client->ps.gunframe == 48)
+	{
+		ent->client->ps.gunframe = 8;
+	}
+
+	if (ent->client->aim == true)
+	{
+		ent->client->crosshair = true;
+		ent->client->ps.fov = SCOPE_FOV;
+		ent->client->ps.gunframe = 6;
+		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
+		{
+			if (ent->client->last_fire_time < level.time - .5)
+				Cmd_Arty_f(ent);
+			ent->client->last_fire_time = level.time;
+		}
+	}
+	else
+	{
+		ent->client->crosshair = false;
+
+		if (((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK)
+				&& 	(ent->client->last_fire_time < level.time -.5))
+		{
+			ent->client->last_fire_time = level.time;
+			if ( ent->client->arty_called )
+			{
+				if (ent->client->arty_fired)
+				{
+					gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
+					return;
+				}
+				else
+				{
+					gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
+					ent->client->arty_called = 0;
+					ent->client->arty_num--;
+					check_unscope(ent);
+					return;
+				}
+			}
+			else
+			{
+				gi.cprintf(ent, PRINT_HIGH, "Press the aim button to aim the binoculars!\n");
+				ent->client->latched_buttons = 0;
+			}
+		}
+
+		check_unscope(ent);//faf
+
+		ent->client->ps.fov = STANDARD_FOV;
+	}
 }
 
 
@@ -1829,9 +1995,9 @@ void weapon_flame_fire (edict_t *ent)
 	//250 / 500 / 500
 	//375 / 900 / 900
 	speed = 250 + (ent->client->machinegun_shots * 150);
-	if (speed >= 200)
+	if (speed >= 300)
 	{
-		speed = 200;
+		speed = 300;
         ent->client->machinegun_shots = 0;
 	}
 	else
@@ -1966,7 +2132,14 @@ void weapon_tnt_prime (edict_t *ent, int team)
 	else
 		tnt->item = FindItem(va("%s", (team) ? "Potato Masher" : "USA Grenade" ));
 */	
-	//grenade->touch = Shrapnel_Touch;
+
+	if (ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_TNT)
+		tnt->item = ent->client->pers.weapon;
+	else {
+		tnt->item = FindItemInTeam("TNT", ent->client->resp.team_on->teamid);
+	}
+
+	//grenade->touch = Shrapnel_Touch;	
 
 	tnt->spawnflags = 1;
 
@@ -2000,12 +2173,22 @@ void Weapon_TNT (edict_t *ent)
 		return;
 	}
 
-	if (ent->client->weaponstate == WEAPON_RAISE || 
-		ent->client->weaponstate == WEAPON_LOWER )	{
+	if (ent->client->weaponstate == WEAPON_LOWER) {
 		ent->client->weaponstate =  WEAPON_READY;
 		ent->client->ps.gunframe = (ent->client->tnt) ? 10 : 18;
 	}
 
+	if (ent->client->tnt &&
+		ent->client->weaponstate == WEAPON_RAISE) {
+		ent->client->ps.gunframe = 13;
+		
+		if ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) {
+			// throwing a live tnt
+			ent->client->latched_buttons &= ~BUTTON_ATTACK;
+			ent->client->weaponstate = WEAPON_FIRING;
+			ent->client->ps.gunframe = 12;
+		}
+	}
 
 	if (ent->client->weaponstate == WEAPON_ACTIVATING)
 	{
@@ -2053,7 +2236,9 @@ void Weapon_TNT (edict_t *ent)
 		}
 
 		if (ent->client->tnt) { // No "idle" frames if it's active
-			ent->client->ps.gunframe = 10;
+			// show frame before throwing when it is a live tnt
+			ent->client->ps.gunframe = 13;
+			ent->client->weaponstate = WEAPON_RAISE;
 		}
 		else
 		{

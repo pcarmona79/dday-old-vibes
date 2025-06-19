@@ -381,7 +381,7 @@ void P_ExplosionEffects (edict_t *player)
 											:	 0;
 */
 		player->client->explosion_angles[YAW] =	(frame > SWAY_START && intensity > 15) ?				\
-												sin(frame + 145) * (intensity / 10) * 2 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))					\
+												sin(frame + 145) * (intensity / 10.0) * 2 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))					\
 											:	 0;
 /*
 		player->client->explosion_angles[ROLL] =	(frame == 0) ?											\
@@ -400,8 +400,8 @@ void P_ExplosionEffects (edict_t *player)
 												:	intensity * -0.5								\
 											:	(frame > SWAY_START && intensity > 15) ?			\
 													(intensity % 2) ?								\
-														sin(frame + 90) * (intensity / 10) * 2 *  0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
-													:	sin(frame + 90) * (intensity / 10) * 2 * -0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
+														sin(frame + 90) * (intensity / 10.0) * 2 *  0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
+													:	sin(frame + 90) * (intensity / 10.0) * 2 * -0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
 												:	0;
 
 		if (frame > 0 && frame < 11 && player->client->dmgef_flash == true) {
@@ -603,6 +603,17 @@ void SV_CalcGunOffset (edict_t *ent)
 	int		i;
 	float	delta;
 
+
+	if (ent->client && 
+		ent->client->pers.weapon &&
+		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
+	{
+		VectorClear(ent->client->ps.gunangles);
+		return;
+	}
+	//stops binocular aim being messed up
+
+
 	// gun angles from bobbing
 	ent->client->ps.gunangles[ROLL] = xyspeed * bobfracsin * 0.005;
 	ent->client->ps.gunangles[YAW] = xyspeed * bobfracsin * 0.01;
@@ -719,7 +730,8 @@ void SV_CalcBlend (edict_t *ent)
 	}
 
 	// fade to black if dead
-	if (ent->deadflag)
+	if (ent->deadflag &&
+		!ent->flyingnun)
 	{
 		if (ent->client->resp.deathblend < 1)
 			ent->client->resp.deathblend += 0.03;
@@ -943,15 +955,38 @@ void P_ShowID (edict_t *ent)
 	trace_t tr;
 	vec3_t start, forward, end;
 
+	vec3_t mins,maxs;
+
+	VectorSet (mins, -10,-10,-10);
+	VectorSet (maxs, 10,10,10);
+
 	VectorCopy(ent->s.origin, start);
     start[2] += ent->viewheight;
     AngleVectors(ent->client->v_angle, forward, NULL, NULL);
     VectorMA(start, 8192, forward, end);
 
-    tr = gi.trace(start, NULL, NULL, end, ent, MASK_ALL); 
-	if (tr.ent->client)
+    tr = gi.trace(start, mins, maxs, end, ent, MASK_ALL); 
+    //tr = gi.trace(start, NULL, NULL, end, ent, MASK_ALL); 
+
+	//faf:  if chasing someone...
+	if (ent->client->resp.show_id &&
+		ent->client->chasetarget)
 	{
-		if (ent->flyingnun && tr.ent->client->resp.team_on && tr.ent->client->resp.mos)
+		ent->client->ps.stats[STAT_IDENT] = 1;
+		ent->client->ps.stats[STAT_IDENT_PLAYER] = CS_PLAYERSKINS + (ent->client->chasetarget - g_edicts - 1);
+		ent->client->ps.stats[STAT_IDENT_ICON] = 0;
+//		ent->client->last_id_time = level.time;  //faf:  to put delay on player id
+	
+		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health: %i", ent->client->chasetarget->health));
+		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
+
+//		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), "Chase Mode.");
+//		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
+	}
+	else if (tr.ent->client)
+	{
+		if (ent->client->resp.show_id &&
+			ent->flyingnun && tr.ent->client->resp.team_on && tr.ent->client->resp.mos)
 		{
 			ent->client->ps.stats[STAT_IDENT] = 1;
 			ent->client->ps.stats[STAT_IDENT_PLAYER] = CS_PLAYERSKINS + (tr.ent - g_edicts - 1);
@@ -1742,11 +1777,13 @@ edict_t *FindOverlap(edict_t *ent, edict_t *last_overlap)
 }
 
 void A_ScoreboardMessage (edict_t *ent);
+void DDayScoreboardMessage (edict_t *ent);
 
 void ClientEndServerFrame (edict_t *ent)
 {
 	float	bobtime;
 	int		i;
+	vec3_t offset;
 
 	current_player = ent;
 	current_client = ent->client;
@@ -1802,9 +1839,11 @@ void ClientEndServerFrame (edict_t *ent)
 				ent->client->showscores = true;
 			}
 
-
-			A_ScoreboardMessage(ent);//
-			//faf DDayScoreboardMessage(ent);
+			// kernel: just use regular scoreboard
+			//if (!ent->flyingnun)
+				A_ScoreboardMessage(ent);
+			//else
+			//	DDayScoreboardMessage(ent);
 			gi.unicast (ent, true);
 		}
 
@@ -1915,9 +1954,12 @@ void ClientEndServerFrame (edict_t *ent)
 		if (ent->client->menu)
 			PMenu_Update(ent);
 		else
-			A_ScoreboardMessage(ent);
-			//faf DDayScoreboardMessage(ent);
-
+		{
+			if (!ent->flyingnun)
+				A_ScoreboardMessage(ent);
+			else
+				DDayScoreboardMessage(ent);
+		}
 		gi.unicast (ent, false);
 	}
 
@@ -1951,4 +1993,231 @@ void ClientEndServerFrame (edict_t *ent)
 			} while (overlap != NULL);
 		}
 	}
+
+	if (ent->flyingnun)
+	{
+		if (ent->client->chasetarget &&
+			ent->client->chasetarget->client)
+		{
+			//overhead view
+			if (ent->client->aim == 4 && !ent->client->chasetarget->client->limbo_mode)
+			{
+				    trace_t tr; 
+					vec3_t end, start;
+					vec3_t up = { 0, 0, 1};
+					vec3_t forward = { 1, 0, 0};
+					vec3_t distv;
+					float dist = 0;
+					vec3_t targetview;
+					float	height;
+					vec3_t	transition_dir;
+					vec3_t	mins,maxs;
+
+					VectorSet (mins, -5,-5,0);
+					VectorSet (maxs, 5,5,11);
+
+
+					VectorCopy (ent->client->chasetarget->s.origin, start);
+					VectorMA (start, 310, up, end);              
+
+					tr = gi.trace (ent->client->chasetarget->s.origin, mins, maxs, end, ent->client->chasetarget, MASK_SOLID);
+					if (tr.fraction < 1.0 )	
+					{
+						//VectorSubtract (ent->client->chasetarget->s.origin, tr.endpos, distv);
+						//dist = VectorLength (distv);
+						VectorCopy (tr.endpos,targetview);
+						targetview[2]-=20;
+					}
+					else
+					{
+						VectorCopy (ent->client->chasetarget->s.origin,targetview);
+						targetview[2]=ent->client->chasetarget->s.origin[2]+290;
+					}
+
+					height = targetview[2] - ent->client->chasetarget->s.origin[2];
+
+	
+					//move the view forward as much as it is high
+					VectorCopy(ent->client->chasetarget->client->ps.viewangles, ent->client->ps.viewangles);
+					VectorCopy(ent->client->chasetarget->client->v_angle, ent->client->v_angle);
+					ent->client->v_angle[0] = 0;
+
+
+					dist =  .5 * height  + 125;
+					dist = 0.8 *height  + 39;
+					//dist = height-10;
+
+
+					//gi.dprintf("%f %f\n",height,dist);
+
+
+						
+					VectorCopy (targetview, start);
+					AngleVectors (ent->client->v_angle, forward, right, NULL);
+					VectorMA (start, dist, forward, end);              
+
+
+					tr = gi.trace (targetview, mins, maxs, end, ent, MASK_SOLID);
+					if (tr.fraction < 1.0 )	
+					{
+						VectorSubtract (targetview, tr.endpos, distv);
+						dist = VectorLength(distv);
+						VectorSet(offset, dist-10, 0, 0);
+						G_ProjectSource (targetview,offset,forward,right,targetview);
+					}
+					else
+					{
+						VectorSet(offset, dist-20, 0, 0);
+						G_ProjectSource (targetview,offset,forward,right,targetview);
+					}
+
+	
+
+				//	VectorSubtract (ent->client->chasetarget->s.origin, targetview,distv);
+				//	dist = VectorLength (distv);
+
+				/*	targetfov = abs(-0.074 * height + 122);
+					
+					if (targetfov > 140)
+						targetfov=140;
+					if (targetfov < 100)
+						targetfov=100;
+					//gi.dprintf("%f\n",targetfov);
+
+					ent->client->ps.fov = (ent->client->ps.fov + targetfov)/2;*/
+					ent->client->ps.fov = 100;
+					
+					VectorSubtract (ent->s.origin, targetview,distv);
+					dist = VectorLength (distv);
+
+					
+					if (//dist < 100 ||//pretty close, just move it there
+						dist > 500) //pretty far, just move it there
+					{
+						VectorCopy (targetview, ent->s.origin);
+					}
+					else //go 100 units towards targetview
+					{
+						VectorSubtract(targetview, ent->s.origin, transition_dir );
+					    VectorNormalize(transition_dir);
+						VectorMA (ent->s.origin, dist/4.5, transition_dir, ent->s.origin);
+						//gi.dprintf("%s %s %f\n", vtos(targetview), vtos(ent->s.origin), level.time);
+						//gi.dprintf("%f\n",dist);
+
+						VectorSet(end, ent->s.origin[0],ent->s.origin[1],ent->s.origin[2]+5);
+						tr = gi.trace(ent->s.origin, NULL, NULL, end, ent, MASK_SOLID);
+
+						//if we're outside the world, just go to new spot
+						if (gi.pointcontents(end) == CONTENTS_SOLID || tr.fraction < 1.0 )
+						{
+							VectorCopy (targetview, ent->s.origin);
+						}
+
+
+
+					}
+
+					
+
+					ent->client->ps.pmove.pm_type = PM_FREEZE;
+
+					ent->client->v_angle[0]=90;
+					ent->client->ps.viewangles[0]=90;
+
+					//locking camera
+					ent->client->v_angle[1]=ent->client->v_angle[2]=0;
+					ent->client->ps.viewangles[1]=ent->client->ps.viewangles[2]=0;
+
+
+
+					ent->client->ps.gunindex = 0;
+					ent->client->ps.gunframe = 0;
+					VectorClear (ent->client->ps.gunangles);
+
+
+
+			}
+			else
+			{
+				ent->client->ps.pmove.pm_type = PM_FREEZE;
+
+				for (i=0 ; i<3 ; i++)
+					ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(ent->client->chasetarget->s.angles[i] - ent->client->resp.cmd_angles[i]);
+
+
+				VectorCopy(ent->client->chasetarget->client->ps.viewangles, ent->client->ps.viewangles);
+				VectorCopy(ent->client->chasetarget->client->v_angle, ent->client->v_angle);
+				VectorCopy(ent->client->chasetarget->s.origin, ent->s.origin);
+				ent->s.origin[2]+= ent->client->chasetarget->viewheight - ent->viewheight;
+				if (ent->client->chasetarget->stanceflags == STANCE_CRAWL)
+				{
+					AngleVectors (ent->client->chasetarget->client->v_angle, forward, right, NULL);
+					if ((ent->client->aim && ent->client->chasetarget->client->aim) || ent->client->aim == 1 || ent->client->aim == 2)
+						VectorSet(offset, 30, 0, 0);
+					else
+						VectorSet(offset, -3, 0, 0);
+
+					G_ProjectSource (ent->s.origin, offset, forward, right, ent->s.origin);
+					if ((ent->client->aim && ent->client->chasetarget->client->aim) || ent->client->aim == 1 || ent->client->aim == 2)
+					{}else ent->s.origin[2]+=13;
+				}
+				else if (ent->client->chasetarget->stanceflags == STANCE_STAND)
+				{
+					AngleVectors (ent->client->chasetarget->client->v_angle, forward, right, NULL);
+					if ((ent->client->aim && ent->client->chasetarget->client->aim) || ent->client->aim == 1 || ent->client->aim == 2)
+					{	
+						VectorSet(offset, 30, 0, 0);
+					}
+					else
+						VectorSet(offset, -7, 0, 5);
+						
+
+					G_ProjectSource (ent->s.origin, offset, forward, right, ent->s.origin);
+				}
+				else//duck
+				{
+					AngleVectors (ent->client->chasetarget->client->v_angle, forward, right, NULL);
+					if ((ent->client->aim && ent->client->chasetarget->client->aim) || ent->client->aim == 1 || ent->client->aim == 3)
+						VectorSet(offset, 30, 0, 0);
+					else
+						VectorSet(offset, -7, 0, 7);
+					G_ProjectSource (ent->s.origin, offset, forward, right, ent->s.origin);
+				}
+
+				ent->client->ps.gunindex = 0;
+				ent->client->ps.gunframe = 0;
+				VectorClear (ent->client->ps.gunangles);
+
+				if (ent->client->aim) 
+					ent->client->ps.fov = ent->client->chasetarget->client->ps.fov;
+				else 
+					ent->client->ps.fov = STANDARD_FOV;
+
+				if ((ent->client->chasetarget->client->aim && ent->client->aim == 3) || ent->client->aim == 2)
+				{
+					ent->client->ps.gunindex = ent->client->chasetarget->client->ps.gunindex;
+					ent->client->ps.gunframe = ent->client->chasetarget->client->ps.gunframe;
+					VectorCopy (ent->client->chasetarget->client->ps.gunangles,ent->client->ps.gunangles);
+				}
+
+
+
+
+		//		VectorCopy (ent->client->chasetarget->velocity,ent->velocity);
+		//		ent->client->ps.gunindex = ent->client->chasetarget->client->ps.gunindex;
+		//		ent->client->ps.gunframe = ent->client->chasetarget->client->ps.gunframe;
+
+
+
+			}
+		}
+		else
+		{
+			ent->client->ps.fov = STANDARD_FOV;
+			ent->client->ps.gunindex = 0;
+			ent->client->ps.gunframe = 0;
+			VectorClear (ent->client->ps.gunangles);
+		}
+	}
+
 }

@@ -63,7 +63,7 @@ GunInfo_t gbrguninfo[]=
 
 		MOD_RIFLE,
 		DAMAGE_Enfield, 0,
-		17
+		13 //17
 	},
 	{//Sten
 		{4,5},{79,80}, 5,80, 71,71,
@@ -132,7 +132,7 @@ GunInfo_t gbrguninfo[]=
 		0
 	},
 	{//Lee Enfield Sniper 
-		{4},{62,71,86,91}, 26,91, 53,53,
+		{4},{71,77,83,91}, 26,91, 53,53, //{4},{62,71,86,91}, 26,91, 53,53,
 
 			"gbr/303s/unload.wav",
 				{28},

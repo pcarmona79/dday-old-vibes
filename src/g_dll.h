@@ -25,6 +25,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __G_DLL_H__
+#define __G_DLL_H__
+
+#include "g_local.h"
+#include "g_cmds.h"
+
 #ifdef AMIGA
 	#include <stdlib.h>
 	#include <ctype.h>
@@ -112,3 +118,5 @@ static userdll_import_t  UserDLLImports;
 
 
 void InsertCmds(g_cmds_t *cmds, int numCmds, char *src);
+
+#endif /* __G_DLL_H__ */
