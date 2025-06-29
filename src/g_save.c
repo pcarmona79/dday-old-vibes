@@ -302,8 +302,9 @@ void InitGame (void)
 	observer_bscore = gi.cvar("observer_bscore", "0", 0);
 
 	// kernel: q2pro directories
-	sys_homedir = gi.cvar("homedir", "", CVAR_NOSET);
-	sys_libdir = gi.cvar("libdir", "", CVAR_NOSET);
+	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
+	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);
+	sys_libdir = gi.cvar("libdir", ".", CVAR_NOSET);
 
 	// pbowens: reduce lag by manipulating userinfo on server basis
 //	crosshair	= gi.cvar ("crosshair", "0", CVAR_USERINFO); 

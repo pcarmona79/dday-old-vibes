@@ -733,6 +733,7 @@ extern cvar_t  *teamkills_time;
 extern cvar_t *observer_bscore;
 
 // kernel: to get q2pro default directories
+extern cvar_t *sys_basedir;
 extern cvar_t *sys_homedir;
 extern cvar_t *sys_libdir;
 
