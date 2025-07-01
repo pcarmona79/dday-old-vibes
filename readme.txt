@@ -1,6 +1,12 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+Whats new in 4.4k-1
+-------------------
+
+ - Fixes compile warnings about file usage and replaces the majority of
+   fopen() calls by using new function DDay_OpenFullPathFile().
+
 Whats new in 4.4k
 -----------------
 
