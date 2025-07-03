@@ -723,6 +723,8 @@ extern  cvar_t  *force_auto_select;
 extern cvar_t  *allied_password;
 extern cvar_t  *axis_password;
 
+extern cvar_t  *ent_files;
+
 extern cvar_t *mashup;
 
 //kernel

@@ -113,6 +113,8 @@ cvar_t  *force_auto_select;
 cvar_t  *allied_password;
 cvar_t  *axis_password;
 
+cvar_t  *ent_files;
+
 cvar_t *mashup;
 
 //kernel

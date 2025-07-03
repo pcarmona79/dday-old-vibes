@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <ctype.h>
 
 //Ok, since we are modifying this file, we might as well declare the
 //item spawning functions here. These are the functions that actually 
@@ -630,6 +631,93 @@ void G_FindTeams (void)
 	gi.dprintf ("%i teams with %i entities\n", c, c2);
 }
 
+
+char *ReadEntFile(char *filename)
+{
+	FILE		*fp;
+	char		*filestring = NULL;
+	long int	i = 0;
+	int			ch;
+
+	while (true)
+	{
+		// kernel: try to open from q2 directories
+		fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
+		if (!fp)
+			break;
+
+		for (i=0; (ch = fgetc(fp)) != EOF; i++)
+			;
+
+		filestring = gi.TagMalloc(i+1, TAG_LEVEL);
+		if (!filestring)
+			break;
+
+		fseek(fp, 0, SEEK_SET);
+		for (i=0; (ch = fgetc(fp)) != EOF; i++)
+			filestring[i] = ch;
+		filestring[i] = '\0';
+
+		break;
+	}
+
+	if (fp)
+		fclose(fp);
+
+	return(filestring);
+}
+
+
+char *LoadEntFile(char *mapname, char *entities)
+{
+	char	entfilename[MAX_QPATH] = "";
+	char	*newentities;
+	int		i;
+
+
+	if (ent_files->value == 0)
+		return(entities);
+
+
+	//hack so civ override files load
+	if (strstr(entities, "misc_civilian"))
+		return(entities);
+
+
+	//can put the word "override" in the override ents somewhere so the ent file doesnt load
+	if (strstr(entities, "override"))
+	{
+		return(entities);
+	}
+
+
+	sprintf(entfilename, "ents/%s.ent", mapname);
+	// convert string to all lowercase (for Linux)
+	for (i = 0; entfilename[i]; i++)
+		entfilename[i] = tolower(entfilename[i]);
+
+	newentities = ReadEntFile(entfilename);
+
+	if (newentities)
+	{   //leave these dprints active they show up in the server init console section
+		gi.dprintf("%s.ent Loaded\n", mapname);
+		return(newentities);	// reassign the ents
+	}
+	else
+	{
+		gi.dprintf("No .ent File for %s.bsp\n", mapname);
+		return(entities);
+	}
+}
+
+
 /*
 ==============
 SpawnEntities
@@ -670,6 +758,9 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 	ent = NULL;
 	inhibit = 0;
+
+	InitItems();
+	entities = LoadEntFile(mapname, entities);//faf
 
 // parse ents
 	while (1)
