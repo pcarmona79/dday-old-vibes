@@ -242,6 +242,7 @@ se 'angles' instead of 'angle', so you can set pitch or roll as well as yaw.  'p
 */
 void SP_info_player_intermission(void){}
 void SP_info_reinforcement_start(edict_t *ent);
+/*
 void SP_info_Infantry_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_L_Gunner_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_H_Gunner_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
@@ -251,6 +252,70 @@ void SP_info_Medic_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_Flamethrower_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_Special_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_Officer_Start(edict_t *ent) {SP_info_reinforcement_start(ent);}
+*/
+
+void SP_info_Infantry_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][INFANTRY].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_L_Gunner_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][L_GUNNER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_H_Gunner_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][H_GUNNER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Sniper_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][SNIPER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Engineer_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][ENGINEER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Medic_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][MEDIC].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Flamethrower_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][FLAMER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Special_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][SPECIAL].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Officer_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][OFFICER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
 
 
 //=======================================================================

@@ -193,9 +193,9 @@ userdll_list_node_t *LoadUserDLLs(edict_t *ent, int team);
 
 void SP_info_reinforcement_start(edict_t *ent)
 {
-	ent->think= reinforcement_think;
-	ent->nextthink = level.time+((ent->delay)?ent->delay : RI->value);
-	ent->nextspawn = ent->nextthink;
+	//ent->think= reinforcement_think;
+	//ent->nextthink = level.time+((ent->delay)?ent->delay : RI->value);
+	//ent->nextspawn = ent->nextthink;
 	ent->spawnpoint = true;
 } 
 

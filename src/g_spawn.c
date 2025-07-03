@@ -263,7 +263,18 @@ spawn_t spawns[MAX_EDICTS] = {
 //	{"trigger_enough_troops", SP_trigger_enough_troops},
 
 //	{"target_objective",SP_target_objective},
-	{"info_infantry_start", SP_info_reinforcement_start},
+	{"info_infantry_start", SP_info_Infantry_Start},
+	{"info_officer_start",SP_info_Officer_Start},
+	{"info_lgunner_start",SP_info_L_Gunner_Start},
+	{"info_hgunner_start",SP_info_H_Gunner_Start},
+	{"info_sniper_start",SP_info_Sniper_Start},
+	{"info_engineer_start",SP_info_Engineer_Start},
+	{"info_medic_start",SP_info_Medic_Start},
+	{"info_special_start",SP_info_Special_Start},
+	{"info_flamethrower_start",SP_info_Flamethrower_Start},
+
+
+/*	{"info_infantry_start", SP_info_reinforcement_start},
 	{"info_officer_start",SP_info_reinforcement_start},
 	{"info_lgunner_start",SP_info_reinforcement_start},
 	{"info_hgunner_start",SP_info_reinforcement_start},
@@ -272,6 +283,10 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"info_medic_start",SP_info_reinforcement_start},
 	{"info_special_start",SP_info_reinforcement_start},
 	{"info_flamethrower_start",SP_info_reinforcement_start},
+
+*/
+
+
 
 	{"info_mission_results",SP_info_Mission_Results},
 	{"info_Mission_Results",SP_info_Mission_Results},

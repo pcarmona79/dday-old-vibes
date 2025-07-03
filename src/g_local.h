@@ -1737,6 +1737,15 @@ extern qboolean	frame_output;
 #define	flame_normal 0
 #define flame_gib 1
 
+
+typedef struct 
+{
+	int  limit;
+}mapclasslimits_t;
+
+mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
+
+
 typedef enum
 {
 	SOUND_WOOD,

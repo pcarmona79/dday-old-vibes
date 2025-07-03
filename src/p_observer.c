@@ -226,6 +226,12 @@ qboolean OpenSpot (edict_t *ent, mos_t class)
 		break;
 	}
 
+	if (mapclasslimits[team->index][class].limit)
+	{
+		int spots = mapclasslimits[team->index][class].limit;
+		team->mos[class]->available = spots - taken;
+	}
+
 	if (team->mos[class]->available > 0)
 		return true;
 	else
@@ -443,6 +449,14 @@ void M_ChooseMOS(edict_t *ent)
 			maxSlots = 0;
 			break;
 		}
+
+		if (mapclasslimits[ent->client->resp.team_on->index][i].limit)
+		{
+			maxSlots = mapclasslimits[ent->client->resp.team_on->index][i].limit;
+		}
+
+		if (maxSlots < 0)
+			maxSlots = 0;
 
 		// Setup text variable
 		theText = gi.TagMalloc(sizeof("123456789012 [00/00]"), TAG_GAME);
