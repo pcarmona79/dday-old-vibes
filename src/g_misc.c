@@ -2859,3 +2859,93 @@ int Surface2(char *name)
 	return -1;
 }
 
+
+void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
+{
+    edict_t *x;
+
+	//gi.dprintf("%s %s\n",activator->classname, other->classname);
+		
+	if (self->style == 2 && activator->client)
+	{
+		//bulgef thing: only switch if the activating person's nearest i_r_s belongs to opposite team.
+		edict_t *e,*nearest;
+		float temp_distance,nearest_distance;
+		vec3_t dist;
+
+		nearest_distance = 9999999999.0;
+		for (e = g_edicts; e < &g_edicts[globals.num_edicts]; e++)
+		{
+			if (!e->inuse)
+				continue;
+			if (strcmp(e->classname, "info_reinforcements_start"))
+				continue;
+			
+			VectorSubtract (e->s.origin, other->s.origin, dist);
+			
+			temp_distance = VectorLength(dist);
+			//gi.dprintf("%f\n",temp_distance);
+
+			if (temp_distance < nearest_distance)
+			{
+				nearest_distance = temp_distance;
+				nearest = e;
+			}
+		}
+		if (nearest)
+		{	
+			if (activator->client->resp.team_on &&
+				nearest->obj_owner == activator->client->resp.team_on->index)
+				return;
+			//gi.dprintf ("%s\n",vtos(nearest->s.origin));
+			
+		}
+	}
+
+
+	for (x = g_edicts; x < &g_edicts[globals.num_edicts]; x++)
+    {
+       if (!x->inuse)
+		   continue;
+	   
+	   if (!x->classname)
+		   continue;
+
+	   if (!strcmp(x->classname, "info_reinforcements_start") || !strcmp(x->classname, "bot_spawn"))
+	   {
+			if (self->style !=2)
+			{
+				if (x->obj_owner > -1)
+					x->obj_owner = -99;
+			}
+	   }
+   	
+	   if (!x->targetname)
+		   continue;
+
+	   if (self->style == 2)
+	   {
+			if (x->obj_owner == 1)
+				x->obj_owner = 0;
+			else if (x->obj_owner == 0)
+				x->obj_owner = 1;
+	   }
+
+
+
+		if (!strcmp(x->targetname, self->target))
+		{
+			if (x->obj_owner == -2)
+				x->obj_owner = 1;
+			else if (x->obj_owner == -1)
+				x->obj_owner = 0;
+		}
+	}
+
+}
+
+void SP_Spawn_Toggle (edict_t *self)
+{
+	self->use = spawn_toggle_use;
+}
+

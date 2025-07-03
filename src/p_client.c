@@ -368,6 +368,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				else
 					message = "blew himself up";
 				break;
+			case MOD_SPAWNCAMP://faf
+				message = "was killed for being in a spawn area";
+				break;
 			case MOD_AIRSTRIKE_SPLASH: //faf
 				if (IsFemale(self))
 					message = "called an airstrike on herself";

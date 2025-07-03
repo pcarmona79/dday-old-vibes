@@ -628,6 +628,7 @@ extern	int	body_armor_index;
 #define MOD_AIRSTRIKE		47
 #define MOD_AIRSTRIKE_SPLASH  48//
 #define MOD_BAYONET			49//faf
+#define MOD_SPAWNCAMP		51
 #define MOD_FRIENDLY_FIRE	0x8000000
 #define	MOD_BOTTLE			53
 #define	MOD_TANKHIT			54
@@ -1492,6 +1493,10 @@ struct gclient_s
 	float       last_fire_time;//faf
 
 	qboolean    tank_hit;//faf
+
+	float       enter_spawn_time;//faf
+	int			spawn_kill_time;//faf
+	float		spawn_safe_time;
 
 	edict_t     *chasetarget;//faf
 

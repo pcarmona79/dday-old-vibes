@@ -2084,3 +2084,117 @@ void reinforcement_think(edict_t *ent)
 	ent->nextthink=level.time+((ent->delay)?ent->delay : RI->value); 
 }
 */
+
+void Shrapnel_Dud (edict_t *ent);
+//faf
+void Touch_Spawn_Protect (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	if (other->client &&
+		!other->deadflag &&
+		other->client->resp.team_on)
+	{
+		if (other->client->resp.team_on->index != ent->obj_owner)
+		{
+			//last warned more than 4 seconds ago
+			if (!other->client->enter_spawn_time ||
+				other->client->enter_spawn_time < level.time - 4)
+			{
+				if (ent->message)
+					gi.centerprintf(other, "%s\n", ent->message);
+				else
+					gi.centerprintf(other, "You've Entered Spawn Area, Stay Out!!\n");
+				
+				other->client->enter_spawn_time = level.time;
+				other->client->spawn_kill_time = level.time + 4;
+			}
+
+			if (other->client->enter_spawn_time > level.time - 4 &&
+				other->client->spawn_kill_time < level.time)
+			{
+				other->health = 1;
+				T_Damage(other, other, other, other->maxs, other->s.origin, NULL, 999, 0,  DAMAGE_NO_PROTECTION, MOD_SPAWNCAMP);
+			}
+		}
+		else //in own spawn area
+		{
+			other->client->spawn_safe_time = level.time;
+		}
+
+	}
+	else if (other->item &&
+		other->item->position == LOC_GRENADES &&
+		other->owner &&
+		other->owner->client &&
+		other->owner->client->resp.team_on &&
+		other->owner->client->resp.team_on->index != ent->obj_owner)
+	{
+		other->think = Shrapnel_Dud;
+	}
+	else if (other->owner && other->owner->client && (!strcmp (other->classname,"rocket") || !strcmp (other->classname,"bomb")))
+	{
+		if (other->owner->client->resp.team_on && other->owner->client->resp.team_on->index !=
+			ent->obj_owner)
+		{
+			/*if (other->owner->client->gunwarntime && other->owner->client->gunwarntime > level.time - 1)
+			{}else{
+//				other->owner->client->gunwarntime = level.time;
+//				safe_centerprintf(other->owner, "You are firing into a spawn area!\nDamage will be lowered!\n");
+			}*/
+			other->dmg = 120;
+			other->radius_dmg = 80;
+			other->dmg_radius = 600;
+		}
+	}
+
+}
+
+
+void SP_spawn_protect(edict_t *self)
+{
+//	vec3_t orig;
+	vec3_t min;
+	vec3_t max;
+	int i;
+
+
+	self->touch = Touch_Spawn_Protect;
+	self->movetype = MOVETYPE_NONE;
+	self->svflags |= SVF_NOCLIENT;
+
+	self->solid = SOLID_TRIGGER;
+	if (self->model)
+		gi.setmodel (self, self->model);
+	else if (self->move_origin && self->move_angles)
+	{ 
+		VectorCopy (self->move_origin, min);
+		VectorCopy (self->move_angles, max);
+
+		//make sure mins are really less than maxs
+		for (i=0; i< 3; i++)
+		{
+			if (min[i] > max [i])
+			{
+				self->move_origin[i] = max[i];
+				self->move_angles[i] = min[i];
+			}
+		}
+
+		VectorSet (self->s.origin, (self->move_angles[0] + self->move_origin[0])/2,
+			(self->move_angles[1] + self->move_origin[1])/2,
+			(self->move_angles[2] + self->move_origin[2])/2);
+		VectorSet (self->mins, self->move_origin[0] - self->s.origin[0],
+			self->move_origin[1] - self->s.origin[1],
+			self->move_origin[2] - self->s.origin[2]);
+		VectorSet (self->maxs, self->move_angles[0]- self->s.origin[0],
+			self->move_angles[1]- self->s.origin[1],
+			self->move_angles[2]- self->s.origin[2]);
+
+	}
+	else
+	{
+		G_FreeEdict(self);
+		return;
+	}
+
+	gi.linkentity (self);
+}

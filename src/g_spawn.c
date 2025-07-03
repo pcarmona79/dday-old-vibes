@@ -206,6 +206,8 @@ void SP_objective_touch(edict_t *self);
 void SP_func_explosive_objective (edict_t *self);
 
 void SP_map_location (edict_t *self);//faf
+void SP_spawn_protect (edict_t *self);
+void SP_Spawn_Toggle (edict_t *self);
 
 spawn_t spawns[MAX_EDICTS] = {
 	{"item_health", SP_item_health},
@@ -386,7 +388,8 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"objective_touch",SP_objective_touch},
 	{"func_explosive_objective", SP_func_explosive_objective}, //test
 	{"map_location", SP_map_location},//faf
-    
+	{"spawn_protect", SP_spawn_protect},//faf
+	{"spawn_toggle", SP_Spawn_Toggle},
      //end of item modifications.
 	{NULL, NULL}
 };
