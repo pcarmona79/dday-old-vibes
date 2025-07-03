@@ -175,6 +175,7 @@ void SP_misc_banner_4 (edict_t *self);
 void SP_misc_skeleton (edict_t *self);
 //bcass end
 void SP_misc_md2 (edict_t *self);
+void SP_misc_crate (edict_t *self);
 void SP_misc_satellite_dish (edict_t *self);
 void SP_misc_actor (edict_t *self);
 void SP_misc_gib_arm (edict_t *self);
@@ -322,6 +323,8 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"misc_skeleton", SP_misc_skeleton},
 //bcass end
 	{"misc_md2", SP_misc_md2},
+	{"misc_crate", SP_misc_crate},
+
 	{"misc_satellite_dish", SP_misc_satellite_dish},
 	{"misc_actor", SP_misc_actor},
 	{"misc_gib_arm", SP_misc_gib_arm},

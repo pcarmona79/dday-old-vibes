@@ -1682,6 +1682,43 @@ void SP_misc_md2 (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+
+void SP_misc_crate (edict_t *ent)
+{
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_BBOX;
+	ent->s.modelindex = gi.modelindex ("models/objects/crate/tris.md2");
+//	ent->s.frame = rand() % 16;
+//	ent->s.frame = 1;
+
+	ent->mass = 400;
+
+	if (ent->style)
+		ent->s.skinnum = ent->style;
+
+	if (ent->count == 0)
+	{
+		ent->s.frame = 0;
+		VectorSet (ent->mins, -8, -8, -10);
+		VectorSet (ent->maxs, 8, 8, 6);
+	}
+	else if (ent->count == 1)
+	{
+		ent->s.frame = 1;
+		VectorSet (ent->mins, -24, -24, -10); 
+		VectorSet (ent->maxs, 24, 24, 36);
+	}
+	else if (ent->count == 2)
+	{
+		ent->s.frame = 2;
+		VectorSet (ent->mins, -32, -32, -10);
+		VectorSet (ent->maxs, 32, 32, 54);
+	}
+	gi.linkentity (ent);
+
+}
+
+
 void SP_misc_skeleton_generic (edict_t *ent, char *model)
 
 {
