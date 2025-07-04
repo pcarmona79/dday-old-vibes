@@ -1,6 +1,22 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.5k
+-------------------
+
+ - Adds support for loading map ents, readed from .ent files in the
+   "ents/" directory.
+ - Adds support for spawn types "spawn_protect" and "spawn_toggle" adding
+   code from 5.x source.
+ - Adds mapclasslimits array to allow mappers to set the class limits.
+ - Adds support for turrets from 5.x source.
+
+Whats new in 4.4k-1
+-------------------
+
+ - Fixes compile warnings about file usage and replaces the majority of
+   fopen() calls by using new function DDay_OpenFullPathFile().
+
 Whats new in 4.4k
 -----------------
 
