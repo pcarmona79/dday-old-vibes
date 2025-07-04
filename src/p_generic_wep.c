@@ -468,6 +468,13 @@ no_fire:
 					ent->client->ps.gunframe = FRAME_IDLE_FIRST;
 					return;
 				}
+				//faf
+				else if (ent->client->enter_spawn_time > level.time - 4)
+				{
+					ent->client->weaponstate = WEAPON_READY;
+					ent->client->ps.gunframe = FRAME_IDLE_FIRST;
+					return;
+				}
 				else
 					fire (ent);
 

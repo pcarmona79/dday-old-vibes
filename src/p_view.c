@@ -723,6 +723,11 @@ void SV_CalcBlend (edict_t *ent)
 	if (ent->burnout)
 		SV_AddBlend (0.9, 0.9, 0.6, 0.84, ent->client->ps.blend);
 
+	if (ent->health > 0 &&
+		ent->client->enter_spawn_time &&
+		ent->client->enter_spawn_time > level.time - 4)
+		SV_AddBlend (0, 0, 0, 0.5, ent->client->ps.blend);
+
 	// fade into lobby
 	if (level.framenum < ((int)level_wait->value * 10))
 	{

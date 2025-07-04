@@ -1033,6 +1033,11 @@ void G_SetStats (edict_t *ent)
 	ent->client->ps.stats[STAT_HEALTH_ICON] = level.pic_health;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health;
 
+	if (ent->health > 0 &&
+		ent->client->enter_spawn_time &&
+		ent->client->enter_spawn_time > level.time - 4)
+		ent->client->ps.stats[STAT_HEALTH_ICON] = gi.imageindex ("i_respcount");
+
 	//
 	// SELECTED WEAPON
 	//

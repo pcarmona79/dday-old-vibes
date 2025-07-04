@@ -80,6 +80,8 @@ field_t fields[] = {
 
 //these are for SP_info_Skin
 	{"skindir",FOFS(pathtarget),F_LSTRING},
+	{"min", FOFS(move_origin), F_VECTOR},
+	{"max", FOFS(move_angles), F_VECTOR},//faf:  for spawn_protect
 //these are for SP_event_Arty_Battery
 	{"guns",FOFS(health),F_INT},
 	{"volly",FOFS(sounds),F_INT},
