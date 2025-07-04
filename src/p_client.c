@@ -46,7 +46,8 @@ void change_stance(edict_t *self, int stance);
 void Cmd_Scope_f(edict_t *ent);
 void Drop_Weapon (edict_t *ent, gitem_t *item);
 void weapon_grenade_fire (edict_t *ent);
-void check_unscope (edict_t *ent);
+void check_unscope (edict_t *ent);//faf
+void turret_off (edict_t *self);
 
 //kernel: to kick teamkillers
 void DropClient (edict_t *ent);
@@ -909,6 +910,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	self->maxs[2] = -8;
 	self->solid = SOLID_NOT;
 	self->svflags |= SVF_DEADMONSTER;
+
+	turret_off (self);
 	
 	if (!self->deadflag)
 	{
@@ -925,7 +928,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		//gi.sound(self, CHAN_WEAPON, gi.soundindex("misc/null.wav"), 1, ATTN_NORM, 0);
 
 		if (meansOfDeath != MOD_CHANGETEAM) {
-			if (deathmatch->value)
+			if (deathmatch->value && !self->client->menu)
 				Cmd_Help_f (self);		// show scores
 		} 
 
@@ -2199,6 +2202,8 @@ void ClientDisconnect (edict_t *ent)
 
 	change_stance(ent, STANCE_STAND);
 
+	turret_off(ent);
+
 	stuffcmd(ent, "cl_forwardspeed 200;cl_sidespeed 200;cl_upspeed 200;");
 	gi.bprintf (PRINT_HIGH, "%s disconnected\n", ent->client->pers.netname);
 
@@ -2767,7 +2772,9 @@ you can get the motd by typing MOTD at the console too
 	// set up for pmove
 	memset (&pm, 0, sizeof(pm));
 
-	if (ent->movetype == MOVETYPE_NOCLIP)
+	if (client->turret)
+		client->ps.pmove.pm_type = PM_NORMAL;
+	else if (ent->movetype == MOVETYPE_NOCLIP)
 		client->ps.pmove.pm_type = PM_SPECTATOR;
 	else if (ent->s.modelindex != 255)
 		client->ps.pmove.pm_type = PM_GIB;
@@ -2874,6 +2881,8 @@ you can get the motd by typing MOTD at the console too
 
 			ent->client->ps.fov = STANDARD_FOV;
 		}
+
+		turret_off (ent);
 
 	}
 

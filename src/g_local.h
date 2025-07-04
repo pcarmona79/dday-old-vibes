@@ -1001,7 +1001,7 @@ void fire_bullet (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
 void fire_blaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, int effect, qboolean hyper);
 
 void fire_tracer (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int mod);
-//void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
+void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float time, float damage_radius, int team);
 //bcass start - TNT
 void fire_tnt (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float time, float damage_radius, int team);
@@ -1500,6 +1500,8 @@ struct gclient_s
 
 	edict_t     *chasetarget;//faf
 
+	edict_t     *turret;//faf
+
 	float 		crosshair_offset_x;
 	float 		crosshair_offset_y;
 
@@ -1713,6 +1715,7 @@ struct edict_s
 	float			leave_limbo_time;//faf
 	int				oldstance;//faf
 
+	vec3_t			last_turret_driver_spot;
 };
 
 

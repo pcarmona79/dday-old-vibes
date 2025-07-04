@@ -197,8 +197,10 @@ void SP_misc_easterchick2 (edict_t *self);
 void SP_turret_breach (edict_t *self);
 void SP_turret_base (edict_t *self);
 
+void SP_turret_range (edict_t *self);
+
 void SP_info_Mission_Results (edict_t *ent);
-//void SP_turret_driver (edict_t *self);
+void SP_turret_driver (edict_t *self);
 //void SP_tank_Tank1 (edict_t *self); // for DDAY tanks (pbowens)
 
 // Objectives courtesy of BinaryCowboy
@@ -371,7 +373,8 @@ spawn_t spawns[MAX_EDICTS] = {
 */
 	{"turret_breach", SP_turret_breach},
 	{"turret_base", SP_turret_base},
-//	{"turret_driver", SP_turret_driver},
+	{"turret_range", SP_turret_range},
+	{"turret_driver", SP_turret_driver},
 
 	
 

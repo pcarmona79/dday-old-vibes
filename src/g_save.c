@@ -44,9 +44,16 @@ field_t fields[] = {
 	{"combattarget", FOFS(combattarget), F_LSTRING},
 	{"message", FOFS(message), F_LSTRING},
 	{"team", FOFS(team), F_LSTRING},
+
+	{"ammo_type", FOFS(killtarget), F_LSTRING},//turret
+	{"fire_sound", FOFS(obj_name), F_LSTRING},//turret
+
 	{"wait", FOFS(wait), F_FLOAT},
 	{"delay", FOFS(delay), F_FLOAT},
 	{"random", FOFS(random), F_FLOAT},
+
+	{"rate", FOFS(pain_debounce_time), F_FLOAT},//turret
+
 	{"move_origin", FOFS(move_origin), F_VECTOR},
 	{"move_angles", FOFS(move_angles), F_VECTOR},
 	{"style", FOFS(style), F_INT},
@@ -79,9 +86,19 @@ field_t fields[] = {
 	{"frames",FOFS(mass),F_INT},//faf:  for animated misc_md2
 
 //these are for SP_info_Skin
-	{"skindir",FOFS(pathtarget),F_LSTRING},
+//	{"skindir",FOFS(pathtarget),F_LSTRING},
+
+	{"md2",FOFS(pathtarget),F_LSTRING},//faf: turret md2s
+
+	{"stance", FOFS(sounds), F_INT}, //turret: forces stance stanceflags
+	{"tank",FOFS(obj_gain),F_INT},//turret:  tank 1 will make player disappear
+
+
+	{"skin",FOFS(deathtarget),F_LSTRING},//faf: for custom skins, mapper sets this in info_team_start
+
 	{"min", FOFS(move_origin), F_VECTOR},
 	{"max", FOFS(move_angles), F_VECTOR},//faf:  for spawn_protect
+
 //these are for SP_event_Arty_Battery
 	{"guns",FOFS(health),F_INT},
 	{"volly",FOFS(sounds),F_INT},
@@ -91,6 +108,9 @@ field_t fields[] = {
 	{"time_to_fire",FOFS(health),F_INT},
 	{"accuracy",FOFS(dmg),F_INT},
 	{"strike_type",FOFS(mass),F_INT},
+
+	{"turret_sound",FOFS(map), F_LSTRING},
+
 
 //these are for SP_info_Mission_Results
 	{"nextmap",FOFS(map), F_LSTRING},

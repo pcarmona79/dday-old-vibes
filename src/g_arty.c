@@ -43,6 +43,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, char *wav, qboolean fists);
 void P_ProjectSource(gclient_t * client , vec3_t point , vec3_t distance , vec3_t forward , vec3_t right , vec3_t result );
+qboolean CheckForTurret(edict_t *ent);
+void turret_off (edict_t *self);
+void Use_Weapon (edict_t *ent, gitem_t *item);
 
 void Weapon_Bayonet_Fire1 (edict_t *ent)
 {
@@ -125,7 +128,23 @@ void Cmd_Arty_f (edict_t *ent)
 	if (!ent->client->resp.team_on)
 		return;
 
-
+	//faf:  turret stuff
+	if (!ent->client->turret &&
+		!ent->client->grenade)
+	{
+		if	(CheckForTurret(ent))
+		{
+			Use_Weapon (ent, FindItem("Fists"));
+			CheckForTurret(ent);
+			return;
+		}
+	}
+	else
+	{
+		turret_off(ent);
+		return;
+	}
+			
 	if (ent->client &&
 		ent->client->pers.weapon &&
 		!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_carcano"))

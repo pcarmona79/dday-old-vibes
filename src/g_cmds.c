@@ -40,6 +40,8 @@ void SwitchToObserver(edict_t *ent);
 void SyncUserInfo(edict_t *ent, qboolean pers);
 void ClientSetMaxSpeed (edict_t *ent, qboolean sync);
 void check_unscope (edict_t *ent);
+void turret_off(edict_t *self);
+qboolean CheckForTurret(edict_t *ent);
 
 #define MEDIC_CALL_TIME 30
 
@@ -431,7 +433,21 @@ void Cmd_Scope_f(edict_t *ent)
 		}
 		return;
 	}
-	
+
+	//faf:  turret stuff
+	if (ent->client->pers.weapon && !Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_fists")
+		&& !ent->client->aim)
+	{
+		if (ent->client->turret)
+		{
+			turret_off (ent);
+			ent->client->turret = NULL;
+			return;
+		}
+		else if (CheckForTurret(ent))
+			return;
+	}
+
 	if (!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 	{
 		if (ent->client->aim == true)
@@ -2728,101 +2744,51 @@ qboolean Cmd_Reload_f (edict_t *ent)
 }
 
 
-/*======================================================================================
-==  This function is for setting mos types.
-======================================================================================*/
-/*
-int fix_mos(char *argv)
-{
-	int i,argc=atoi(argv);
-	for(i=1;i<MAX_MOS+1;i++) {
-		if( (argc==i) || (Q_stricmp(argv,mos_name[i])==0) )
-			return i;
-	}
 
-	if( (Q_stricmp(argv,"1")==0) || (Q_stricmp(argv,"Officer")==0) )
-		return OFFICER;
-	else if( (Q_stricmp(argv,"2")==0) || (Q_stricmp(argv,"L_GUNNER")==0)
-	                                  || (Q_stricmp(argv,"light_gunner")==0) )
-		return L_GUNNER;
-	else if( (Q_stricmp(argv,"3")==0) || (Q_stricmp(argv,"H_GUNNER")==0)
-		                              || (Q_stricmp(argv,"heavy_gunner")==0) )
-		return H_GUNNER;
-	else if( (Q_stricmp(argv,"4")==0) || (Q_stricmp(argv,"SNIPER")==0) )
-		return SNIPER;
-	else if( (Q_stricmp(argv,"5")==0) || (Q_stricmp(argv,"AIRBORNE")==0) )
-		return AIRBORNE;
-//	else if( (Q_stricmp(argv,"6")==0) || (Q_stricmp(argv,"ENGINEER")==0) )
-//		return ENGINEER;
-	else if( (Q_stricmp(argv,"6")==0) || (Q_stricmp(argv,"MEDIC")==0) )
-		return MEDIC;
-	else if( (Q_stricmp(argv,"7")==0) || (Q_stricmp(argv,"FLAMER")==0) )
-		return FLAMER;
-	else return INFANTRY;
-}
-*/
-
-/*
-void Cmd_MOS(edict_t *ent)
-{
-	mos_t new_mos;
-
-	if (!ent->client->resp.team_on || !ent->client->resp.mos)
-		return;
-	
-	if( (gi.argc()<2) || ((Q_stricmp(gi.argv(1),"?")==0)) )
-	{
-		//they wanna print a list of options
-		gi.cprintf(ent,PRINT_HIGH,"usage: class [list] classname\n\n[0] Infantry\n[1] Officer\n[2] Light Gunner\n[3] Heavy Gunner\n[4] Sniper\n[5] Airborne\n[6] Medic\n[7] FlameThrower\n");
-		return;
-	}
-	
-	if(Q_stricmp(gi.argv(1), "list")==0) 
-	{
-		Show_Mos(ent);
-		return;
-	}
-
-//	if( (Q_stricmp(gi.argv(1), "smos")==0) && (gi.argc()>=3) )
-//	{
-//		ent->client->resp.smos=fix_mos(gi.argv(2));
-//	}
-//	else 
-//	{
-
-
-	new_mos = fix_mos(gi.argv(1));
-
-	if (new_mos == ent->client->resp.mos) { // Already playing that class!
-		gi.cprintf(ent, PRINT_HIGH, "You're already playing the %s class!\n",
-			ent->client->resp.team_on->mos[new_mos]->name);
-
-		return;
-	
-	} else {
-	
-		gi.cprintf(ent, PRINT_HIGH, "You will be class %s on your next respawn.\n",
-			ent->client->resp.team_on->mos[new_mos]->name);
-
-		ent->client->resp.newmos = new_mos;
-	}
-//	}
-}
-*/
 void Cmd_Stance(edict_t *ent)
 {
+	vec3_t	start;
+	vec3_t	end;
+	vec3_t  up;
+	trace_t	tr;
+
 	if (!ent->client->resp.AlreadySpawned || ent->deadflag)
 		return;
 
-	if (ent->waterlevel > 1)
-		return;
+//	if (ent->waterlevel > 1)
+//		return;
 
 	//gi.cprintf(ent, PRINT_HIGH, "Use +movedown instead.\n");
+
 	if(ent->client->limbo_mode)
 	{
 		ent->movedown=level.time+.30;
+		return;
 	}
-	else if(ent->stanceflags == STANCE_STAND) change_stance(ent, STANCE_DUCK);
+
+	turret_off (ent);
+
+	//faf:  keep player's view inside the map
+	if (ent->stanceflags == STANCE_CRAWL)
+	{
+		VectorCopy(ent->s.origin, start);
+		start[2] += ent->viewheight;
+		VectorSet(up, 0, 0, 1);
+		VectorMA(start, 48, up, end);
+		
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+
+
+		if (tr.fraction < 1.0 )	//can't stand so go to crouch
+		{
+
+				change_stance(ent, STANCE_DUCK);
+				return;
+
+		}	
+	}
+
+	if (ent->stanceflags == STANCE_STAND) change_stance(ent, STANCE_DUCK);
 	else if(ent->stanceflags == STANCE_DUCK) change_stance(ent, STANCE_CRAWL);
 	else if(ent->stanceflags == STANCE_CRAWL) change_stance(ent, STANCE_STAND);
 	WeighPlayer(ent);

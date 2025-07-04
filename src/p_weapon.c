@@ -62,6 +62,8 @@ void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 void Shrapnel_Dud (edict_t *ent);
 void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
 void check_unscope (edict_t *ent);//faf
+void turret_off (edict_t *self);
+void Weapon_Turret_Fire(edict_t *ent);
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
@@ -613,6 +615,10 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 	// see if we're already using it
 	if (item == ent->client->pers.weapon)
 		return;
+
+
+	turret_off(ent);
+
 
 	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
 	{
@@ -1622,6 +1628,14 @@ void Weapon_Knife (edict_t *ent)
 	qboolean armedfists = Q_stricmp(ent->client->pers.weapon->pickup_name,"Knife");
 
 	ent->client->crosshair = false;
+
+	if (ent->client->turret)
+	{
+		if (ent->client->turret->count >= 0)
+			ent->client->p_rnd= &ent->client->turret->count;
+		Weapon_Turret_Fire(ent);
+		return;
+	}
 
 	//ent->client->aim=false;
 	//fire_frames[0]=(ent->client->aim)?54:4;

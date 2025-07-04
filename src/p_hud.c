@@ -1160,6 +1160,8 @@ void G_SetStats (edict_t *ent)
 	else if (ent->client->resp.mos == OFFICER && ent->client->pers.weapon && ent->client->aim &&
 			!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
+	else if (ent->client->turret)
+		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
 	else
 		ent->client->ps.stats[STAT_CROSSHAIR] = 0;
 

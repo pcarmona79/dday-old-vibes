@@ -1256,8 +1256,8 @@ void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *
     //Shrapnel_Explode (ent);
 }
 
-/*
-void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, int team)
+
+void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
 {
 	edict_t	*grenade;
 	vec3_t	dir;
@@ -1278,21 +1278,21 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 //	grenade->s.effects |= EF_GRENADE;
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
-	grenade->s.modelindex = gi.modelindex (va("models/objects/%s/tris.md2", (self->client->resp.team_on->index) ? "masher" : "grenade2"));
+	grenade->s.modelindex = gi.modelindex ("models/objects/grenade2/tris.md2");
 	grenade->owner = self;
 	grenade->nextthink = level.time + timer;
 	grenade->dmg = damage;
 	grenade->dmg_radius = damage_radius;
-	grenade->classname = "grenade";
-	grenade->item=FindItem(va("%s", (self->client->resp.team_on->index) ? "Potato Masher" : "USA Grenade" ));
-//	grenade->grenade_armed = true;
+	grenade->classname = "nade";
 	
 	grenade->think = Shrapnel_Explode;
 	grenade->touch = Shrapnel_Touch;
 	
 	gi.linkentity (grenade);
 }
-*/
+
+
+
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float time, float damage_radius, int team)
 {
 	edict_t	*grenade;
