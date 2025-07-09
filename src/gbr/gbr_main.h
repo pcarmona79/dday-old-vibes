@@ -78,6 +78,7 @@ qboolean (*Cmd_Reload_f)(edict_t *);
 void (*fire_rifle)(edict_t *, vec3_t, vec3_t, int, int, int);
 void (*VectorScale)(vec3_t, vec_t, vec3_t);
 void (*fire_rocket)(edict_t *, vec3_t, vec3_t, int, int, float, int);
+void (*fire_rocket2)(edict_t *, vec3_t, vec3_t, int, int, float, int);
 void (*PBM_FireFlameThrower)(edict_t *, vec3_t, vec3_t, vec3_t, int, vec3_t, vec3_t, int , int);
 void (*Weapon_Pistol_Fire)(edict_t *);
 void (*Weapon_Rifle_Fire)(edict_t *);

@@ -47,7 +47,6 @@ void fire_Knife2 ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int k
 void Weapon_Enfield_Fire (edict_t *ent);
 void Weapon_Sten_Fire (edict_t *ent);
 void Weapon_PIAT_Fire (edict_t *ent);
-void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 
 
 void Weapon_Pistol_Fire2 (edict_t *ent);
@@ -1702,42 +1701,6 @@ void Weapon_PIAT_Fire (edict_t *ent)
 	ent->client->mags[mag_index].antitank_rnd--;
 	ent->client->next_fire_frame = ptrlevel->framenum + guninfo->frame_delay;
 
-}
-
-//faf:  adds gravity to the rocket
-void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
-{
-	edict_t	*rocket;
-
-	rocket = G_Spawn();
-	VectorCopy (start, rocket->s.origin);
-	VectorCopy (dir, rocket->movedir);
-	vectoangles (dir, rocket->s.angles);
-	VectorScale (dir, speed, rocket->velocity);
-	rocket->movetype = MOVETYPE_BOUNCE,//MOVETYPE_FLYMISSILE;
-	rocket->clipmask = MASK_SHOT;
-	rocket->solid = SOLID_BBOX;
-	//rocket->s.effects |= EF_ROCKET;
-	VectorClear (rocket->mins);
-	VectorClear (rocket->maxs);
-	rocket->s.modelindex = ptrgi->modelindex ("models/objects/rocket/tris.md2");
-	rocket->owner = self;
-	rocket->touch = rocket_touch;
-	rocket->nextthink = ptrlevel->time + 8000/speed;
-	rocket->think = G_FreeEdict;
-	rocket->dmg = damage;
-	rocket->radius_dmg = radius_damage;
-	rocket->dmg_radius = damage_radius;
-	rocket->s.sound = ptrgi->soundindex ("weapons/rockfly.wav");
-	rocket->classname = "rocket";
-	
-	rocket->gravity =  1;//.9; //faf
-
-
-//faf:causing error and dont think is needed	if (self->client)
-//faf		check_dodge (self, rocket->s.origin, dir, speed);
-
-	ptrgi->linkentity (rocket);
 }
 
 void Weapon_Pistol_Fire2 (edict_t *ent)

@@ -578,6 +578,7 @@ void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , 
 void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 void rocket_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:693
 void fire_rocket(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:744
+void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void fire_shell(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:776
 void fire_rifle(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick, int mod );   // found @ line:812
 edict_t * ApplyFirstAid(edict_t * ent );   // found @ line:872

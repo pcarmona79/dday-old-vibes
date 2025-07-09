@@ -68,12 +68,12 @@ void InitFunctions(void)
                    PlayerFindFunction("fire_bullet");
     ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
 	
-    Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int,int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
-                   PlayerFindFunction("Weapon_Generic");
-    FindItem = (gitem_t * (*)(char *))
-                   PlayerFindFunction("FindItem");
-    SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
-    FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
+	Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int,int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
+				   PlayerFindFunction("Weapon_Generic");
+	FindItem = (gitem_t * (*)(char *))
+				   PlayerFindFunction("FindItem");
+	SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
+	FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
 	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
@@ -87,6 +87,8 @@ void InitFunctions(void)
 	VectorScale=(void(*)(vec3_t, vec_t, vec3_t))PlayerFindFunction("VectorScale");
 	fire_rocket=(void (*)(edict_t *, vec3_t, vec3_t, int, int, float, int))
 					PlayerFindFunction("fire_rocket");
+	fire_rocket2=(void (*)(edict_t *, vec3_t, vec3_t, int, int, float, int))
+					PlayerFindFunction("fire_rocket2");
 	PBM_FireFlameThrower=(void(*)(edict_t *, vec3_t, vec3_t, vec3_t, int, vec3_t, vec3_t, int , int))
 					PlayerFindFunction("PBM_FireFlameThrower");
 	Pickup_Ammo=(qboolean(*)(edict_t *, edict_t *))PlayerFindFunction("Pickup_Ammo");
