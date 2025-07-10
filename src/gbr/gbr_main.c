@@ -103,6 +103,7 @@ void InitFunctions(void)
 	Weapon_Rocket_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Rocket_Fire");
 	Weapon_Sniper_Fire=(void (*)(edict_t *))PlayerFindFunction("Weapon_Sniper_Fire");
 	Weapon_Grenade=(void (*)(edict_t *))PlayerFindFunction("Weapon_Grenade");
+	Weapon_PIAT_Fire = (void (*)(edict_t *))PlayerFindFunction("Weapon_PIAT_Fire");
 
 	Play_WepSound=(void (*)(edict_t *, char))PlayerFindFunction("Play_WepSound");
 	fire_tracer = (void(*)(edict_t *, vec3_t, vec3_t, int, int))PlayerFindFunction("fire_tracer");

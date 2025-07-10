@@ -88,7 +88,7 @@ void (*Weapon_HMG_Fire)(edict_t *);
 void (*Weapon_Rocket_Fire)(edict_t *);
 void (*Weapon_Sniper_Fire)(edict_t *);
 void (*Weapon_Grenade)(edict_t *);
-
+void (*Weapon_PIAT_Fire)(edict_t *ent);
 
 void Weapon_Webley (edict_t *ent);
 void Weapon_Enfield(edict_t *ent);
