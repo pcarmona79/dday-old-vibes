@@ -83,6 +83,7 @@ void InitFunctions(void)
 	Cmd_Reload_f=(qboolean(*)(edict_t *))PlayerFindFunction("Cmd_Reload_f");
 	Pickup_Weapon=(qboolean(*)(edict_t *, edict_t *))PlayerFindFunction("Pickup_Weapon");
 	Drop_Weapon=(void (*)(edict_t *, gitem_t *))PlayerFindFunction("Drop_Weapon");
+	fire_gun2 = (void (*)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean)) PlayerFindFunction("fire_gun2");
 	fire_rifle=(void (*)(edict_t *, vec3_t, vec3_t, int, int, int))PlayerFindFunction("fire_rifle");
 	VectorScale=(void(*)(vec3_t, vec_t, vec3_t))PlayerFindFunction("VectorScale");
 	fire_rocket=(void (*)(edict_t *, vec3_t, vec3_t, int, int, float, int))
