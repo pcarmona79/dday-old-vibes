@@ -70,18 +70,17 @@ static int AlreadyLoad = 0;
 
 void InitFunctions(void)
 {
+    //this is where you would acquire any needed function pointers
+	fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
+				   PlayerFindFunction("fire_bullet");
+	ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
 	
-      //this is where you would acquire any needed function pointers
-    fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
-                   PlayerFindFunction("fire_bullet");
-    ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
-	
-    Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
-                   PlayerFindFunction("Weapon_Generic");
-    FindItem = (gitem_t * (*)(char *))
-                   PlayerFindFunction("FindItem");
-    SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
-    FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
+	Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
+				   PlayerFindFunction("Weapon_Generic");
+	FindItem = (gitem_t * (*)(char *))
+				   PlayerFindFunction("FindItem");
+	SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
+	FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
 	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
@@ -91,6 +90,7 @@ void InitFunctions(void)
 	Cmd_Reload_f=(qboolean(*)(edict_t *))PlayerFindFunction("Cmd_Reload_f");
 	Pickup_Weapon=(qboolean(*)(edict_t *, edict_t *))PlayerFindFunction("Pickup_Weapon");
 	Drop_Weapon=(void (*)(edict_t *, gitem_t *))PlayerFindFunction("Drop_Weapon");
+	fire_gun2 = (void (*)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean)) PlayerFindFunction("fire_gun2");
 	fire_rifle=(void (*)(edict_t *, vec3_t, vec3_t, int, int, int))PlayerFindFunction("fire_rifle");
 	VectorScale=(void(*)(vec3_t, vec_t, vec3_t))PlayerFindFunction("VectorScale");
 	fire_rocket=(void (*)(edict_t *, vec3_t, vec3_t, int, int, float, int))

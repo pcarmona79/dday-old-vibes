@@ -683,6 +683,7 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 //"fire_grenade", (void (*))fire_grenade,   // void fire_grenade(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius )  \dday\source/g_weapon.c:605
 "fire_grenade2", (void (*))fire_grenade2,   // void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius , qboolean held )  \dday\source/g_weapon.c:639
 "fire_gun", (void (*))fire_gun, // void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv)
+"fire_gun2", (void (*))fire_gun2, // void fire_gun2(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv)
 "fire_hit", (void (*))fire_hit,   // qboolean fire_hit(edict_t * self , vec3_t aim , int damage , int kick )  \dday\source/g_weapon.c:46
 //"fire_lead", (void (*))fire_lead,   // static void fire_lead(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick , int te_impact , int hspread , int vspread , int mod , qboolean calcv )  \dday\source/g_weapon.c:128
 "fire_rifle", (void (*))fire_rifle,   // void fire_rifle(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick )  \dday\source/g_weapon.c:812
@@ -841,6 +842,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   738
+#define  FUNARRAYLEN   739
 
 #endif /* __FUNCARRY_H__ */

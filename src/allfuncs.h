@@ -576,6 +576,7 @@ void Smoke_Effect (vec3_t origin, float strength);
 //void fire_grenade(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius );   // found @ line:605
 void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float time , float damage_radius , int team );   // found @ line:639
 void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
+void fire_gun2(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 void rocket_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:693
 void fire_rocket(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:744
 void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
