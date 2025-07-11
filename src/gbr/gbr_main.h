@@ -103,7 +103,7 @@ void Weapon_Enfields(edict_t *ent);
 void (*SP_misc_banner_generic) (edict_t *ent, char *model);
 
 
-void Weapon_Bren_Fire (edict_t *ent);
+void (*Weapon_Bren_Fire)(edict_t *ent);
 void Weapon_Vickers_Fire (edict_t *ent);
 void (*Play_WepSound)(edict_t *, char);
 void (*fire_gun)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
