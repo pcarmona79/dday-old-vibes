@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_cmds.h"
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
-void NoAmmoWeaponChange (edict_t *ent);
 //qboolean (*Pickup_Weapon)(edict_t *, edict_t *);
 
 //faf:  tidies up coming out of the scope for the sniper.

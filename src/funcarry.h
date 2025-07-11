@@ -253,7 +253,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "Move_Calc", (void (*))Move_Calc,   // void Move_Calc(edict_t * ent , vec3_t dest , void ( * func ) ( edict_t * ) )  \dday\source/g_func.c:95
 "Move_Done", (void (*))Move_Done,   // void Move_Done(edict_t * ent )  \dday\source/g_func.c:57
 "Move_Final", (void (*))Move_Final,   // void Move_Final(edict_t * ent )  \dday\source/g_func.c:63
-"NoAmmoWeaponChange", (void (*))NoAmmoWeaponChange,   // void NoAmmoWeaponChange(edict_t * ent )  \dday\source/p_weapon.c:201
 "PBM_ActivePowerArmor", (void (*))PBM_ActivePowerArmor,   // qboolean PBM_ActivePowerArmor(edict_t * ent , vec3_t point )  \dday\source/x_fire.c:264
 "PBM_BecomeSmallExplosion", (void (*))PBM_BecomeSmallExplosion,   // void PBM_BecomeSmallExplosion(edict_t * self )  \dday\source/x_fire.c:166
 "PBM_BecomeSmoke", (void (*))PBM_BecomeSmoke,   // void PBM_BecomeSmoke(edict_t * self )  \dday\source/x_fire.c:83
@@ -842,6 +841,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   739
+#define  FUNARRAYLEN   738
 
 #endif /* __FUNCARRY_H__ */

@@ -526,46 +526,6 @@ void ChangeWeapon (edict_t *ent)
 	
 } 
 
-/*
-=================
-NoAmmoWeaponChange
-=================
-*/
-void NoAmmoWeaponChange (edict_t *ent)
-{
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("m1903"))] )
-	{
-		ent->client->newweapon = FindItem ("M1903");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("Bullets"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("Thompson"))] )
-	{
-		ent->client->newweapon = FindItem ("Thompson");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("HMGAmmo"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("BHMG"))] )
-	{
-		ent->client->newweapon = FindItem ("BHMG");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("HMGAmmo"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("BAR"))] )
-	{
-		ent->client->newweapon = FindItem ("BAR");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))] > 1
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("M1 Garand"))] )
-	{
-		ent->client->newweapon = FindItem ("M1 Garand");
-		return;
-	}
-	ent->client->newweapon = FindItem ("colt45");
-}
-
 
 /*
 =================

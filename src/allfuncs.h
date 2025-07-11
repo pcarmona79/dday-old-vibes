@@ -766,7 +766,6 @@ void P_ProjectSource(gclient_t * client , vec3_t point , vec3_t distance , vec3_
 void PlayerNoise(edict_t * who , vec3_t where , int type );   // found @ line:42
 qboolean Pickup_Weapon(edict_t * ent , edict_t * other );   // found @ line:102
 void ChangeWeapon(edict_t * ent );   // found @ line:162
-void NoAmmoWeaponChange(edict_t * ent );   // found @ line:201
 void Think_Weapon(edict_t * ent );   // found @ line:244
 void Use_Weapon(edict_t * ent , gitem_t * item );   // found @ line:273
 void Drop_Weapon(edict_t * ent , gitem_t * item );   // found @ line:308
