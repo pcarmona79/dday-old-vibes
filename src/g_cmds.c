@@ -1062,8 +1062,8 @@ void Cmd_Use_f (edict_t *ent)
 
 	if (Q_stricmp(s, "gibmachine") == 0)
 	{
-	if(easter_egg->value==0)
-		return;
+		if(easter_egg->value==0)
+			return;
 		
 		if (ent->client->gibmachine == flame_normal)
 		{
@@ -1075,7 +1075,7 @@ void Cmd_Use_f (edict_t *ent)
 			gi.cprintf(ent, PRINT_HIGH, "Goodbye gib machine!.\n");
 			ent->client->gibmachine = flame_normal;
 		}
-	return;
+		return;
 	}
 
 
@@ -1812,60 +1812,59 @@ void Cmd_Wave_f (edict_t *ent)
 //faf:  based on aq2 code
 void GetNearbyTeammates(edict_t *self, char *buf)
 {
-        unsigned char nearby_teammates[10][16];
-        int nearby_teammates_num, l;
-        edict_t *ent = NULL;
+	char nearby_teammates[10][16];
+	int nearby_teammates_num, l;
+	edict_t *ent = NULL;
 
-        nearby_teammates_num = 0;
-        
-        while ((ent = findradius(ent, self->s.origin, 750)) != NULL)
-        {
-                if (ent == self || !ent->client || !CanDamage(ent, self) || 
-                        !OnSameTeam(ent, self))
-                        continue;
+	nearby_teammates_num = 0;
 
-                strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, 15);
-                nearby_teammates[nearby_teammates_num][15] = 0; // in case their name is 15 chars...
-                nearby_teammates_num++;
-                if (nearby_teammates_num >= 10)
-                        break;
-        }
-        
-        if (nearby_teammates_num == 0)
-        {
-                strcpy(buf, "");
-                return;
-        }
+	while ((ent = findradius(ent, self->s.origin, 750)) != NULL)
+	{
+		if (ent == self || !ent->client || !CanDamage(ent, self) ||
+			!OnSameTeam(ent, self))
+			continue;
 
-        for (l = 0; l < nearby_teammates_num; l++)
-        {
-                if (l == 0)
-                {
-                        strcpy(buf, nearby_teammates[l]);
-                }
-                        else
-                {
-                        if (nearby_teammates_num == 2)
-                        {
-                                strcat(buf, " and ");
-                                strcat(buf, nearby_teammates[l]);
-                        }
-                                else
-                        {
-                                if (l == (nearby_teammates_num - 1))
-                                {
-                                        strcat(buf, ", and ");
-                                        strcat(buf, nearby_teammates[l]);
-                                }
-                                        else
-                                {
-                                        strcat(buf, ", ");
-                                        strcat(buf, nearby_teammates[l]);
-                                }
-                        }
-                }
-                
-        }
+		strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, 15);
+		nearby_teammates[nearby_teammates_num][15] = 0; // in case their name is 15 chars...
+		nearby_teammates_num++;
+		if (nearby_teammates_num >= 10)
+			break;
+	}
+
+	if (nearby_teammates_num == 0)
+	{
+		strcpy(buf, "");
+		return;
+	}
+
+	for (l = 0; l < nearby_teammates_num; l++)
+	{
+		if (l == 0)
+		{
+			strcpy(buf, nearby_teammates[l]);
+		}
+		else
+		{
+			if (nearby_teammates_num == 2)
+			{
+				strcat(buf, " and ");
+				strcat(buf, nearby_teammates[l]);
+			}
+			else
+			{
+				if (l == (nearby_teammates_num - 1))
+				{
+					strcat(buf, ", and ");
+					strcat(buf, nearby_teammates[l]);
+				}
+				else
+				{
+					strcat(buf, ", ");
+					strcat(buf, nearby_teammates[l]);
+				}
+			}
+		}
+	}
 }
 
 //faf
@@ -2054,56 +2053,56 @@ char *SeekBufEnd(char *buf)
 
 void ParseSayText(edict_t *ent, char *text)
 {
-        static unsigned char buf[10240], infobuf[10240];
-        char *p, *pbuf;
+	static char buf[10240], infobuf[10240];
+	char *p, *pbuf;
 
-        p = text;
-        pbuf = buf;
-        *pbuf = 0;
+	p = text;
+	pbuf = buf;
+	*pbuf = 0;
 
-        while (*p != 0)
-        {
-             if (((ptrdiff_t)pbuf - (ptrdiff_t)buf) > 150)
-	            {
-					break;
-			    }
-                if (*p == '%')
-                {
-                        switch (*(p+1))
-                        {
-                                case 'L':
-                                        GetNearbyLocation(ent, infobuf);
-                                        strcpy(pbuf, infobuf);
-                                        pbuf = SeekBufEnd(pbuf);
-                                        p += 2;
-                                        continue;
-                                case 'T':
-                                        GetNearbyTeammates(ent, infobuf);
-                                        strcpy(pbuf, infobuf);
-                                        pbuf = SeekBufEnd(pbuf);
-                                        p += 2;
-                                        continue;
-								case 'M':
-									GetNearestMedic(ent, infobuf);
-									strcpy(pbuf, infobuf);
-									pbuf = SeekBufEnd(pbuf);
-									p +=2;
-									continue;
-								case 'C':
-									GetClass(ent, infobuf);
-									strcpy(pbuf, infobuf);
-									pbuf = SeekBufEnd(pbuf);
-									p +=2;
-									continue;
-                        }
-                }
-                *pbuf++ = *p++;
-        }
+	while (*p != 0)
+	{
+		if (((ptrdiff_t)pbuf - (ptrdiff_t)buf) > 150)
+		{
+			break;
+		}
+		if (*p == '%')
+		{
+			switch (*(p+1))
+			{
+				case 'L':
+					GetNearbyLocation(ent, infobuf);
+					strcpy(pbuf, infobuf);
+					pbuf = SeekBufEnd(pbuf);
+					p += 2;
+					continue;
+				case 'T':
+					GetNearbyTeammates(ent, infobuf);
+					strcpy(pbuf, infobuf);
+					pbuf = SeekBufEnd(pbuf);
+					p += 2;
+					continue;
+				case 'M':
+					GetNearestMedic(ent, infobuf);
+					strcpy(pbuf, infobuf);
+					pbuf = SeekBufEnd(pbuf);
+					p +=2;
+					continue;
+				case 'C':
+					GetClass(ent, infobuf);
+					strcpy(pbuf, infobuf);
+					pbuf = SeekBufEnd(pbuf);
+					p +=2;
+					continue;
+			}
+		}
+		*pbuf++ = *p++;
+	}
 
-        *pbuf = 0;
+	*pbuf = 0;
 
-        strncpy(text, buf, 150);
-        text[150] = 0; // in case it's 150
+	strncpy(text, buf, 150);
+	text[150] = 0; // in case it's 150
 }
 
 /*
