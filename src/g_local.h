@@ -1182,6 +1182,8 @@ typedef struct
 	int		arty_fire_count; // how many times the battary has been fired
 
 	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
+	qboolean chute;
+	float		delay;//delay at start of map
 
 }TeamS_t;
 
@@ -1514,6 +1516,8 @@ struct gclient_s
 
 	edict_t		*sandbag_preview;
 	vec3_t		sandbag_pos;
+
+	qboolean	has_chute;
 };
 
 

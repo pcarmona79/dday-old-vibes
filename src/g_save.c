@@ -142,7 +142,8 @@ field_t fields[] = {
 	{"obj_owner",FOFS(obj_owner),F_INT},//pointer to who currently owns target
 	{"obj_gain",FOFS(obj_gain),F_INT},
 	{"obj_loss",FOFS(obj_loss),F_INT},
-	{"obj_count",FOFS(obj_count),F_INT}
+	{"obj_count",FOFS(obj_count),F_INT},
+	{"chute",FOFS(obj_count),F_INT}
 };
 
 // -------- just for savegames ----------

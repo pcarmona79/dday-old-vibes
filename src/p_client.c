@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "m_player.h"
 #include "g_cmds.h"
@@ -2800,7 +2801,7 @@ you can get the motd by typing MOTD at the console too
 		else
 		{
 		//	ucmd->upmove += -200;
-			client->ps.pmove.gravity = .25 * (sv_gravity->value) ; //parchute factor
+			client->ps.pmove.gravity = PARACHUTE_FACTOR * (sv_gravity->value) ; //parchute factor
 //faf			client->landed = false;
 		}
 	}
@@ -3134,6 +3135,7 @@ void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;
+	int delay;
 	edict_t *chase;
 
 	if (level.intermissiontime)
@@ -3192,6 +3194,11 @@ void ClientBeginServerFrame (edict_t *ent)
 	{
 		if (client->latched_buttons & BUTTON_ATTACK)
 		{
+			delay = 0;
+			if (ent->client->resp.team_on)
+				delay = ent->client->resp.team_on->delay;
+
+
 			if (!ent->client->resp.team_on)
 				MainMenu(ent);
 			else if (!ent->client->resp.mos &&
@@ -3200,8 +3207,8 @@ void ClientBeginServerFrame (edict_t *ent)
 				M_ChooseMOS(ent);
 				client->latched_buttons = 0;
 			}
-			else if ((level.framenum > ((int)(level_wait->value * 10))) &&// + ((ent->client->spawn_delay) *10))) &&
-			(ent->leave_limbo_time < level.time - .1))
+			if (level.framenum > (10 * (int)(level_wait->value  + delay)) &&
+			ent->leave_limbo_time < level.time - .1)
 			{
 				EndObserverMode(ent); //faf
 				client->latched_buttons = 0;
@@ -3256,11 +3263,12 @@ void ClientBeginServerFrame (edict_t *ent)
 			PlayerTrail_Add (ent->s.old_origin);
 
 	client->latched_buttons = 0;
+	
+	delay = 0;
+	if (ent->client->resp.team_on)
+		delay = ent->client->resp.team_on->delay;
 
-
-
-
-	if ((level.framenum > ((int)(level_wait->value * 10))) &&// + ((ent->client->spawn_delay) *10))) &&
+	if (level.framenum > (10 * (int)(level_wait->value  + delay))  &&
 	(ent->client->limbo_mode) &&
 	(ent->leave_limbo_time < level.time) &&
 	(ent->client->menu == 0))  // so you dont spawn while choosing a class

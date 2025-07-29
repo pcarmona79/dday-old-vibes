@@ -85,6 +85,215 @@ void SwitchToObserver(edict_t *ent)
 	}
 }
 
+
+//faf    parachutes :P
+void Chute_Think(edict_t *ent)
+{
+	if (level.intermissiontime || ent->owner->deadflag)
+	{
+		ent->think = G_FreeEdict;
+		ent->nextthink = level.time + .1;
+		return;
+	}
+
+
+	//done with it
+	if (ent->s.frame == 10)
+	{
+		if (ent->owner->client)
+			ent->owner->client->landed = true;
+
+		ent->movetype = MOVETYPE_NONE;
+		ent->gravity = 0;
+		ent->nextthink = level.time + 2;
+		ent->think = G_FreeEdict;
+		return;
+	}
+
+	ent->nextthink = level.time + .1;
+//	gi.dprintf("%f\n",ent->owner->client->jump_stamina);
+	//we've touched the ground
+	if (ent->owner->client &&
+		ent->owner->groundentity || ent->owner->velocity[2] > 0 ||
+		ent->owner->client->jump_stamina < 80 ||
+		ent->s.frame > 5)
+//		ent->owner->client->ps.pmove.gravity == sv_gravity->value)//landed
+	{
+		if (ent->s.frame < 10)  //start parachute falling
+		{
+			ent->owner->client->ps.pmove.gravity = sv_gravity->value;
+			//ent->owner->client->landed = true;
+			ent->s.sound = 0;
+			ent->s.frame++;
+			if (ent->owner->velocity[2] <= 0 ||  // keeps chute from floating when landing
+				ent->s.frame < 3)
+				ent->s.origin[2] = ent->owner->s.origin[2];
+			return;
+		}
+	}
+	else //not on ground
+		if (ent->owner->velocity[2] > 0) //just jumped
+	{
+//			ent->s.frame = 0;
+		ent->s.origin[0] = ent->owner->s.origin[0];
+		ent->s.origin[1] = ent->owner->s.origin[1];
+		ent->gravity = 0;
+
+		ent->s.sound = gi.soundindex("faf/flag.wav");
+		ent->owner->client->landed = false;
+		ent->owner->client->ps.pmove.gravity = .25 * (sv_gravity->value) ; //parchute factor
+
+	}
+	else
+	{
+		ent->s.frame = 0;
+		VectorCopy (ent->owner->s.origin, ent->s.origin);
+		ent->gravity = .25;
+		ent->s.sound = gi.soundindex("faf/flag.wav");
+		ent->movetype = MOVETYPE_TOSS;
+		ent->owner->client->landed = false;
+
+	}
+
+	if (ent->velocity[2] <-500)
+		ent->velocity [2] = -500;
+/*
+	if (ent->s.frame < 10 &&
+		!ent->owner->groundentity)
+	{
+		ent->s.frame = 0;// restart the chute
+		VectorCopy (ent->owner->s.origin, ent->s.origin);
+		ent->movetype = MOVETYPE_TOSS;
+		ent->s.sound = gi.soundindex("faf/flag.wav");
+
+	} */
+}
+
+
+void Spawn_Chute(edict_t *ent)
+{
+	//faf
+	vec3_t	start;
+	vec3_t	end;
+	vec3_t world_up, down;
+
+	trace_t	tr;
+
+	edict_t *chute;
+
+
+	ent->client->landed = true;
+
+	VectorCopy(ent->s.origin, start);
+	VectorSet(world_up, 0, 0, 1);
+	VectorMA(start, 8192, world_up, end);
+
+	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+
+	if ( tr.surface && !(tr.surface->flags & SURF_SKY))  //under a roof
+	{
+		return;
+	}
+
+	VectorSet(down, 0, 0, -1);
+	VectorMA(start, 100, down, end);
+
+	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+
+	if ( tr.fraction < 1.0 )  //not high off ground
+	{
+		return;
+	}
+
+	ent->client->landed = false;
+
+
+	chute = G_Spawn();
+	chute->movetype = MOVETYPE_TOSS;
+	chute->solid = SOLID_TRIGGER;
+	chute->gravity = .25;
+	chute->s.modelindex = gi.modelindex ("models/objects/chute/tris.md2");
+	chute->s.sound = gi.soundindex("faf/flag.wav");
+
+	chute->think = Chute_Think;
+	chute->nextthink = level.time + .1;
+	chute->owner = ent;
+
+	chute->clipmask = MASK_SHOT;
+
+	VectorClear (chute->mins);
+	VectorClear (chute->maxs);
+
+	chute->classname = "chute";
+
+	VectorCopy (ent->s.origin, chute->s.origin);
+}
+
+
+void Spawn_Chute_Special(edict_t *ent)
+{
+	//faf
+	vec3_t	start;
+	vec3_t	end;
+	vec3_t world_up, down;
+
+	trace_t	tr;
+
+	edict_t *chute;
+
+	if (ent->client->has_chute == false)
+		return;
+
+
+	ent->client->landed = true;
+
+	VectorCopy(ent->s.origin, start);
+	VectorSet(world_up, 0, 0, 1);
+	VectorMA(start, 8192, world_up, end);
+
+	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+
+//	if ( tr.surface && !(tr.surface->flags & SURF_SKY))  //under a roof
+//	{
+//		return;
+//	}
+
+	VectorSet(down, 0, 0, -1);
+	VectorMA(start, 100, down, end);
+
+	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+
+	if ( tr.fraction < 1.0 )  //not high off ground
+	{
+		return;
+	}
+
+	ent->client->landed = false;
+	ent->client->has_chute = false;
+
+
+	chute = G_Spawn();
+	chute->movetype = MOVETYPE_TOSS;
+	chute->solid = SOLID_TRIGGER;
+	chute->gravity = .25;
+	chute->s.modelindex = gi.modelindex ("models/objects/chute/tris.md2");
+	chute->s.sound = gi.soundindex("faf/flag.wav");
+
+	chute->think = Chute_Think;
+	chute->nextthink = level.time + .1;
+	chute->owner = ent;
+
+	chute->clipmask = MASK_SHOT;
+
+	VectorClear (chute->mins);
+	VectorClear (chute->maxs);
+
+	chute->classname = "chute";
+
+	VectorCopy (ent->s.origin, chute->s.origin);
+}
+
+
 //this function exits observer mode, presumably after they have chosen mos. They must have
 //joined a team, if one is avaiable...
 
@@ -157,10 +366,20 @@ void EndObserverMode(edict_t* ent)
 	WeighPlayer(ent);
 	ent->client->spawntime = level.time;
 
+	/*move to spawn_chute
 	if (ent->client->resp.mos == SPECIAL)
 		ent->client->landed = false;
 	else
 		ent->client->landed = true;
+*/
+	ent->client->landed = true;
+	//faf
+	/*requires model*/
+	if (ent->client->resp.mos == SPECIAL)
+	{
+		ent->client->has_chute = true;
+		Spawn_Chute(ent);
+	}
 }
 
 qboolean OpenSpot (edict_t *ent, mos_t class)

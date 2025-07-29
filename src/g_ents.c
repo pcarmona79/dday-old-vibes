@@ -352,6 +352,13 @@ void SP_info_team_start(edict_t *ent)
 	else if (ent->dmg)
 		team_list[i]->need_kills = ent->dmg;
 
+	//set chute 1 to give all players on team parachute
+	if (ent->obj_count)
+		team_list[i]->chute = true;
+	if (ent->delay)
+		team_list[i]->delay = ent->delay;
+	else
+		team_list[i]->delay = 0;
 
 // now is the time to hook up the mos .dll files...
 	   

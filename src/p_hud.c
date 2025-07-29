@@ -1025,7 +1025,7 @@ G_SetStats
 void G_SetStats (edict_t *ent)
 {
 	gitem_t		*item;
-	int			index;
+	int			index, delay;
 
 	//
 	// HEALTH 
@@ -1108,10 +1108,13 @@ void G_SetStats (edict_t *ent)
 	// TIMERS
 	//
 	// level_wait timer (i_dday)
-	if (level.framenum < ((int)level_wait->value * 10) )
+	delay = 0;
+	if (ent->client->resp.team_on)
+		delay = ent->client->resp.team_on->delay;
+	if (level.framenum < ((int)(delay + level_wait->value) * 10) )
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("i_dday");
-		ent->client->ps.stats[STAT_TIMER] = ((int)level_wait->value - (level.framenum / 10));
+		ent->client->ps.stats[STAT_TIMER] = ((int)(delay + level_wait->value) - (level.framenum / 10));
 	} 	
 	// forced respawn tuner (i_respcount)
 	else if (level.framenum <= ent->client->forcespawn)

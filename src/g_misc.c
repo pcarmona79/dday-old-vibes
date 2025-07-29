@@ -2404,6 +2404,7 @@ void SP_func_clock (edict_t *self)
 //=================================================================================
 
 
+void Spawn_Chute(edict_t *ent);
 
 void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 
@@ -2490,6 +2491,8 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	other->solid = SOLID_TRIGGER;
 	//it works just like when spawning
 
+	other->client->landed = false;
+	Spawn_Chute(other);
 
 
 
