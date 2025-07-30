@@ -10,6 +10,8 @@ What's new in 4.5k
    code from 5.x source.
  - Adds mapclasslimits array to allow mappers to set the class limits.
  - Adds support for turrets from 5.x source.
+ - Adds parachute spawn for special classes, copied from 5.x source code.
+ - Cleans up code, removing duplicated and some unused functions.
 
 Whats new in 4.4k-1
 -------------------
