@@ -319,6 +319,8 @@ void InitGame (void)
 
 	mashup = gi.cvar ("mashup", "0", 0);
 
+	chile = gi.cvar ("chile", "0", CVAR_LATCH);
+
 	//kernel: cvar for team kill checking
 	teamkills_check = gi.cvar ("teamkills_check", "0", 0);
 	teamkills_max = gi.cvar ("teamkills_max", "5", 0);
@@ -330,6 +332,7 @@ void InitGame (void)
 	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
 	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);
 	sys_libdir = gi.cvar("libdir", ".", CVAR_NOSET);
+
 
 	// pbowens: reduce lag by manipulating userinfo on server basis
 //	crosshair	= gi.cvar ("crosshair", "0", CVAR_USERINFO); 

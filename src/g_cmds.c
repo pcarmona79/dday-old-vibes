@@ -1000,8 +1000,6 @@ gitem_t	*FindNextPickup (edict_t *ent, int location)
 		else if (location)	// Skip the stuff below if its looking for a specific position
 			continue;
 
-		// weapon1, weapon2, grenades y special son nombres de las armas del equipo
-		// agregar comprobacion de team para descartar que el arma recogida tenga el mismo nombre de otra en el inventario
 		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
 				ent->client->resp.team_on->teamid))
 			continue;

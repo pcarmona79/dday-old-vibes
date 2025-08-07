@@ -38,6 +38,7 @@ int gbr_index;
 byte *is_silenced;
 edict_t *g_edicts;
 
+extern cvar_t *chile;
 
 //g_items.c
 void InitItems(void);

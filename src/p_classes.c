@@ -52,55 +52,54 @@ void Load_Weapon (edict_t *ent, gitem_t	*item)
 	else if (!strcmp(item->ammo, "mauser98k_mag") && !strcmp(item->pickup_name, "Mauser 98ks"))
 		ent->client->mags[1].sniper_rnd = ammo_item->quantity;
 
-        else if (!strcmp(item->dllname, team_list[1]->teamid))  //faf:  if its a team 1 weap...(usually grm)
-        {
-                if (item->position == LOC_PISTOL)
-                        ent->client->mags[1].pistol_rnd = ammo_item->quantity;
-                else if (item->position == LOC_SUBMACHINEGUN)
-                        ent->client->mags[1].submg_rnd = ammo_item->quantity;
-                else if (item->position == LOC_L_MACHINEGUN)
-                        ent->client->mags[1].lmg_rnd = ammo_item->quantity;
-                else if (item->position == LOC_H_MACHINEGUN)
-                        ent->client->mags[1].hmg_rnd = ammo_item->quantity;
-                else if (item->position == LOC_ROCKET)
-                        ent->client->mags[1].antitank_rnd = ammo_item->quantity;
-                else if ((item->position == LOC_RIFLE))
-                        ent->client->mags[1].rifle_rnd = ammo_item->quantity;
-                else if ((item->position == LOC_SNIPER))
-                        ent->client->mags[1].sniper_rnd = ammo_item->quantity;
-                else if ((item->position == LOC_SHOTGUN))
-                        ent->client->mags[1].shotgun_rnd = ammo_item->quantity;
-                 else if (item->position == LOC_SUBMACHINEGUN2)
-                        ent->client->mags[1].submg2_rnd = ammo_item->quantity;
-       }
+	else if (!strcmp(item->dllname, team_list[1]->teamid))  //faf:  if its a team 1 weap...(usually grm)
+	{
+		if (item->position == LOC_PISTOL)
+			ent->client->mags[1].pistol_rnd = ammo_item->quantity;
+		else if (item->position == LOC_SUBMACHINEGUN)
+			ent->client->mags[1].submg_rnd = ammo_item->quantity;
+		else if (item->position == LOC_L_MACHINEGUN)
+			ent->client->mags[1].lmg_rnd = ammo_item->quantity;
+		else if (item->position == LOC_H_MACHINEGUN)
+			ent->client->mags[1].hmg_rnd = ammo_item->quantity;
+		else if (item->position == LOC_ROCKET)
+			ent->client->mags[1].antitank_rnd = ammo_item->quantity;
+		else if (item->position == LOC_RIFLE)
+			ent->client->mags[1].rifle_rnd = ammo_item->quantity;
+		else if (item->position == LOC_SNIPER)
+			ent->client->mags[1].sniper_rnd = ammo_item->quantity;
+		else if (item->position == LOC_SHOTGUN)
+			ent->client->mags[1].shotgun_rnd = ammo_item->quantity;
+		else if (item->position == LOC_SUBMACHINEGUN2)
+			ent->client->mags[1].submg2_rnd = ammo_item->quantity;
+	}
 
-        else if (!strcmp(item->dllname, team_list[0]->teamid))  //usually allied weapons here...
-        {
-                if (item->position == LOC_PISTOL)
-                        ent->client->mags[0].pistol_rnd = ammo_item->quantity;
-                else if (item->position ==  LOC_RIFLE)
-                        ent->client->mags[0].rifle_rnd = ammo_item->quantity;
-                else if (item->position == LOC_SNIPER)
-                        ent->client->mags[0].sniper_rnd = ammo_item->quantity;  //faf:  not used for usa but so plugin team 1 can use same ammo for inf rifle and sniper rifle
-                else if (item->position == LOC_SUBMACHINEGUN)
-                        ent->client->mags[0].submg_rnd = ammo_item->quantity;
-                else if (item->position == LOC_L_MACHINEGUN)
-                        ent->client->mags[0].lmg_rnd = ammo_item->quantity;
-                else if (item->position == LOC_H_MACHINEGUN)
-                        ent->client->mags[0].hmg_rnd = ammo_item->quantity;
-                else if (item->position == LOC_ROCKET)
-                        ent->client->mags[0].antitank_rnd = ammo_item->quantity;
-                else if (item->position == LOC_SNIPER)
-                        ent->client->mags[0].sniper_rnd = ammo_item->quantity;
-                else if (item->position == LOC_SHOTGUN)
-                        ent->client->mags[0].shotgun_rnd = ammo_item->quantity;
-                 else if (item->position == LOC_SUBMACHINEGUN2)
-                        ent->client->mags[0].submg2_rnd = ammo_item->quantity;
-       }
+    else if (!strcmp(item->dllname, team_list[0]->teamid))  //usually allied weapons here...
+    {
+        if (item->position == LOC_PISTOL)
+            ent->client->mags[0].pistol_rnd = ammo_item->quantity;
+        else if (item->position ==  LOC_RIFLE)
+            ent->client->mags[0].rifle_rnd = ammo_item->quantity;
+        else if (item->position == LOC_SNIPER)
+            ent->client->mags[0].sniper_rnd = ammo_item->quantity;  //faf:  not used for usa but so plugin team 1 can use same ammo for inf rifle and sniper rifle
+        else if (item->position == LOC_SUBMACHINEGUN)
+            ent->client->mags[0].submg_rnd = ammo_item->quantity;
+        else if (item->position == LOC_L_MACHINEGUN)
+            ent->client->mags[0].lmg_rnd = ammo_item->quantity;
+        else if (item->position == LOC_H_MACHINEGUN)
+            ent->client->mags[0].hmg_rnd = ammo_item->quantity;
+        else if (item->position == LOC_ROCKET)
+            ent->client->mags[0].antitank_rnd = ammo_item->quantity;
+        else if (item->position == LOC_SNIPER)
+            ent->client->mags[0].sniper_rnd = ammo_item->quantity;
+        else if (item->position == LOC_SHOTGUN)
+            ent->client->mags[0].shotgun_rnd = ammo_item->quantity;
+        else if (item->position == LOC_SUBMACHINEGUN2)
+            ent->client->mags[0].submg2_rnd = ammo_item->quantity;
+    }
 
-        else if (!strcmp(item->ammo, "flame_mag"))
-                ent->client->flame_rnd = ammo_item->quantity;
-	
+    else if (!strcmp(item->ammo, "flame_mag"))
+        ent->client->flame_rnd = ammo_item->quantity;
 }
 
 void Give_Class_Weapon(edict_t *ent)
@@ -152,8 +151,8 @@ void Give_Class_Weapon(edict_t *ent)
 
 	item = NULL;
 
-	if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->weapon2,
-							  client->resp.team_on->teamid))
+	if ((item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->weapon2,
+							  client->resp.team_on->teamid)))
 		client->pers.inventory[ITEM_INDEX(item)] = 1;
 
 	// Loads secondary weapon, if existant, when spawning
@@ -167,14 +166,14 @@ void Give_Class_Weapon(edict_t *ent)
 	}
 
 	// kernel: this forces team id when assigns grenades (italians has potato masher like germans)
-	if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->grenades,
-				client->resp.team_on->teamid))
-			client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->grenadenum;
+	if ((item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->grenades,
+							   client->resp.team_on->teamid)))
+		client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->grenadenum;
 	//}
 	//if(client->resp.team_on->mos[client->resp.mos]->special)
 	//{
-		if (item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->special,
-				client->resp.team_on->teamid))
+	if ((item = FindItemInTeam(client->resp.team_on->mos[client->resp.mos]->special,
+							   client->resp.team_on->teamid)))
 		client->pers.inventory[ITEM_INDEX(item)]=client->resp.team_on->mos[client->resp.mos]->specnum;
 	//}
 

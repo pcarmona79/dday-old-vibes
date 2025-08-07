@@ -115,6 +115,7 @@ cvar_t  *axis_password;
 
 cvar_t  *ent_files;
 
+cvar_t *chile;
 cvar_t *mashup;
 
 //kernel

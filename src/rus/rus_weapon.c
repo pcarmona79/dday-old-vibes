@@ -419,7 +419,7 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 		
 		return;
 	}
-
+/*
 	if (!ent->client->aim)
 	{
 		for (i=0 ; i<3 ; i++)
@@ -448,14 +448,14 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 		//ent->client->kick_origin[0] = crandom() * 0.35;
 		//ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
 	}
-
+*/
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 
 	//faf: adding this to alternate firing sounds

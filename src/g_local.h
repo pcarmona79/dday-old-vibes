@@ -727,6 +727,7 @@ extern cvar_t  *axis_password;
 extern cvar_t  *ent_files;
 
 extern cvar_t *mashup;
+extern cvar_t *chile;
 
 //kernel
 extern cvar_t  *teamkills_check;
