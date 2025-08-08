@@ -15,8 +15,11 @@ What's new in 4.5k
  - Adds cvar "chile" to restrict some tweaks only when this cvar is
    enabled. The first tweak is to do not rise the submachine guns when
    firing.
- - Fix bug in InsertItem() of u_entmgr.c when adding 1 to the calculated
-   index to avoid overwrite the last element of "itemlist" array.
+ - Remove unused functions from u_entmgr.c and fixes the buggy function
+   InsertItem(), replacing it with a version which only adds new elements
+   to the end. Also fixes for loops in FindItem* functions of g_items.c
+   and other for loops involving game.num_items, to allow them to
+   correctly reach the end of itemlist array.
 
 Whats new in 4.4k-1
 -------------------

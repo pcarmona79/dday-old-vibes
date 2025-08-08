@@ -37,17 +37,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   manipulate items and entities.
 */
 
+#include "g_local.h"
+
 //returns a pointer to the gitem_t allocated in the itemlist, null if failed
-
 gitem_t *InsertItem(gitem_t *it,spawn_t *spawnInfo);
-
-//returns a pointer to the spawn_t structure in the spawns[], null if failed
-
-spawn_t *InsertEntity(spawn_t *spawnInfo);
-
-
-//finds and removes the entity. returns the old index, -1 if not found
-
-int RemoveEntity(char *name);
 
 #endif /* __U_ENTMGR_H__ */

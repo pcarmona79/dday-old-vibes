@@ -926,10 +926,5 @@ void PlayerDiesUserDLLs(edict_t * self , edict_t * inflictor , edict_t * attacke
 
 // File : \dday\source/u_entmgr.c
 gitem_t * InsertItem(gitem_t * it , spawn_t * spawnInfo );   // found @ line:34
-qboolean booldummy(struct edict_s * i , struct edict_s * ii );   // found @ line:85
-void dummy1(struct edict_s * i , struct gitem_s * ii );   // found @ line:90
-void dummy2(struct edict_s * i );   // found @ line:94
-spawn_t * InsertEntity(spawn_t * spawnInfo );   // found @ line:104
-int RemoveEntity(char * name );   // found @ line:132
 
 #endif /* __ALLFUNCS_H__ */

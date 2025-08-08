@@ -204,7 +204,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "InitTrigger", (void (*))InitTrigger,   // void InitTrigger(edict_t * self )  \dday\source/g_trigger.c:4
 "InitializeUserDLLs", (void (*))InitializeUserDLLs,   // int InitializeUserDLLs(struct userdll_list_node * unode , int teamindex )  \dday\source/g_dll.c:86
 "InsertCmds", (void (*))InsertCmds,   // void InsertCmds(struct g_cmds_t * cmds , int numCmds , char * src )  \dday\source/g_cmds.c:1389
-"InsertEntity", (void (*))InsertEntity,   // spawn_t * InsertEntity(spawn_t * spawnInfo )  \dday\source/u_entmgr.c:104
 "InsertItem", (void (*))InsertItem,   // gitem_t * InsertItem(gitem_t * it , spawn_t * spawnInfo )  \dday\source/u_entmgr.c:34
 "IsFemale", (void (*))IsFemale,   // qboolean IsFemale(edict_t * ent )  \dday\source/p_client.c:183
 "KillBox", (void (*))KillBox,   // qboolean KillBox(edict_t * ent )  \dday\source/g_utils.c:521
@@ -333,7 +332,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "ReadGame", (void (*))ReadGame,   // void ReadGame(char * filename )  \dday\source/g_save.c:458
 "ReadLevel", (void (*))ReadLevel,   // void ReadLevel(char * filename )  \dday\source/g_save.c:653
 "ReadLevelLocals", (void (*))ReadLevelLocals,   // void ReadLevelLocals(FILE * f )  \dday\source/g_save.c:581
-"RemoveEntity", (void (*))RemoveEntity,   // int RemoveEntity(char * name )  \dday\source/u_entmgr.c:132
 "RotatePointAroundVector", (void (*))RotatePointAroundVector,   // void RotatePointAroundVector(vec3_t dst , const vec3_t dir , const vec3_t point , float degrees )  \dday\source/q_shared.c:13
 //"SMOS_Join", (void (*))SMOS_Join,   // void SMOS_Join(edict_t * ent , int choice )  \dday\source/observer.c:135
 //"SP_CreateCoopSpots", (void (*))SP_CreateCoopSpots,   // static void SP_CreateCoopSpots(edict_t * self )  \dday\source/p_client.c:59
@@ -630,7 +628,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "barrel_touch", (void (*))barrel_touch,   // void barrel_touch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_misc.c:849
 "blaster_touch", (void (*))blaster_touch,   // void blaster_touch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_weapon.c:394
 "body_die", (void (*))body_die,   // void body_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point )  \dday\source/p_client.c:945
-"booldummy", (void (*))booldummy,   // qboolean booldummy(struct edict_s * i , struct edict_s * ii )  \dday\source/u_entmgr.c:85
 "button_done", (void (*))button_done,   // void button_done(edict_t * self )  \dday\source/g_func.c:673
 "button_fire", (void (*))button_fire,   // void button_fire(edict_t * self )  \dday\source/g_func.c:707
 "button_killed", (void (*))button_killed,   // void button_killed(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point )  \dday\source/g_func.c:736
@@ -669,8 +666,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 //"drop_make_touchable", (void (*))drop_make_touchable,   // static void drop_make_touchable(edict_t * ent )  \dday\source/g_items.c:743
 //"drop_temp_touch", (void (*))drop_temp_touch,   // static void drop_temp_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_items.c:735
 "droptofloor", (void (*))droptofloor,   // void droptofloor(edict_t * ent )  \dday\source/g_items.c:828
-"dummy1", (void (*))dummy1,   // void dummy1(struct edict_s * i , struct gitem_s * ii )  \dday\source/u_entmgr.c:90
-"dummy2", (void (*))dummy2,   // void dummy2(struct edict_s * i )  \dday\source/u_entmgr.c:94
 "findradius", (void (*))findradius,   // edict_t * findradius(edict_t * from , vec3_t org , float rad )  \dday\source/g_utils.c:61
 "fire_Knife", (void (*))fire_Knife,   // void fire_Knife(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick )  \dday\source/p_weapon.c:550
 "fire_blaster", (void (*))fire_blaster,   // void fire_blaster(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , int effect , qboolean hyper )  \dday\source/g_weapon.c:433
@@ -841,6 +836,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   738
+#define  FUNARRAYLEN   733
 
 #endif /* __FUNCARRY_H__ */

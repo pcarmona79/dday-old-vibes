@@ -47,17 +47,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct
 {
-    int apiversion;
-    char creator[32];
+	int apiversion;
+	char creator[32];
 
-    void (*UserDLLDigest)(char MsgDigest[64]);
+	void (*UserDLLDigest)(char MsgDigest[64]);
 
-    void (*UserDLLInit)(void);
-    void (*UserDLLShutdown)(void);
-    void (*UserDLLStartLevel)(edict_t *ent);
-    void (*UserDLLLeaveLevel)(void);
-    void (*UserDLLPlayerSpawns)(edict_t *self);
-    void (*UserDLLPlayerDies)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
+	void (*UserDLLInit)(void);
+	void (*UserDLLShutdown)(void);
+	void (*UserDLLStartLevel)(edict_t *ent);
+	void (*UserDLLLeaveLevel)(void);
+	void (*UserDLLPlayerSpawns)(edict_t *self);
+	void (*UserDLLPlayerDies)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
 	SMos_t *mos_list;
 	char teamid[16];
 	char playermodel[32];
@@ -66,11 +66,11 @@ typedef struct
 
 typedef struct
 {
-      //not sure what to pass in.
-    game_locals_t *game;
-    level_locals_t *level;
-    game_import_t *gi;
-    game_export_t *globals;
+	  //not sure what to pass in.
+	game_locals_t *game;
+	level_locals_t *level;
+	game_import_t *gi;
+	game_export_t *globals;
 
 	edict_t		*g_edicts;
 	byte			*is_silenced;
@@ -78,36 +78,34 @@ typedef struct
  
 	int team_index;
 	//for now, we will allow the user to add new commands
-    //new items and new monsters.
-    void (*InsertCommands)(g_cmds_t *, int, char *);
+	//new items and new monsters.
+	void (*InsertCommands)(g_cmds_t *, int, char *);
 	void (*(*FindFunction)(char *t));
 	gitem_t *(*InsertItem)(gitem_t *it,spawn_t *spawnInfo);
-	spawn_t *(*InsertEntity)(spawn_t *t); 
-    	int (*RemoveEntity)(char *name);    
-	
+
 	/* commented out - future functionality
-    void (*InsertMonster)();    
-    void (*InsertClient)();     // for bots?
-    */
+	void (*InsertMonster)();
+	void (*InsertClient)();     // for bots?
+	*/
 } userdll_import_t;
 
 
 typedef struct userdll_list_node
 {
-        struct userdll_list_node *next;
-        char libname[128];
-        char entryname[256];
-        char version[32];
-        char MD5Sig[64];
+	struct userdll_list_node *next;
+	char libname[128];
+	char entryname[256];
+	char version[32];
+	char MD5Sig[64];
 
 #if defined(__linux__) || defined(AMIGA)
-		void *hDLL;
+	void *hDLL;
 #else
-        HMODULE hDLL;
+	HMODULE hDLL;
 #endif
 
-        userdll_export_t (*EntryPoint)(userdll_import_t);
-        userdll_export_t dll_funcs;
+	userdll_export_t (*EntryPoint)(userdll_import_t);
+	userdll_export_t dll_funcs;
 } userdll_list_node_t;
 
 
