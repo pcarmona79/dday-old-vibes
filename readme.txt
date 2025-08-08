@@ -15,6 +15,8 @@ What's new in 4.5k
  - Adds cvar "chile" to restrict some tweaks only when this cvar is
    enabled. The first tweak is to do not rise the submachine guns when
    firing.
+ - Fix bug in InsertItem() of u_entmgr.c when adding 1 to the calculated
+   index to avoid overwrite the last element of "itemlist" array.
 
 Whats new in 4.4k-1
 -------------------

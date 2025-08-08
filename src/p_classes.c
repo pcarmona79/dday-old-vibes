@@ -42,7 +42,8 @@ void Load_Weapon (edict_t *ent, gitem_t	*item)
 	ammo_item = FindItemInTeam(item->ammo, item->dllname);
 	if (!ammo_item)
 	{
-		gi.dprintf("WARNING: in Give_Class_Weapon %s spawned with no ammo for %s -> %s\n", ent->client->pers.netname, item->pickup_name, item->ammo);
+		gi.dprintf("WARNING: in Load_Weapon %s spawned with no ammo for %s -> %s (%s)\n",
+				   ent->client->pers.netname, item->pickup_name, item->ammo, item->dllname);
 		return;
 	}
 
