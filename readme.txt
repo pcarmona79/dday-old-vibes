@@ -16,10 +16,11 @@ What's new in 4.5k
    enabled. The first tweak is to do not rise the submachine guns when
    firing.
  - Remove unused functions from u_entmgr.c and fixes the buggy function
-   InsertItem(), replacing it with a version which only adds new elements
-   to the end. Also fixes for loops in FindItem* functions of g_items.c
-   and other for loops involving game.num_items, to allow them to
-   correctly reach the end of itemlist array.
+   InsertItem(), replacing it with a version which adds new elements to
+   the end only if it was adding a new one. Also fixes for loops in
+   FindItem* functions of g_items.c and other for loops involving
+   game.num_items, to allow them to correctly reach the end of itemlist
+   array.
 
 Whats new in 4.4k-1
 -------------------
