@@ -2039,7 +2039,8 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	{
 		char skin[64];
 
-		if (ent->client->resp.team_on && ent->client->resp.mos) 
+		if (ent->client &&
+			ent->client->resp.team_on && ent->client->resp.mos)
 		{
 			strcpy(skin, va("%s/%s",
 				ent->client->resp.team_on->playermodel, 
