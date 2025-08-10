@@ -88,12 +88,12 @@ void Weapon_B3842_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 
 //	if (ent->client->pers.weapon->position == LOC_SUBMACHINEGUN)
@@ -1078,19 +1078,18 @@ void Weapon_Breda_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if (//!ent->ai &&
-		((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
-		ent->client->machinegun_shots++;
+	if (!chile->value)
+	{
+		if (//!ent->ai &&
+			((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
 
-	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-		ent->client->machinegun_shots = 0;
-
-//	}
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+	}
 
 	if (ent->client->pers.weapon->position == LOC_H_MACHINEGUN)
 		VectorSet(offset, 0, 0, ent->viewheight - 0);	//10
