@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <stdio.h>
 
 void DDayScoreboardMessage (edict_t *ent);
 
@@ -1145,12 +1146,11 @@ void G_SetStats (edict_t *ent)
 	// OBJECTIVES
 	//
 	if (ent->client->display_info) {
-		char pic[26];
-		//strcpy (pic, "objectives\\");
-		strcpy (pic, "objectives/");
-		strcat (pic, level.mapname);
-
-		ent->client->ps.stats[STAT_OBJECTIVE] = gi.imageindex (pic);
+		char pic[75];
+		if (snprintf(pic, 75, "objectives/%s", level.mapname) >= 75)
+			ent->client->ps.stats[STAT_OBJECTIVE] = 0;
+		else
+			ent->client->ps.stats[STAT_OBJECTIVE] = gi.imageindex (pic);
 	} else 
 		ent->client->ps.stats[STAT_OBJECTIVE] = 0;
 
