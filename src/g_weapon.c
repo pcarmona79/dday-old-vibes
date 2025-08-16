@@ -1599,7 +1599,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	rocket->owner = self;
 	rocket->touch = rocket_touch;
-	rocket->nextthink = level.time + 8000/speed;
+	rocket->nextthink = level.time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	rocket->dmg = damage;
 	rocket->radius_dmg = radius_damage;
@@ -1631,7 +1631,7 @@ void fire_shell (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed,
 	shell->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	shell->owner = self;
 	shell->touch = rocket_touch;
-	shell->nextthink = level.time + 8000/speed;
+	shell->nextthink = level.time + 8000.0/speed;
 	shell->think = G_FreeEdict;
 	shell->dmg = damage;
 	shell->radius_dmg = radius_damage;
@@ -1666,7 +1666,7 @@ void fire_airstrike (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	airstrike->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	airstrike->owner = self;
 	airstrike->touch = airstrike_touch;
-	airstrike->nextthink = level.time + 8000/speed;
+	airstrike->nextthink = level.time + 8000.0/speed;
 	airstrike->think = G_FreeEdict;
 	airstrike->dmg = damage;
 	airstrike->radius_dmg = radius_damage;
@@ -3051,7 +3051,7 @@ void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	rocket->owner = self;
 	rocket->touch = rocket_touch;
-	rocket->nextthink = level.time + 8000/speed;
+	rocket->nextthink = level.time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	rocket->dmg = damage;
 	rocket->radius_dmg = radius_damage;
@@ -3181,7 +3181,7 @@ void Weapon_PIAT_Fire (edict_t *ent)
 	}
 
 	// pbowens: rasied rocket dmg from 175 to 225
-	damage_radius = 175;//faf 225;
+	damage_radius = 225;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
