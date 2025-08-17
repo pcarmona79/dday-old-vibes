@@ -21,6 +21,18 @@ What's new in 4.5k
    FindItem* functions of g_items.c and other for loops involving
    game.num_items, to allow them to correctly reach the end of itemlist
    array.
+ - Fixes buffer overflow when showing objective pic for maps with larger
+   names, in G_SetStats() of p_hud.c
+ - Adds cvar "force_limits" to limit classes with new cvars
+   limit_<classname>, overriding map settings.
+   * force_limits: Enable class limits.
+   * limit_infantry, limit_officer, limit_lgunner, limit_hgunner,
+     limit_sniper, limit_engineer, limit_medic, limit_special,
+     limit_flamer: Maximum players allowed to spawn. If value is 0,
+     class will be disabled.
+ - Fixes functions Weapon_PIAT_Fire() of g_weapon.c and
+   Weapon_Panzerfaust_Fire() of ita_weapon.c to have the same value for
+   "damage_radius" as Weapon_Rocket_Fire() of g_weapon.c.
 
 Whats new in 4.4k-1
 -------------------
