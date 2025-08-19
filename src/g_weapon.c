@@ -4303,18 +4303,17 @@ void Weapon_Bren_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
-		ent->client->machinegun_shots++;
+	if (!chile->value)
+	{
+		if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
 
-	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-		ent->client->machinegun_shots = 0;
-
-//	}
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));

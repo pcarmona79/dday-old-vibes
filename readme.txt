@@ -14,7 +14,8 @@ What's new in 4.5k
  - Cleans up code, removing duplicated and some unused functions.
  - Adds cvar "chile" to restrict some tweaks only when this cvar is
    enabled. The first tweak is to do not rise the submachine guns when
-   firing.
+   firing and the british and japanese LMG now are using its original
+   fire functions.
  - Remove unused functions from u_entmgr.c and fixes the buggy function
    InsertItem(), replacing it with a version which adds new elements to
    the end only if it was adding a new one. Also fixes for loops in
