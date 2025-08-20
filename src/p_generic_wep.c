@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "m_player.h"
 
-void NoAmmoWeaponChange (edict_t *ent);
 void check_unscope (edict_t *ent);//faf
 
 /*
@@ -463,6 +462,13 @@ no_fire:
 				if (ent->waterlevel > 2 && 
 					ent->client->pers.weapon->position != LOC_KNIFE &&
 					ent->client->pers.weapon->position != LOC_SPECIAL)
+				{
+					ent->client->weaponstate = WEAPON_READY;
+					ent->client->ps.gunframe = FRAME_IDLE_FIRST;
+					return;
+				}
+				//faf
+				else if (ent->client->enter_spawn_time > level.time - 4)
 				{
 					ent->client->weaponstate = WEAPON_READY;
 					ent->client->ps.gunframe = FRAME_IDLE_FIRST;

@@ -62,6 +62,8 @@ void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 void Shrapnel_Dud (edict_t *ent);
 void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
 void check_unscope (edict_t *ent);//faf
+void turret_off (edict_t *self);
+void Weapon_Turret_Fire(edict_t *ent);
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
@@ -413,7 +415,9 @@ void ShowGun( edict_t *ent)
 	{
 		ent->s.modelindex2 = gi.modelindex ("players/usa/w_fists.md2");
 	}	
-	else if (ent->client->pers.weapon->position == LOC_FLAME && !strcmp(ent->client->resp.team_on->teamid, "gbr"))
+	else if (ent->client->pers.weapon->position == LOC_FLAME &&
+			 ent->client->resp.team_on &&
+			 !strcmp(ent->client->resp.team_on->teamid, "gbr"))
 	{
 		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
 	}
@@ -524,46 +528,6 @@ void ChangeWeapon (edict_t *ent)
 	
 } 
 
-/*
-=================
-NoAmmoWeaponChange
-=================
-*/
-void NoAmmoWeaponChange (edict_t *ent)
-{
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("m1903"))] )
-	{
-		ent->client->newweapon = FindItem ("M1903");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("Bullets"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("Thompson"))] )
-	{
-		ent->client->newweapon = FindItem ("Thompson");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("HMGAmmo"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("BHMG"))] )
-	{
-		ent->client->newweapon = FindItem ("BHMG");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("HMGAmmo"))]
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("BAR"))] )
-	{
-		ent->client->newweapon = FindItem ("BAR");
-		return;
-	}
-	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))] > 1
-		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("M1 Garand"))] )
-	{
-		ent->client->newweapon = FindItem ("M1 Garand");
-		return;
-	}
-	ent->client->newweapon = FindItem ("colt45");
-}
-
 
 /*
 =================
@@ -613,6 +577,10 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 	// see if we're already using it
 	if (item == ent->client->pers.weapon)
 		return;
+
+
+	turret_off(ent);
+
 
 	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
 	{
@@ -1622,6 +1590,14 @@ void Weapon_Knife (edict_t *ent)
 	qboolean armedfists = Q_stricmp(ent->client->pers.weapon->pickup_name,"Knife");
 
 	ent->client->crosshair = false;
+
+	if (ent->client->turret)
+	{
+		if (ent->client->turret->count >= 0)
+			ent->client->p_rnd= &ent->client->turret->count;
+		Weapon_Turret_Fire(ent);
+		return;
+	}
 
 	//ent->client->aim=false;
 	//fire_frames[0]=(ent->client->aim)?54:4;

@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_cmds.h"
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
-void NoAmmoWeaponChange (edict_t *ent);
 //qboolean (*Pickup_Weapon)(edict_t *, edict_t *);
 
 //faf:  tidies up coming out of the scope for the sniper.
@@ -1256,8 +1255,8 @@ void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *
     //Shrapnel_Explode (ent);
 }
 
-/*
-void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, int team)
+
+void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
 {
 	edict_t	*grenade;
 	vec3_t	dir;
@@ -1278,21 +1277,21 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 //	grenade->s.effects |= EF_GRENADE;
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
-	grenade->s.modelindex = gi.modelindex (va("models/objects/%s/tris.md2", (self->client->resp.team_on->index) ? "masher" : "grenade2"));
+	grenade->s.modelindex = gi.modelindex ("models/objects/grenade2/tris.md2");
 	grenade->owner = self;
 	grenade->nextthink = level.time + timer;
 	grenade->dmg = damage;
 	grenade->dmg_radius = damage_radius;
-	grenade->classname = "grenade";
-	grenade->item=FindItem(va("%s", (self->client->resp.team_on->index) ? "Potato Masher" : "USA Grenade" ));
-//	grenade->grenade_armed = true;
+	grenade->classname = "nade";
 	
 	grenade->think = Shrapnel_Explode;
 	grenade->touch = Shrapnel_Touch;
 	
 	gi.linkentity (grenade);
 }
-*/
+
+
+
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float time, float damage_radius, int team)
 {
 	edict_t	*grenade;
@@ -1600,7 +1599,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	rocket->owner = self;
 	rocket->touch = rocket_touch;
-	rocket->nextthink = level.time + 8000/speed;
+	rocket->nextthink = level.time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	rocket->dmg = damage;
 	rocket->radius_dmg = radius_damage;
@@ -1632,7 +1631,7 @@ void fire_shell (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed,
 	shell->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	shell->owner = self;
 	shell->touch = rocket_touch;
-	shell->nextthink = level.time + 8000/speed;
+	shell->nextthink = level.time + 8000.0/speed;
 	shell->think = G_FreeEdict;
 	shell->dmg = damage;
 	shell->radius_dmg = radius_damage;
@@ -1667,7 +1666,7 @@ void fire_airstrike (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	airstrike->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	airstrike->owner = self;
 	airstrike->touch = airstrike_touch;
-	airstrike->nextthink = level.time + 8000/speed;
+	airstrike->nextthink = level.time + 8000.0/speed;
 	airstrike->think = G_FreeEdict;
 	airstrike->dmg = damage;
 	airstrike->radius_dmg = radius_damage;
@@ -2176,7 +2175,7 @@ void Weapon_Submachinegun_Fire (edict_t *ent)
 		
 		return;
 	}
-
+/*
 	if (!ent->client->aim)
 	{
 		for (i=0 ; i<3 ; i++)
@@ -2205,14 +2204,14 @@ void Weapon_Submachinegun_Fire (edict_t *ent)
 		//ent->client->kick_origin[0] = crandom() * 0.35;
 		//ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
 	}
-
+*/
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));
@@ -3052,7 +3051,7 @@ void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	rocket->owner = self;
 	rocket->touch = rocket_touch;
-	rocket->nextthink = level.time + 8000/speed;
+	rocket->nextthink = level.time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	rocket->dmg = damage;
 	rocket->radius_dmg = radius_damage;
@@ -3182,7 +3181,7 @@ void Weapon_PIAT_Fire (edict_t *ent)
 	}
 
 	// pbowens: rasied rocket dmg from 175 to 225
-	damage_radius = 175;//faf 225;
+	damage_radius = 225;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -4304,18 +4303,17 @@ void Weapon_Bren_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
-		ent->client->machinegun_shots++;
+	if (!chile->value)
+	{
+		if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
 
-	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-		ent->client->machinegun_shots = 0;
-
-//	}
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));

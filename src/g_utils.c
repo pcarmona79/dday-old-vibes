@@ -587,7 +587,7 @@ qboolean KillBox (edict_t *ent)
 			break;
 
 		// nail it
-		T_Damage (tr.ent, ent, ent, vec3_origin, ent->s.origin, vec3_origin, 100000, 0, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
+		T_Damage (tr.ent, ent, ent, vec3_origin, ent->s.origin, vec3_origin, 100000, 0, DAMAGE_NO_PROTECTION, MOD_SPAWNCAMP);
 
 		// if we didn't kill it, fail
 		if (tr.ent->solid)

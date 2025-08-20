@@ -74,7 +74,7 @@ GetItemByIndex
 */
 gitem_t	*GetItemByIndex (int index)
 {
-	if (index == 0 || index >= game.num_items)
+	if (index == 0 || index > game.num_items)
 		return NULL;
 
 	return &itemlist[index];
@@ -93,7 +93,7 @@ gitem_t	*FindItemByClassname (char *classname)
 	gitem_t	*it;
 
 	it = itemlist;
-	for (i=0 ; i<game.num_items ; i++, it++)
+	for (i = 0; i <= game.num_items; i++, it++)
 	{
 		if (!it->classname)
 			continue;
@@ -116,7 +116,7 @@ gitem_t	*FindItem (char *pickup_name)
 	gitem_t	*it;
 
 	it = itemlist;
-	for (i=0 ; i<game.num_items ; i++, it++)
+	for (i = 0; i <= game.num_items; i++, it++)
 	{
 		if (!it->pickup_name)
 			continue;
@@ -134,7 +134,7 @@ gitem_t	*FindItemInTeam(char *pickup_name, char *dllname)
 	gitem_t	*it;
 
 	it = itemlist;
-	for (i=0 ; i<game.num_items ; i++, it++)
+	for (i = 0; i <= game.num_items; i++, it++)
 	{
 		if (!it->pickup_name)
 			continue;
@@ -159,7 +159,7 @@ gitem_t	*FindItemByClassnameInTeam(char *classname, char *dllname)
 	gitem_t	*it;
 
 	it = itemlist;
-	for (i=0 ; i<game.num_items ; i++, it++)
+	for (i = 0; i <= game.num_items; i++, it++)
 	{
 		if (!it->classname)
 			continue;
@@ -173,27 +173,27 @@ gitem_t	*FindItemByClassnameInTeam(char *classname, char *dllname)
 		}
 	}
 
-	// try to not return null pointer
-	return FindItemByClassname(classname);
+	// return null when not found
+	return NULL;
 }
 
 gitem_t *FindTeamItem (char *dllname, int position)  //faf:  added for team dll support.  Finds item by dll name and 'position'.  Not 100% sure if it works yet...
 {
-        int             i;
-        gitem_t *it;
+	int             i;
+	gitem_t *it;
 
-        it = itemlist;
-        for (i=0 ; i<game.num_items ; i++, it++)
-        {
-                if (!it->position)
-                        continue;
-                if (it->position != position)
-                        continue;
-                if (!Q_stricmp(it->dllname, dllname))
-                        return it;
-        }
+	it = itemlist;
+	for (i = 0; i <= game.num_items; i++, it++)
+	{
+		if (!it->position)
+			continue;
+		if (it->position != position)
+			continue;
+		if (!Q_stricmp(it->dllname, dllname))
+			return it;
+	}
 
-        return NULL;
+	return NULL;
 }
 //======================================================================
 
@@ -1853,7 +1853,7 @@ normal door key - red
 		},
 #endif
 	// end of list marker
-	{NULL}
+
 };
 
 
@@ -1926,13 +1926,15 @@ void SP_item_health_mega (edict_t *self)
 
 void InitItems (void)
 {
-//	game.num_items = sizeof(itemlist)/sizeof(itemlist[0]) - 1;
 	gitem_t *it;
-	int i,count=0;
-	it=itemlist;
+	int i, count = 0;
+	it = itemlist;
 
-	for(i=0;i<=MAX_ITEMS;i++,it++)
-		if(it && it->pickup_name) count++;
+	for (i = 0; i < MAX_ITEMS; i++, it++)
+	{
+		if (it->pickup_name)
+			count++;
+	}
 	game.num_items = count;
 }
 
@@ -1950,7 +1952,7 @@ void SetItemNames (void)
 	int		i;
 	gitem_t	*it;
 
-	for (i=0 ; i<game.num_items ; i++)
+	for (i = 1; i <= game.num_items; i++)
 	{
 		it = &itemlist[i];
 		gi.configstring (CS_ITEMS+i, it->pickup_name);

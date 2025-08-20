@@ -361,238 +361,6 @@ void Weapon_m9130s (edict_t *ent)
 }
 
 
-
-
-
-
-
-void fire_gun2(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv)
-{
-	// standard defines
-	trace_t		tr;
-	vec3_t		dir;
-	vec3_t		forward, right, up;
-	vec3_t		end;
-	float		r;
-	float		u;
-	vec3_t		water_start;
-	qboolean	water = false;
-	int			content_mask = MASK_SHOT | MASK_WATER;
-
-	// rezmoth - start dist trace
-	vec3_t	diststart, dist;
-	vec3_t	distend = {0, 0, -8192};
-	trace_t	disttr;
-
-	VectorCopy(self->s.origin, diststart);	// initial value
-	//VectorAdd(start, ent->mins, start); // go to the bottom of the player
-	VectorAdd(diststart, distend, distend);			// add distance for end
-
-	disttr = ptrgi->trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
-	VectorSubtract(self->s.origin, disttr.endpos, dist);
-	// rezmoth - end dist trace
-
-	// Extra debugging propaganda
-	//gi.dprintf("self    %s\n", self->client->pers.netname);
-	//gi.dprintf("damage  %i\n", damage);
-	//gi.dprintf("kick    %i\n", kick);
-	//gi.dprintf("mod     %i\n", mod);
-	//gi.dprintf("calcv   %s\n", (calcv) ? "true":"false");
-
-	// Useful debugging information
-	//gi.dprintf("hspread %i\n", hspread);
-	//gi.dprintf("vspread %i\n", vspread);
-	//showvector("start   ", start);
-	//showvector("aimdir  ", aimdir);
-
-	// fetch trace results
-	tr = ptrgi->trace(self->s.origin, NULL, NULL, start, self, MASK_SHOT);
-
-	// if the trace hit anything before distance termination
-	if (!(tr.fraction < 1.0))
-	{
-		// seperate the aimdir into three parts
-		vectoangles(aimdir, dir);
-		AngleVectors(dir, forward, right, up);
-
-		// rezmoth - TODO: fix this part
-		// random spread calculation
-		calcv = false;
-		//r = (calcv) ? (crandom() * hspread) : hspread;
-		//u = (calcv) ? (crandom() * vspread) : vspread;
-
-		// add spread to hip shots
-		if (!self->client->aim)
-		{
-			r = crandom() * 600;
-			u = crandom() * 600;
-		} else {
-			r = crandom() * 50;
-			u = crandom() * 50;
-		}
-
-		if (VectorLength(dist) > 20 && self->velocity[2] != 0)
-		{
-			r = crandom() * 1600;
-			u = crandom() * 1600;
-		}
-
-		// end = start[i] + 8192 * forward[i]
-		VectorMA (start, 8192, aimdir, end);//forward, end);
-		// scale right angle by calculated horizontal spread
-		VectorMA (end, r, right, end);
-		// scale up angle by calculated vertical spread
-		VectorMA (end, u, up, end);
-
-		// if trace starts in water?
-		if (ptrgi->pointcontents (start) & MASK_WATER)
-		{
-			water = true;
-			VectorCopy (start, water_start);
-			// remove water from possible impacts during trace
-			content_mask &= ~MASK_WATER;
-		}
-
-		// retrace from point of impact with water
-		tr = ptrgi->trace (start, NULL, NULL, end, self, content_mask);
-
-		// if trace impacts dead player
-
-//faf	if (tr.contents & MASK_DEADSOLID)
-//faf		SprayBlood(self, tr.endpos, up, 0, MOD_UNKNOWN);
-//faf:  sprayblood wont work here
-
-
-		// more spread calculation
-		if(calcv) calcVspread(self,&tr);
-
-		// if the trace impacts water?
-		if (tr.contents & MASK_WATER)
-		{
-			int		color;
-			water = true;
-
-			// copy trace's impact with water (end) to water_start
-			VectorCopy (tr.endpos, water_start);
-
-			// if the trace's start and end were not the same
-			if (!VectorCompare (start, tr.endpos))
-			{
-				// if trace impacts water
-				if (tr.contents & CONTENTS_WATER)
-				{
-					// if water is brown
-					if (strcmp(tr.surface->name, "*brwater") == 0)
-						color = SPLASH_BROWN_WATER;
-					// if water is blue
-					else
-						color = SPLASH_BLUE_WATER;
-				}
-				// if trace impacts slime
-				else if (tr.contents & CONTENTS_SLIME)
-					color = SPLASH_SLIME;
-				// if trace impacts lava
-				else if (tr.contents & CONTENTS_LAVA)
-					color = SPLASH_LAVA;
-				// if trace impacts unknown water
-				else
-					color = SPLASH_UNKNOWN;
-
-				// if trace impacted known water
-				if (color != SPLASH_UNKNOWN)
-				{
-					// display water splash particles
-					ptrgi->WriteByte (svc_temp_entity);
-					ptrgi->WriteByte (TE_SPLASH);
-					ptrgi->WriteByte (8);
-					ptrgi->WritePosition (tr.endpos);
-					ptrgi->WriteDir (tr.plane.normal);
-					ptrgi->WriteByte (color);
-					ptrgi->multicast (tr.endpos, MULTICAST_PVS);
-				}
-
-				// change bullet's course when it enters water
-				VectorSubtract (end, start, dir);
-				vectoangles (dir, dir);
-				AngleVectors (dir, forward, right, up);
-				r = crandom()*hspread*2;
-				u = crandom()*vspread*2;
-				VectorMA (water_start, 8192, aimdir, end);//faf forward, end);
-				VectorMA (end, r, right, end);
-				VectorMA (end, u, up, end);
-			}
-
-			// retrace starting from impact with water
-			tr = ptrgi->trace (water_start, NULL, NULL, end, self, MASK_SHOT);
-		}
-	}
-
-	// if trace does not impact a surface and the surface is not the sky
-	if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))
-	{
-		// if the trace impacted anything before distance termination
-		if (tr.fraction < 1.0)
-		{
-			// if the impacted player can take damage
-			if (tr.ent->takedamage)
-			{
-				// damage impacted player
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
-			}
-			else
-			{
-				// if the trace impacted a surface other than the sky
-				if (strncmp (tr.surface->name, "sky", 3) != 0)
-				{
-					// display impact on surface
-					ptrgi->WriteByte (svc_temp_entity);
-					if (crandom() < 0.5)
-						ptrgi->WriteByte (TE_GUNSHOT);
-					else
-						ptrgi->WriteByte (TE_BULLET_SPARKS);
-					ptrgi->WritePosition (tr.endpos);
-					ptrgi->WriteDir (tr.plane.normal);
-					ptrgi->multicast (tr.endpos, MULTICAST_PVS);
-
-					// output impact sound
-					if (self->client)
-						PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
-//						ptrgi->sound(ent, CHAN_WEAPON, ptrgi->soundindex(guninfo->FireSound), 1, ATTN_NORM, 0);//faf
-
-											
-				}
-			}
-		}
-	}
-
-	// if trace impacted water
-	if (water)
-	{
-		vec3_t	pos;
-
-		VectorSubtract (tr.endpos, water_start, dir);
-		VectorNormalize (dir);
-		VectorMA (tr.endpos, -2, dir, pos);
-		if (ptrgi->pointcontents (pos) & MASK_WATER)
-			VectorCopy (pos, tr.endpos);
-		else
-			tr = ptrgi->trace (pos, NULL, NULL, water_start, tr.ent, MASK_WATER);
-
-		VectorAdd (water_start, tr.endpos, pos);
-		VectorScale (pos, 0.5, pos);
-
-		// display bubble trail
-		ptrgi->WriteByte (svc_temp_entity);
-		ptrgi->WriteByte (TE_BUBBLETRAIL);
-		ptrgi->WritePosition (water_start);
-		ptrgi->WritePosition (tr.endpos);
-		ptrgi->multicast (pos, MULTICAST_PVS);
-	}
-} 
-
-
-
-
 void Weapon_Ppsh41_Fire (edict_t *ent)
 {
 	int	i;
@@ -651,7 +419,7 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 		
 		return;
 	}
-
+/*
 	if (!ent->client->aim)
 	{
 		for (i=0 ; i<3 ; i++)
@@ -680,14 +448,14 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 		//ent->client->kick_origin[0] = crandom() * 0.35;
 		//ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
 	}
-
+*/
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 
 	//faf: adding this to alternate firing sounds

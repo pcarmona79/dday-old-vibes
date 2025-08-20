@@ -1,6 +1,40 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.5k
+-------------------
+
+ - Adds support for loading map ents, readed from .ent files in the
+   "ents/" directory.
+ - Adds support for spawn types "spawn_protect" and "spawn_toggle" adding
+   code from 5.x source.
+ - Adds mapclasslimits array to allow mappers to set the class limits.
+ - Adds support for turrets from 5.x source.
+ - Adds parachute spawn for special classes, copied from 5.x source code.
+ - Cleans up code, removing duplicated and some unused functions.
+ - Adds cvar "chile" to restrict some tweaks only when this cvar is
+   enabled. The first tweak is to do not rise the submachine guns when
+   firing and the british and japanese LMG now are using its original
+   fire functions.
+ - Remove unused functions from u_entmgr.c and fixes the buggy function
+   InsertItem(), replacing it with a version which adds new elements to
+   the end only if it was adding a new one. Also fixes for loops in
+   FindItem* functions of g_items.c and other for loops involving
+   game.num_items, to allow them to correctly reach the end of itemlist
+   array.
+ - Fixes buffer overflow when showing objective pic for maps with larger
+   names, in G_SetStats() of p_hud.c
+ - Adds cvar "force_limits" to limit classes with new cvars
+   limit_<classname>, overriding map settings.
+   * force_limits: Enable class limits.
+   * limit_infantry, limit_officer, limit_lgunner, limit_hgunner,
+     limit_sniper, limit_engineer, limit_medic, limit_special,
+     limit_flamer: Maximum players allowed to spawn. If value is 0,
+     class will be disabled.
+ - Fixes functions Weapon_PIAT_Fire() of g_weapon.c and
+   Weapon_Panzerfaust_Fire() of ita_weapon.c to have the same value for
+   "damage_radius" as Weapon_Rocket_Fire() of g_weapon.c.
+
 Whats new in 4.4k-1
 -------------------
 

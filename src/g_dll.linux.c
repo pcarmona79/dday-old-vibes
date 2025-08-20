@@ -172,8 +172,6 @@ int InitializeUserDLLs(userdll_list_node_t *unode,int teamindex)
 	UserDLLImports.InsertCommands = InsertCmds;
 	UserDLLImports.FindFunction = FindGameFunction;
 	UserDLLImports.InsertItem = InsertItem;
-	UserDLLImports.InsertEntity = InsertEntity;
-	UserDLLImports.RemoveEntity = RemoveEntity;
 	UserDLLImports.g_edicts = g_edicts;
 	UserDLLImports.is_silenced = &is_silenced;
 //	UserDLLImports.scope_setting = &scope_setting->value;

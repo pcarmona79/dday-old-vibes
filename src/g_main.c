@@ -113,6 +113,9 @@ cvar_t  *force_auto_select;
 cvar_t  *allied_password;
 cvar_t  *axis_password;
 
+cvar_t  *ent_files;
+
+cvar_t *chile;
 cvar_t *mashup;
 
 //kernel
@@ -126,6 +129,18 @@ cvar_t *observer_bscore;
 cvar_t *sys_basedir;
 cvar_t *sys_homedir;
 cvar_t *sys_libdir;
+
+// kernel: global class limits
+cvar_t *force_limits;
+cvar_t *limit_infantry;
+cvar_t *limit_officer;
+cvar_t *limit_lgunner;
+cvar_t *limit_hgunner;
+cvar_t *limit_sniper;
+cvar_t *limit_engineer;
+cvar_t *limit_medic;
+cvar_t *limit_special;
+cvar_t *limit_flamer;
 
 int countdownTimer = 0;
 int countdownStart = 0;

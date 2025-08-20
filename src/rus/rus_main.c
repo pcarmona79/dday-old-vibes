@@ -70,18 +70,17 @@ static int AlreadyLoad = 0;
 
 void InitFunctions(void)
 {
+	//this is where you would acquire any needed function pointers
+	fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
+				   PlayerFindFunction("fire_bullet");
+	ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
 	
-      //this is where you would acquire any needed function pointers
-    fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
-                   PlayerFindFunction("fire_bullet");
-    ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
-	
-    Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
-                   PlayerFindFunction("Weapon_Generic");
-    FindItem = (gitem_t * (*)(char *))
-                   PlayerFindFunction("FindItem");
-    SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
-    FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
+	Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
+				   PlayerFindFunction("Weapon_Generic");
+	FindItem = (gitem_t * (*)(char *))
+				   PlayerFindFunction("FindItem");
+	SpawnItem = (void (*)(edict_t *, gitem_t *))PlayerFindFunction("SpawnItem");
+	FindItemByClassname = (gitem_t *(*)(char *))PlayerFindFunction("FindItemByClassname");
 	FindItemByClassnameInTeam = (gitem_t *(*)(char *, char *)) PlayerFindFunction("FindItemByClassnameInTeam");
 	Use_Weapon=(void(*)(edict_t *, gitem_t *))PlayerFindFunction("Use_Weapon");
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t))PlayerFindFunction("AngleVectors");
@@ -91,6 +90,7 @@ void InitFunctions(void)
 	Cmd_Reload_f=(qboolean(*)(edict_t *))PlayerFindFunction("Cmd_Reload_f");
 	Pickup_Weapon=(qboolean(*)(edict_t *, edict_t *))PlayerFindFunction("Pickup_Weapon");
 	Drop_Weapon=(void (*)(edict_t *, gitem_t *))PlayerFindFunction("Drop_Weapon");
+	fire_gun2 = (void (*)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean)) PlayerFindFunction("fire_gun2");
 	fire_rifle=(void (*)(edict_t *, vec3_t, vec3_t, int, int, int))PlayerFindFunction("fire_rifle");
 	VectorScale=(void(*)(vec3_t, vec_t, vec3_t))PlayerFindFunction("VectorScale");
 	fire_rocket=(void (*)(edict_t *, vec3_t, vec3_t, int, int, float, int))
@@ -126,7 +126,7 @@ void InitFunctions(void)
 //the item array. However, I'm lazy :-p
 
 vec3_t vec3_origin = {0,0,0};
-//cvar_t  *deathmatch; 
+cvar_t  *chile;
 //cvar_t	*auto_reload;
 
 
@@ -146,7 +146,7 @@ vec3_t vec3_origin = {0,0,0};
 void UserDLLMD5(char *buf)
 {
 
-    buf[0]='\0';  /*do nothing for now*/
+	buf[0]='\0';  /*do nothing for now*/
 
 }
 
@@ -205,18 +205,18 @@ void UserPrecache(void)
 
 void UserDLLInit(void)
 {
-
 	if (AlreadyInit) return;
-        AlreadyInit = 1;
-        ptrgi->dprintf(" += UserDLLInit reached <%s>\n",DLL_NAME);
+
+    AlreadyInit = 1;
+    ptrgi->dprintf(" += UserDLLInit reached <%s>\n",DLL_NAME);
 	InitFunctions();
 	InitItems();
 	UserPrecache();
-       
-//	auto_reload = ptrgi->cvar ("autoreload","0",0);
-//    deathmatch = ptrgi->cvar ("deathmatch", "4", CVAR_SERVERINFO | CVAR_LATCH);
 
+//	auto_reload = ptrgi->cvar ("autoreload","0",0);
+	chile = ptrgi->cvar("chile", "0", CVAR_LATCH);
 }
+
 /* this is the clean up function - if there were global data structures
  that you had allocated, this is where you get rid of them */
 void
@@ -252,15 +252,15 @@ UserDLLPlayerDies(edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
   */
 static userdll_export_t userdll_export =
 {
-    1,						//version of the library
-    "Unofficial",	        //creator - put up to 31 chars of your name here
-    UserDLLMD5,				//this is supposed to return an MD5 hash of the code
-    UserDLLInit,			//initialization function - adds the command in
-    UserDLLStop,			//this is the clean up function
-    UserDLLStartLevel,		//supposed to be called at the start of each level
-    UserDLLEndLevel,		//called when the user exits the level
-    UserDLLPlayerRespawns,	//called when user respawns
-    UserDLLPlayerDies,		//called when the user dies
+	1,						//version of the library
+	"Unofficial",	        //creator - put up to 31 chars of your name here
+	UserDLLMD5,				//this is supposed to return an MD5 hash of the code
+	UserDLLInit,			//initialization function - adds the command in
+	UserDLLStop,			//this is the clean up function
+	UserDLLStartLevel,		//supposed to be called at the start of each level
+	UserDLLEndLevel,		//called when the user exits the level
+	UserDLLPlayerRespawns,	//called when user respawns
+	UserDLLPlayerDies,		//called when the user dies
 	rus_MOS_List,
 	"rus",					//team id
 	"rus"					//this is the player model to use when spawning
@@ -274,45 +274,44 @@ static userdll_export_t userdll_export =
 
 userdll_export_t RUSGetAPI(userdll_import_t udit)
 {
-
 	PlayerInsertItem=udit.InsertItem;
-    PlayerInsertCommands =  udit.InsertCommands;
-    PlayerFindFunction = udit.FindFunction;
-    ptrgi = udit.gi;
+	PlayerInsertCommands =  udit.InsertCommands;
+	PlayerFindFunction = udit.FindFunction;
+	ptrgi = udit.gi;
 //	CVscope_setting=udit.scope_setting;
-    ptrGlobals = udit.globals;
-    ptrlevel = udit.level;
-    ptrGame = udit.game;
+	ptrGlobals = udit.globals;
+	ptrlevel = udit.level;
+	ptrGame = udit.game;
 	is_silenced=udit.is_silenced;
 	g_edicts=udit.g_edicts;
-    rus_index=udit.team_index;
-        ptrgi->dprintf(" += GetAPI reached <%s>\n",DLL_NAME);
-    return userdll_export;
+	rus_index=udit.team_index;
+    ptrgi->dprintf(" += GetAPI reached <%s>\n",DLL_NAME);
+	return userdll_export;
 }
 
 #ifdef AMIGA
 void* __saveds dllFindResource(int id, char *pType)
 {
-    return NULL;
+	return NULL;
 }
 
 void* __saveds dllLoadResource(void *pHandle)
 {
-    return NULL;
+	return NULL;
 }
 
 void __saveds dllFreeResource(void *pHandle)
 {
-    return;
+	return;
 }
 
 ULONG SegList;
 
 dll_tExportSymbol DLL_ExportSymbols[]=
 {
-    {dllFindResource,"dllFindResource"},
-    {dllLoadResource,"dllLoadResource"},
-    {dllFreeResource,"dllFreeResource"},
+	{dllFindResource,"dllFindResource"},
+	{dllLoadResource,"dllLoadResource"},
+	{dllFreeResource,"dllFreeResource"},
    {(void *)RUSGetAPI,"RUSGetAPI"},
    {0,0}
 };
@@ -324,7 +323,7 @@ dll_tImportSymbol DLL_ImportSymbols[]=
 
 int __saveds DLL_Init(void)
 {
-    return 1L;
+	return 1L;
 }
 
 void __saveds DLL_DeInit(void)

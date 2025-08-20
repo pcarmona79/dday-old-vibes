@@ -1682,6 +1682,43 @@ void SP_misc_md2 (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+
+void SP_misc_crate (edict_t *ent)
+{
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_BBOX;
+	ent->s.modelindex = gi.modelindex ("models/objects/crate/tris.md2");
+//	ent->s.frame = rand() % 16;
+//	ent->s.frame = 1;
+
+	ent->mass = 400;
+
+	if (ent->style)
+		ent->s.skinnum = ent->style;
+
+	if (ent->count == 0)
+	{
+		ent->s.frame = 0;
+		VectorSet (ent->mins, -8, -8, -10);
+		VectorSet (ent->maxs, 8, 8, 6);
+	}
+	else if (ent->count == 1)
+	{
+		ent->s.frame = 1;
+		VectorSet (ent->mins, -24, -24, -10); 
+		VectorSet (ent->maxs, 24, 24, 36);
+	}
+	else if (ent->count == 2)
+	{
+		ent->s.frame = 2;
+		VectorSet (ent->mins, -32, -32, -10);
+		VectorSet (ent->maxs, 32, 32, 54);
+	}
+	gi.linkentity (ent);
+
+}
+
+
 void SP_misc_skeleton_generic (edict_t *ent, char *model)
 
 {
@@ -2367,6 +2404,7 @@ void SP_func_clock (edict_t *self)
 //=================================================================================
 
 
+void Spawn_Chute(edict_t *ent);
 
 void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 
@@ -2453,6 +2491,8 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	other->solid = SOLID_TRIGGER;
 	//it works just like when spawning
 
+	other->client->landed = false;
+	Spawn_Chute(other);
 
 
 
@@ -2857,5 +2897,95 @@ int Surface2(char *name)
 		return SURF_GLASS;
 
 	return -1;
+}
+
+
+void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
+{
+    edict_t *x;
+
+	//gi.dprintf("%s %s\n",activator->classname, other->classname);
+		
+	if (self->style == 2 && activator->client)
+	{
+		//bulgef thing: only switch if the activating person's nearest i_r_s belongs to opposite team.
+		edict_t *e,*nearest;
+		float temp_distance,nearest_distance;
+		vec3_t dist;
+
+		nearest_distance = 9999999999.0;
+		for (e = g_edicts; e < &g_edicts[globals.num_edicts]; e++)
+		{
+			if (!e->inuse)
+				continue;
+			if (strcmp(e->classname, "info_reinforcements_start"))
+				continue;
+			
+			VectorSubtract (e->s.origin, other->s.origin, dist);
+			
+			temp_distance = VectorLength(dist);
+			//gi.dprintf("%f\n",temp_distance);
+
+			if (temp_distance < nearest_distance)
+			{
+				nearest_distance = temp_distance;
+				nearest = e;
+			}
+		}
+		if (nearest)
+		{	
+			if (activator->client->resp.team_on &&
+				nearest->obj_owner == activator->client->resp.team_on->index)
+				return;
+			//gi.dprintf ("%s\n",vtos(nearest->s.origin));
+			
+		}
+	}
+
+
+	for (x = g_edicts; x < &g_edicts[globals.num_edicts]; x++)
+    {
+       if (!x->inuse)
+		   continue;
+	   
+	   if (!x->classname)
+		   continue;
+
+	   if (!strcmp(x->classname, "info_reinforcements_start") || !strcmp(x->classname, "bot_spawn"))
+	   {
+			if (self->style !=2)
+			{
+				if (x->obj_owner > -1)
+					x->obj_owner = -99;
+			}
+	   }
+   	
+	   if (!x->targetname)
+		   continue;
+
+	   if (self->style == 2)
+	   {
+			if (x->obj_owner == 1)
+				x->obj_owner = 0;
+			else if (x->obj_owner == 0)
+				x->obj_owner = 1;
+	   }
+
+
+
+		if (!strcmp(x->targetname, self->target))
+		{
+			if (x->obj_owner == -2)
+				x->obj_owner = 1;
+			else if (x->obj_owner == -1)
+				x->obj_owner = 0;
+		}
+	}
+
+}
+
+void SP_Spawn_Toggle (edict_t *self)
+{
+	self->use = spawn_toggle_use;
 }
 

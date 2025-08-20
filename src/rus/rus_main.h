@@ -39,6 +39,8 @@ int rus_index;
 byte *is_silenced;
 edict_t *g_edicts;
 
+extern cvar_t *chile;
+
 //g_items.c
 void InitItems(void);
 qboolean (*Pickup_Weapon)(edict_t *, edict_t *);
@@ -81,6 +83,7 @@ void (*AngleVectors)(vec3_t , vec3_t, vec3_t, vec3_t);
 void (*P_ProjectSource)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t);
 void (*PlayerNoise)(edict_t *, vec3_t, int);
 qboolean (*Cmd_Reload_f)(edict_t *);
+void (*fire_gun2)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*fire_rifle)(edict_t *, vec3_t, vec3_t, int, int, int);
 void (*VectorScale)(vec3_t, vec_t, vec3_t);
 void (*fire_rocket)(edict_t *, vec3_t, vec3_t, int, int, float, int);

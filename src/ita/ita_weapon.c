@@ -88,12 +88,12 @@ void Weapon_B3842_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 
 //	if (ent->client->pers.weapon->position == LOC_SUBMACHINEGUN)
@@ -642,7 +642,7 @@ void fire_rocket_panzerfaust (edict_t *self, vec3_t start, vec3_t dir, int damag
 
 	rocket->gravity =  gravity;//1;//.9; //faf
 	
-	rocket->nextthink = ptrlevel->time + 8000/speed;
+	rocket->nextthink = ptrlevel->time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	
 	//faf
@@ -658,7 +658,7 @@ void fire_rocket_panzerfaust (edict_t *self, vec3_t start, vec3_t dir, int damag
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = ptrlevel->time + 8000/speed;
+		rocket->nextthink = rocket->nextthink = ptrlevel->time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
 	
@@ -765,7 +765,7 @@ void Weapon_Panzerfaust_Fire (edict_t *ent)
 	ent->s.modelindex2 = ptrgi->modelindex ("players/ita/w_panzerfmt.md2");
 
 	// pbowens: rasied rocket dmg from 175 to 225
-	damage_radius = 175;//faf 225;
+	damage_radius = 225;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1078,19 +1078,18 @@ void Weapon_Breda_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if (//!ent->ai &&
-		((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
-		ent->client->machinegun_shots++;
+	if (!chile->value)
+	{
+		if (//!ent->ai &&
+			((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
 
-	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-		ent->client->machinegun_shots = 0;
-
-//	}
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+	}
 
 	if (ent->client->pers.weapon->position == LOC_H_MACHINEGUN)
 		VectorSet(offset, 0, 0, ent->viewheight - 0);	//10

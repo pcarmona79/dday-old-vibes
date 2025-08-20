@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <stdio.h>
 
 void DDayScoreboardMessage (edict_t *ent);
 
@@ -1025,13 +1026,18 @@ G_SetStats
 void G_SetStats (edict_t *ent)
 {
 	gitem_t		*item;
-	int			index;
+	int			index, delay;
 
 	//
 	// HEALTH 
 	//
 	ent->client->ps.stats[STAT_HEALTH_ICON] = level.pic_health;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health;
+
+	if (ent->health > 0 &&
+		ent->client->enter_spawn_time &&
+		ent->client->enter_spawn_time > level.time - 4)
+		ent->client->ps.stats[STAT_HEALTH_ICON] = gi.imageindex ("i_respcount");
 
 	//
 	// SELECTED WEAPON
@@ -1103,10 +1109,13 @@ void G_SetStats (edict_t *ent)
 	// TIMERS
 	//
 	// level_wait timer (i_dday)
-	if (level.framenum < ((int)level_wait->value * 10) )
+	delay = 0;
+	if (ent->client->resp.team_on)
+		delay = ent->client->resp.team_on->delay;
+	if (level.framenum < ((int)(delay + level_wait->value) * 10) )
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("i_dday");
-		ent->client->ps.stats[STAT_TIMER] = ((int)level_wait->value - (level.framenum / 10));
+		ent->client->ps.stats[STAT_TIMER] = ((int)(delay + level_wait->value) - (level.framenum / 10));
 	} 	
 	// forced respawn tuner (i_respcount)
 	else if (level.framenum <= ent->client->forcespawn)
@@ -1137,12 +1146,11 @@ void G_SetStats (edict_t *ent)
 	// OBJECTIVES
 	//
 	if (ent->client->display_info) {
-		char pic[26];
-		//strcpy (pic, "objectives\\");
-		strcpy (pic, "objectives/");
-		strcat (pic, level.mapname);
-
-		ent->client->ps.stats[STAT_OBJECTIVE] = gi.imageindex (pic);
+		char pic[75];
+		if (snprintf(pic, 75, "objectives/%s", level.mapname) >= 75)
+			ent->client->ps.stats[STAT_OBJECTIVE] = 0;
+		else
+			ent->client->ps.stats[STAT_OBJECTIVE] = gi.imageindex (pic);
 	} else 
 		ent->client->ps.stats[STAT_OBJECTIVE] = 0;
 
@@ -1154,6 +1162,8 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
 	else if (ent->client->resp.mos == OFFICER && ent->client->pers.weapon && ent->client->aim &&
 			!Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
+		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
+	else if (ent->client->turret)
 		ent->client->ps.stats[STAT_CROSSHAIR] = gi.imageindex ("crosshair");
 	else
 		ent->client->ps.stats[STAT_CROSSHAIR] = 0;

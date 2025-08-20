@@ -44,9 +44,16 @@ field_t fields[] = {
 	{"combattarget", FOFS(combattarget), F_LSTRING},
 	{"message", FOFS(message), F_LSTRING},
 	{"team", FOFS(team), F_LSTRING},
+
+	{"ammo_type", FOFS(killtarget), F_LSTRING},//turret
+	{"fire_sound", FOFS(obj_name), F_LSTRING},//turret
+
 	{"wait", FOFS(wait), F_FLOAT},
 	{"delay", FOFS(delay), F_FLOAT},
 	{"random", FOFS(random), F_FLOAT},
+
+	{"rate", FOFS(pain_debounce_time), F_FLOAT},//turret
+
 	{"move_origin", FOFS(move_origin), F_VECTOR},
 	{"move_angles", FOFS(move_angles), F_VECTOR},
 	{"style", FOFS(style), F_INT},
@@ -79,7 +86,19 @@ field_t fields[] = {
 	{"frames",FOFS(mass),F_INT},//faf:  for animated misc_md2
 
 //these are for SP_info_Skin
-	{"skindir",FOFS(pathtarget),F_LSTRING},
+//	{"skindir",FOFS(pathtarget),F_LSTRING},
+
+	{"md2",FOFS(pathtarget),F_LSTRING},//faf: turret md2s
+
+	{"stance", FOFS(sounds), F_INT}, //turret: forces stance stanceflags
+	{"tank",FOFS(obj_gain),F_INT},//turret:  tank 1 will make player disappear
+
+
+	{"skin",FOFS(deathtarget),F_LSTRING},//faf: for custom skins, mapper sets this in info_team_start
+
+	{"min", FOFS(move_origin), F_VECTOR},
+	{"max", FOFS(move_angles), F_VECTOR},//faf:  for spawn_protect
+
 //these are for SP_event_Arty_Battery
 	{"guns",FOFS(health),F_INT},
 	{"volly",FOFS(sounds),F_INT},
@@ -89,6 +108,9 @@ field_t fields[] = {
 	{"time_to_fire",FOFS(health),F_INT},
 	{"accuracy",FOFS(dmg),F_INT},
 	{"strike_type",FOFS(mass),F_INT},
+
+	{"turret_sound",FOFS(map), F_LSTRING},
+
 
 //these are for SP_info_Mission_Results
 	{"nextmap",FOFS(map), F_LSTRING},
@@ -120,7 +142,8 @@ field_t fields[] = {
 	{"obj_owner",FOFS(obj_owner),F_INT},//pointer to who currently owns target
 	{"obj_gain",FOFS(obj_gain),F_INT},
 	{"obj_loss",FOFS(obj_loss),F_INT},
-	{"obj_count",FOFS(obj_count),F_INT}
+	{"obj_count",FOFS(obj_count),F_INT},
+	{"chute",FOFS(obj_count),F_INT}
 };
 
 // -------- just for savegames ----------
@@ -291,8 +314,12 @@ void InitGame (void)
 
 	allied_password = gi.cvar ("allied_password", "", 0);
 	axis_password = gi.cvar ("axis_password", "", 0);
-	
+
+	ent_files = gi.cvar ("ent_files", "1", 0);
+
 	mashup = gi.cvar ("mashup", "0", 0);
+
+	chile = gi.cvar ("chile", "0", CVAR_LATCH);
 
 	//kernel: cvar for team kill checking
 	teamkills_check = gi.cvar ("teamkills_check", "0", 0);
@@ -305,6 +332,18 @@ void InitGame (void)
 	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
 	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);
 	sys_libdir = gi.cvar("libdir", ".", CVAR_NOSET);
+
+	// kernel: global class limits
+	force_limits = gi.cvar("force_limits", "0", CVAR_SERVERINFO);
+	limit_infantry = gi.cvar("limit_infantry", "0", 0);
+	limit_officer = gi.cvar("limit_officer", "0", 0);
+	limit_lgunner = gi.cvar("limit_lgunner", "0", 0);
+	limit_hgunner = gi.cvar("limit_hgunner", "0", 0);
+	limit_sniper = gi.cvar("limit_sniper", "0", 0);
+	limit_engineer = gi.cvar("limit_engineer", "0", 0);
+	limit_medic = gi.cvar("limit_medic", "0", 0);
+	limit_special = gi.cvar("limit_special", "0", 0);
+	limit_flamer = gi.cvar("limit_flamer", "0", 0);
 
 	// pbowens: reduce lag by manipulating userinfo on server basis
 //	crosshair	= gi.cvar ("crosshair", "0", CVAR_USERINFO); 

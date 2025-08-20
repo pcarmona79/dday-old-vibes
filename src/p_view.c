@@ -443,6 +443,10 @@ void SV_CalcViewOffset (edict_t *ent)
 	vec3_t		v;
 //	int			anglesave;
 
+//turret
+	vec3_t	f, r, u;
+	vec3_t	start;
+
 
 //===================================
 
@@ -590,6 +594,27 @@ faf:  this mades it so people's view turns in a circle instead of on a pin point
 	else if (v[2] > 30)
 		v[2] = 30;
 
+
+
+
+
+		if (ent->client->turret)
+		{
+			AngleVectors (ent->client->turret->s.angles, f, r, u);
+			VectorMA (ent->client->turret->s.origin, ent->client->turret->move_origin[0], f, start);
+			VectorMA (start, ent->client->turret->move_origin[1], r, start);
+			VectorMA (start, ent->client->turret->move_origin[2], u, start);
+//			VectorSubtract (start, ent->s.origin, v);
+
+			ent->client->ps.pmove.origin[0] = start[0]*8;
+            ent->client->ps.pmove.origin[1] = start[1]*8;
+            ent->client->ps.pmove.origin[2] = start[2]*8;
+
+			VectorClear (v);
+
+
+		}
+
 	VectorCopy (v, ent->client->ps.viewoffset);
 }
 
@@ -722,6 +747,11 @@ void SV_CalcBlend (edict_t *ent)
 	// make blind if on fire
 	if (ent->burnout)
 		SV_AddBlend (0.9, 0.9, 0.6, 0.84, ent->client->ps.blend);
+
+	if (ent->health > 0 &&
+		ent->client->enter_spawn_time &&
+		ent->client->enter_spawn_time > level.time - 4)
+		SV_AddBlend (0, 0, 0, 0.5, ent->client->ps.blend);
 
 	// fade into lobby
 	if (level.framenum < ((int)level_wait->value * 10))
@@ -1494,6 +1524,28 @@ void G_SetClientFrame (edict_t *ent)
 		return;		// not in the player model
 
 	client = ent->client;
+
+	if (ent->client->turret &&
+		!ent->client->movement)
+	{
+		if (ent->stanceflags==STANCE_DUCK)
+		{ 
+			ent->s.frame = FRAME_crstnd01;
+			client->anim_end = FRAME_crstnd01;
+		}
+		else if(ent->stanceflags == STANCE_CRAWL)
+		{
+			ent->s.frame = FRAME_crawlidle01;
+			client->anim_end = FRAME_crawlidle01;
+		}
+		else
+		{
+			ent->s.frame = FRAME_stand01;
+			client->anim_end = FRAME_stand01;
+		}
+		return;
+	}
+
 
 	//faf: stops delay on crawl to standing animation:
 	if (ent->stanceflags==STANCE_CRAWL)

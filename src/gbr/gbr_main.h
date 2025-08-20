@@ -38,6 +38,7 @@ int gbr_index;
 byte *is_silenced;
 edict_t *g_edicts;
 
+extern cvar_t *chile;
 
 //g_items.c
 void InitItems(void);
@@ -75,9 +76,11 @@ void (*AngleVectors)(vec3_t , vec3_t, vec3_t, vec3_t);
 void (*P_ProjectSource)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t);
 void (*PlayerNoise)(edict_t *, vec3_t, int);
 qboolean (*Cmd_Reload_f)(edict_t *);
+void (*fire_gun2)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
 void (*fire_rifle)(edict_t *, vec3_t, vec3_t, int, int, int);
 void (*VectorScale)(vec3_t, vec_t, vec3_t);
 void (*fire_rocket)(edict_t *, vec3_t, vec3_t, int, int, float, int);
+void (*fire_rocket2)(edict_t *, vec3_t, vec3_t, int, int, float, int);
 void (*PBM_FireFlameThrower)(edict_t *, vec3_t, vec3_t, vec3_t, int, vec3_t, vec3_t, int , int);
 void (*Weapon_Pistol_Fire)(edict_t *);
 void (*Weapon_Rifle_Fire)(edict_t *);
@@ -87,7 +90,7 @@ void (*Weapon_HMG_Fire)(edict_t *);
 void (*Weapon_Rocket_Fire)(edict_t *);
 void (*Weapon_Sniper_Fire)(edict_t *);
 void (*Weapon_Grenade)(edict_t *);
-
+void (*Weapon_PIAT_Fire)(edict_t *ent);
 
 void Weapon_Webley (edict_t *ent);
 void Weapon_Enfield(edict_t *ent);
@@ -101,7 +104,7 @@ void Weapon_Enfields(edict_t *ent);
 void (*SP_misc_banner_generic) (edict_t *ent, char *model);
 
 
-void Weapon_Bren_Fire (edict_t *ent);
+void (*Weapon_Bren_Fire)(edict_t *ent);
 void Weapon_Vickers_Fire (edict_t *ent);
 void (*Play_WepSound)(edict_t *, char);
 void (*fire_gun)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);

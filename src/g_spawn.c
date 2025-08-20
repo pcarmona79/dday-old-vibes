@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <ctype.h>
 
 //Ok, since we are modifying this file, we might as well declare the
 //item spawning functions here. These are the functions that actually 
@@ -174,6 +175,7 @@ void SP_misc_banner_4 (edict_t *self);
 void SP_misc_skeleton (edict_t *self);
 //bcass end
 void SP_misc_md2 (edict_t *self);
+void SP_misc_crate (edict_t *self);
 void SP_misc_satellite_dish (edict_t *self);
 void SP_misc_actor (edict_t *self);
 void SP_misc_gib_arm (edict_t *self);
@@ -195,8 +197,10 @@ void SP_misc_easterchick2 (edict_t *self);
 void SP_turret_breach (edict_t *self);
 void SP_turret_base (edict_t *self);
 
+void SP_turret_range (edict_t *self);
+
 void SP_info_Mission_Results (edict_t *ent);
-//void SP_turret_driver (edict_t *self);
+void SP_turret_driver (edict_t *self);
 //void SP_tank_Tank1 (edict_t *self); // for DDAY tanks (pbowens)
 
 // Objectives courtesy of BinaryCowboy
@@ -205,6 +209,8 @@ void SP_objective_touch(edict_t *self);
 void SP_func_explosive_objective (edict_t *self);
 
 void SP_map_location (edict_t *self);//faf
+void SP_spawn_protect (edict_t *self);
+void SP_Spawn_Toggle (edict_t *self);
 
 spawn_t spawns[MAX_EDICTS] = {
 	{"item_health", SP_item_health},
@@ -259,7 +265,18 @@ spawn_t spawns[MAX_EDICTS] = {
 //	{"trigger_enough_troops", SP_trigger_enough_troops},
 
 //	{"target_objective",SP_target_objective},
-	{"info_infantry_start", SP_info_reinforcement_start},
+	{"info_infantry_start", SP_info_Infantry_Start},
+	{"info_officer_start",SP_info_Officer_Start},
+	{"info_lgunner_start",SP_info_L_Gunner_Start},
+	{"info_hgunner_start",SP_info_H_Gunner_Start},
+	{"info_sniper_start",SP_info_Sniper_Start},
+	{"info_engineer_start",SP_info_Engineer_Start},
+	{"info_medic_start",SP_info_Medic_Start},
+	{"info_special_start",SP_info_Special_Start},
+	{"info_flamethrower_start",SP_info_Flamethrower_Start},
+
+
+/*	{"info_infantry_start", SP_info_reinforcement_start},
 	{"info_officer_start",SP_info_reinforcement_start},
 	{"info_lgunner_start",SP_info_reinforcement_start},
 	{"info_hgunner_start",SP_info_reinforcement_start},
@@ -268,6 +285,10 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"info_medic_start",SP_info_reinforcement_start},
 	{"info_special_start",SP_info_reinforcement_start},
 	{"info_flamethrower_start",SP_info_reinforcement_start},
+
+*/
+
+
 
 	{"info_mission_results",SP_info_Mission_Results},
 	{"info_Mission_Results",SP_info_Mission_Results},
@@ -319,6 +340,8 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"misc_skeleton", SP_misc_skeleton},
 //bcass end
 	{"misc_md2", SP_misc_md2},
+	{"misc_crate", SP_misc_crate},
+
 	{"misc_satellite_dish", SP_misc_satellite_dish},
 	{"misc_actor", SP_misc_actor},
 	{"misc_gib_arm", SP_misc_gib_arm},
@@ -350,7 +373,8 @@ spawn_t spawns[MAX_EDICTS] = {
 */
 	{"turret_breach", SP_turret_breach},
 	{"turret_base", SP_turret_base},
-//	{"turret_driver", SP_turret_driver},
+	{"turret_range", SP_turret_range},
+	{"turret_driver", SP_turret_driver},
 
 	
 
@@ -385,7 +409,8 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"objective_touch",SP_objective_touch},
 	{"func_explosive_objective", SP_func_explosive_objective}, //test
 	{"map_location", SP_map_location},//faf
-    
+	{"spawn_protect", SP_spawn_protect},//faf
+	{"spawn_toggle", SP_Spawn_Toggle},
      //end of item modifications.
 	{NULL, NULL}
 };
@@ -409,7 +434,7 @@ void ED_CallSpawn (edict_t *ent)
 	}
 
 	// check item spawn functions
-	for (i=0,item=itemlist ; i<game.num_items ; i++,item++)
+	for (i = 0, item = itemlist; i <= game.num_items; i++, item++)
 	{
 		if (!item->classname)
 			continue;
@@ -630,6 +655,93 @@ void G_FindTeams (void)
 	gi.dprintf ("%i teams with %i entities\n", c, c2);
 }
 
+
+char *ReadEntFile(char *filename)
+{
+	FILE		*fp;
+	char		*filestring = NULL;
+	long int	i = 0;
+	int			ch;
+
+	while (true)
+	{
+		// kernel: try to open from q2 directories
+		fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
+		if (!fp)
+			break;
+
+		for (i=0; (ch = fgetc(fp)) != EOF; i++)
+			;
+
+		filestring = gi.TagMalloc(i+1, TAG_LEVEL);
+		if (!filestring)
+			break;
+
+		fseek(fp, 0, SEEK_SET);
+		for (i=0; (ch = fgetc(fp)) != EOF; i++)
+			filestring[i] = ch;
+		filestring[i] = '\0';
+
+		break;
+	}
+
+	if (fp)
+		fclose(fp);
+
+	return(filestring);
+}
+
+
+char *LoadEntFile(char *mapname, char *entities)
+{
+	char	entfilename[MAX_QPATH] = "";
+	char	*newentities;
+	int		i;
+
+
+	if (ent_files->value == 0)
+		return(entities);
+
+
+	//hack so civ override files load
+	if (strstr(entities, "misc_civilian"))
+		return(entities);
+
+
+	//can put the word "override" in the override ents somewhere so the ent file doesnt load
+	if (strstr(entities, "override"))
+	{
+		return(entities);
+	}
+
+
+	sprintf(entfilename, "ents/%s.ent", mapname);
+	// convert string to all lowercase (for Linux)
+	for (i = 0; entfilename[i]; i++)
+		entfilename[i] = tolower(entfilename[i]);
+
+	newentities = ReadEntFile(entfilename);
+
+	if (newentities)
+	{   //leave these dprints active they show up in the server init console section
+		gi.dprintf("%s.ent Loaded\n", mapname);
+		return(newentities);	// reassign the ents
+	}
+	else
+	{
+		gi.dprintf("No .ent File for %s.bsp\n", mapname);
+		return(entities);
+	}
+}
+
+
 /*
 ==============
 SpawnEntities
@@ -670,6 +782,9 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 	ent = NULL;
 	inhibit = 0;
+
+	InitItems();
+	entities = LoadEntFile(mapname, entities);//faf
 
 // parse ents
 	while (1)

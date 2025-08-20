@@ -576,8 +576,10 @@ void Smoke_Effect (vec3_t origin, float strength);
 //void fire_grenade(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius );   // found @ line:605
 void fire_grenade2(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float time , float damage_radius , int team );   // found @ line:639
 void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
+void fire_gun2(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 void rocket_touch(edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf );   // found @ line:693
 void fire_rocket(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:744
+void fire_rocket2 (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void fire_shell(edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage );   // found @ line:776
 void fire_rifle(edict_t * self , vec3_t start , vec3_t aimdir , int damage , int kick, int mod );   // found @ line:812
 edict_t * ApplyFirstAid(edict_t * ent );   // found @ line:872
@@ -764,7 +766,6 @@ void P_ProjectSource(gclient_t * client , vec3_t point , vec3_t distance , vec3_
 void PlayerNoise(edict_t * who , vec3_t where , int type );   // found @ line:42
 qboolean Pickup_Weapon(edict_t * ent , edict_t * other );   // found @ line:102
 void ChangeWeapon(edict_t * ent );   // found @ line:162
-void NoAmmoWeaponChange(edict_t * ent );   // found @ line:201
 void Think_Weapon(edict_t * ent );   // found @ line:244
 void Use_Weapon(edict_t * ent , gitem_t * item );   // found @ line:273
 void Drop_Weapon(edict_t * ent , gitem_t * item );   // found @ line:308
@@ -925,10 +926,5 @@ void PlayerDiesUserDLLs(edict_t * self , edict_t * inflictor , edict_t * attacke
 
 // File : \dday\source/u_entmgr.c
 gitem_t * InsertItem(gitem_t * it , spawn_t * spawnInfo );   // found @ line:34
-qboolean booldummy(struct edict_s * i , struct edict_s * ii );   // found @ line:85
-void dummy1(struct edict_s * i , struct gitem_s * ii );   // found @ line:90
-void dummy2(struct edict_s * i );   // found @ line:94
-spawn_t * InsertEntity(spawn_t * spawnInfo );   // found @ line:104
-int RemoveEntity(char * name );   // found @ line:132
 
 #endif /* __ALLFUNCS_H__ */

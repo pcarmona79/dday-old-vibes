@@ -628,6 +628,7 @@ extern	int	body_armor_index;
 #define MOD_AIRSTRIKE		47
 #define MOD_AIRSTRIKE_SPLASH  48//
 #define MOD_BAYONET			49//faf
+#define MOD_SPAWNCAMP		51
 #define MOD_FRIENDLY_FIRE	0x8000000
 #define	MOD_BOTTLE			53
 #define	MOD_TANKHIT			54
@@ -723,7 +724,10 @@ extern  cvar_t  *force_auto_select;
 extern cvar_t  *allied_password;
 extern cvar_t  *axis_password;
 
+extern cvar_t  *ent_files;
+
 extern cvar_t *mashup;
+extern cvar_t *chile;
 
 //kernel
 extern cvar_t  *teamkills_check;
@@ -736,6 +740,18 @@ extern cvar_t *observer_bscore;
 extern cvar_t *sys_basedir;
 extern cvar_t *sys_homedir;
 extern cvar_t *sys_libdir;
+
+// kernel: global class limits
+extern cvar_t *force_limits;
+extern cvar_t *limit_infantry;
+extern cvar_t *limit_officer;
+extern cvar_t *limit_lgunner;
+extern cvar_t *limit_hgunner;
+extern cvar_t *limit_sniper;
+extern cvar_t *limit_engineer;
+extern cvar_t *limit_medic;
+extern cvar_t *limit_special;
+extern cvar_t *limit_flamer;
 
 //extern	cvar_t	*crosshair;
 
@@ -998,7 +1014,7 @@ void fire_bullet (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
 void fire_blaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, int effect, qboolean hyper);
 
 void fire_tracer (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int mod);
-//void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
+void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float time, float damage_radius, int team);
 //bcass start - TNT
 void fire_tnt (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float time, float damage_radius, int team);
@@ -1179,6 +1195,8 @@ typedef struct
 	int		arty_fire_count; // how many times the battary has been fired
 
 	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
+	qboolean chute;
+	float		delay;//delay at start of map
 
 }TeamS_t;
 
@@ -1491,7 +1509,13 @@ struct gclient_s
 
 	qboolean    tank_hit;//faf
 
+	float       enter_spawn_time;//faf
+	int			spawn_kill_time;//faf
+	float		spawn_safe_time;
+
 	edict_t     *chasetarget;//faf
+
+	edict_t     *turret;//faf
 
 	float 		crosshair_offset_x;
 	float 		crosshair_offset_y;
@@ -1505,6 +1529,8 @@ struct gclient_s
 
 	edict_t		*sandbag_preview;
 	vec3_t		sandbag_pos;
+
+	qboolean	has_chute;
 };
 
 
@@ -1706,6 +1732,7 @@ struct edict_s
 	float			leave_limbo_time;//faf
 	int				oldstance;//faf
 
+	vec3_t			last_turret_driver_spot;
 };
 
 
@@ -1729,6 +1756,15 @@ extern qboolean	frame_output;
 #define DIZZYTIME 6 //seconds
 #define	flame_normal 0
 #define flame_gib 1
+
+
+typedef struct 
+{
+	int  limit;
+}mapclasslimits_t;
+
+mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
+
 
 typedef enum
 {

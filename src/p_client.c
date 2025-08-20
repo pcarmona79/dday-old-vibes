@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "m_player.h"
 #include "g_cmds.h"
@@ -46,7 +47,8 @@ void change_stance(edict_t *self, int stance);
 void Cmd_Scope_f(edict_t *ent);
 void Drop_Weapon (edict_t *ent, gitem_t *item);
 void weapon_grenade_fire (edict_t *ent);
-void check_unscope (edict_t *ent);
+void check_unscope (edict_t *ent);//faf
+void turret_off (edict_t *self);
 
 //kernel: to kick teamkillers
 void DropClient (edict_t *ent);
@@ -242,6 +244,7 @@ se 'angles' instead of 'angle', so you can set pitch or roll as well as yaw.  'p
 */
 void SP_info_player_intermission(void){}
 void SP_info_reinforcement_start(edict_t *ent);
+/*
 void SP_info_Infantry_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_L_Gunner_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_H_Gunner_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
@@ -251,6 +254,70 @@ void SP_info_Medic_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_Flamethrower_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_Special_Start(edict_t *ent){SP_info_reinforcement_start(ent);}
 void SP_info_Officer_Start(edict_t *ent) {SP_info_reinforcement_start(ent);}
+*/
+
+void SP_info_Infantry_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][INFANTRY].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_L_Gunner_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][L_GUNNER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_H_Gunner_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][H_GUNNER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Sniper_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][SNIPER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Engineer_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][ENGINEER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Medic_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][MEDIC].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Flamethrower_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][FLAMER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Special_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][SPECIAL].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
+
+void SP_info_Officer_Start(edict_t *ent)
+{
+	if (ent->count)
+		mapclasslimits[ent->obj_owner][OFFICER].limit = ent->count;
+	SP_info_reinforcement_start(ent);
+}
 
 
 //=======================================================================
@@ -367,6 +434,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "blew herself up";
 				else
 					message = "blew himself up";
+				break;
+			case MOD_SPAWNCAMP://faf
+				message = "was killed for being in a spawn area";
 				break;
 			case MOD_AIRSTRIKE_SPLASH: //faf
 				if (IsFemale(self))
@@ -841,6 +911,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	self->maxs[2] = -8;
 	self->solid = SOLID_NOT;
 	self->svflags |= SVF_DEADMONSTER;
+
+	turret_off (self);
 	
 	if (!self->deadflag)
 	{
@@ -857,7 +929,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		//gi.sound(self, CHAN_WEAPON, gi.soundindex("misc/null.wav"), 1, ATTN_NORM, 0);
 
 		if (meansOfDeath != MOD_CHANGETEAM) {
-			if (deathmatch->value)
+			if (deathmatch->value && !self->client->menu)
 				Cmd_Help_f (self);		// show scores
 		} 
 
@@ -1967,7 +2039,8 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	{
 		char skin[64];
 
-		if (ent->client->resp.team_on && ent->client->resp.mos) 
+		if (ent->client &&
+			ent->client->resp.team_on && ent->client->resp.mos)
 		{
 			strcpy(skin, va("%s/%s",
 				ent->client->resp.team_on->playermodel, 
@@ -2130,6 +2203,8 @@ void ClientDisconnect (edict_t *ent)
 		return;
 
 	change_stance(ent, STANCE_STAND);
+
+	turret_off(ent);
 
 	stuffcmd(ent, "cl_forwardspeed 200;cl_sidespeed 200;cl_upspeed 200;");
 	gi.bprintf (PRINT_HIGH, "%s disconnected\n", ent->client->pers.netname);
@@ -2699,7 +2774,9 @@ you can get the motd by typing MOTD at the console too
 	// set up for pmove
 	memset (&pm, 0, sizeof(pm));
 
-	if (ent->movetype == MOVETYPE_NOCLIP)
+	if (client->turret)
+		client->ps.pmove.pm_type = PM_NORMAL;
+	else if (ent->movetype == MOVETYPE_NOCLIP)
 		client->ps.pmove.pm_type = PM_SPECTATOR;
 	else if (ent->s.modelindex != 255)
 		client->ps.pmove.pm_type = PM_GIB;
@@ -2725,7 +2802,7 @@ you can get the motd by typing MOTD at the console too
 		else
 		{
 		//	ucmd->upmove += -200;
-			client->ps.pmove.gravity = .25 * (sv_gravity->value) ; //parchute factor
+			client->ps.pmove.gravity = PARACHUTE_FACTOR * (sv_gravity->value) ; //parchute factor
 //faf			client->landed = false;
 		}
 	}
@@ -2806,6 +2883,8 @@ you can get the motd by typing MOTD at the console too
 
 			ent->client->ps.fov = STANDARD_FOV;
 		}
+
+		turret_off (ent);
 
 	}
 
@@ -3057,6 +3136,7 @@ void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;
+	int delay;
 	edict_t *chase;
 
 	if (level.intermissiontime)
@@ -3115,6 +3195,11 @@ void ClientBeginServerFrame (edict_t *ent)
 	{
 		if (client->latched_buttons & BUTTON_ATTACK)
 		{
+			delay = 0;
+			if (ent->client->resp.team_on)
+				delay = ent->client->resp.team_on->delay;
+
+
 			if (!ent->client->resp.team_on)
 				MainMenu(ent);
 			else if (!ent->client->resp.mos &&
@@ -3123,8 +3208,8 @@ void ClientBeginServerFrame (edict_t *ent)
 				M_ChooseMOS(ent);
 				client->latched_buttons = 0;
 			}
-			else if ((level.framenum > ((int)(level_wait->value * 10))) &&// + ((ent->client->spawn_delay) *10))) &&
-			(ent->leave_limbo_time < level.time - .1))
+			if (level.framenum > (10 * (int)(level_wait->value  + delay)) &&
+			ent->leave_limbo_time < level.time - .1)
 			{
 				EndObserverMode(ent); //faf
 				client->latched_buttons = 0;
@@ -3179,11 +3264,12 @@ void ClientBeginServerFrame (edict_t *ent)
 			PlayerTrail_Add (ent->s.old_origin);
 
 	client->latched_buttons = 0;
+	
+	delay = 0;
+	if (ent->client->resp.team_on)
+		delay = ent->client->resp.team_on->delay;
 
-
-
-
-	if ((level.framenum > ((int)(level_wait->value * 10))) &&// + ((ent->client->spawn_delay) *10))) &&
+	if (level.framenum > (10 * (int)(level_wait->value  + delay))  &&
 	(ent->client->limbo_mode) &&
 	(ent->leave_limbo_time < level.time) &&
 	(ent->client->menu == 0))  // so you dont spawn while choosing a class
