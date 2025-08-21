@@ -28,7 +28,7 @@
 ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)
 
 # version to build
-DEVVERSION := "4.5k-pre"
+DEVVERSION := "4.6k-pre"
 
 # get the hash and date of the current commit
 COMMITINFO := $(shell git show -s --format='%h %cs')
