@@ -448,6 +448,8 @@ typedef struct
 
 	qboolean	victory_song_played;//faf
 
+	int 		allied_sandbags;
+	int 		axis_sandbags;
 
 } level_locals_t;
 
@@ -1774,9 +1776,6 @@ typedef enum
 	SOUND_SAND,
 	SOUND_CONCRETE
 } soundtype_t;
-
-int	allied_sandbags;
-int axis_sandbags;
 
 int Surface2(char *name);
 
