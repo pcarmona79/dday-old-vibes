@@ -1,6 +1,17 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.5k-1
+--------------------
+ - Adds Svcmd_TimeLeft_f() to implement new server command "sv timeleft"
+   that will broadcast the time left if a countdown is running.
+ - Adds DDay_LoadTextFile() and DDay_LoadMOTD() to g_maps.c to load
+   motd.txt to a local buffer and read from this in every call to
+   Cmd_MOTD(). This change has the objective to avoid open the file
+   every time a client connects or execute a "motd" command.
+ - Moves allied_sandbags and axis_sandbags to level_locals_t struct, so
+   sandbag count is resetted on map change.
+
 What's new in 4.5k
 -------------------
 
