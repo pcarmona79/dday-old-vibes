@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "g_cmds.h"
 #include "g_dll.h"
+#include "g_maps.h"
 
 game_locals_t	game;
 level_locals_t	level;
@@ -677,6 +678,10 @@ void ExitLevel (void)
 		if (ent->health > ent->client->pers.max_health)
 			ent->health = ent->client->pers.max_health;
 	}
+
+	// reload MOTD
+	if (!DDay_LoadMOTD())
+		gi.dprintf("Failed to load the MOTD.\n");
 
 	LevelExitUserDLLs();
 }

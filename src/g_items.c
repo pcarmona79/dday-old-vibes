@@ -2036,9 +2036,9 @@ void sandbag_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	gi.positioned_sound(self->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/woodbreak.wav"), .7, ATTN_NORM, 0);
 
 	if (self->obj_owner == 0)
-		allied_sandbags--;
+		level.allied_sandbags--;
 	else if (self->obj_owner == 1)
-		axis_sandbags--;
+		level.axis_sandbags--;
 
 	G_FreeEdict(self);
 }
@@ -2071,9 +2071,9 @@ void sandbag_think(edict_t *ent)
 	else if (ent->obj_time < level.time - 5)
 	{
 		if (ent->obj_owner == 0)
-			allied_sandbags--;
+			level.allied_sandbags--;
 		else if (ent->obj_owner == 1)
-			axis_sandbags--;
+			level.axis_sandbags--;
 
 		ent->think = G_FreeEdict;
 	}
@@ -2092,7 +2092,7 @@ void Weapon_Sandbag_Fire(edict_t *ent)
 
 	if (ent->client->resp.team_on->index == 0)
 	{
-		if (allied_sandbags >= 12)
+		if (level.allied_sandbags >= 12)
 		{
 			gi.centerprintf(ent, "Your team is at the sandbag limit!\n");
 			return;
@@ -2100,7 +2100,7 @@ void Weapon_Sandbag_Fire(edict_t *ent)
 	}
 	else if (ent->client->resp.team_on->index == 1)
 	{
-		if (axis_sandbags >= 12)
+		if (level.axis_sandbags >= 12)
 		{
 			gi.centerprintf(ent, "Your team is at the sandbag limit!\n");
 			return;
@@ -2153,9 +2153,9 @@ void Weapon_Sandbag_Fire(edict_t *ent)
 		sandbag->obj_owner = ent->client->resp.team_on->index;
 
 	if (ent->client->resp.team_on->index == 0)
-		allied_sandbags++;
+		level.allied_sandbags++;
 	else if (ent->client->resp.team_on->index == 1)
-		axis_sandbags++;
+		level.axis_sandbags++;
 
 	sandbag->obj_time = level.time;
 

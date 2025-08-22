@@ -106,6 +106,18 @@ void Svcmd_Mapinfo_f (void)
 	gi.dprintf("  Kills: %i/%i\n",	team_list[1]->kills, team_list[1]->need_kills);
 }
 
+void Svcmd_Timeleft_f(void)
+{
+	if (countdownStart == 0 && countdownTimer > 0)
+	{
+		// show countdown time left
+		int secs = countdownTimer / 10;
+		int mins = secs / 60;
+		secs = secs - mins * 60;
+		gi.bprintf(PRINT_HIGH, "Remaining time: %d mins %d secs.\n", mins, secs);
+	}
+}
+
 void Svcmd_Countdown_f(void)
 {
 	if (gi.argc() < 3)
@@ -185,6 +197,8 @@ void	ServerCommand (void)
 		Svcmd_Countdown_f();
 	else if (Q_stricmp(cmd, "startcount") == 0)
 		Svcmd_Countdown_f();
+	else if (Q_stricmp(cmd, "timeleft") == 0)
+		Svcmd_Timeleft_f();
 	else if (Q_stricmp(cmd, "resetscore") == 0)
 		Svcmd_ResetScore_f();
 	else
