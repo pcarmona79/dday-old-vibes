@@ -1,6 +1,13 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.5k-2
+--------------------
+ - Fixes door_blocked() of g_func.c to avoid invoke door_go_up() when
+   there is no activator.
+ - Fixes undefined cvar "chile" in ita_main.c which was crashing maps
+   with italian team when selecting classes.
+
 What's new in 4.5k-1
 --------------------
  - Adds Svcmd_TimeLeft_f() to implement new server command "sv timeleft"

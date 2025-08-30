@@ -129,7 +129,7 @@ void InitFunctions(void)
 //the item array. However, I'm lazy :-p
 
 vec3_t vec3_origin = {0,0,0};
-//cvar_t  *deathmatch; 
+cvar_t  *chile;
 //cvar_t	*auto_reload;
 
 
@@ -206,9 +206,9 @@ void UserDLLInit(void)
 	UserPrecache();
 			 
 //	auto_reload = ptrgi->cvar ("autoreload","0",0);
-//    deathmatch = ptrgi->cvar ("deathmatch", "4", CVAR_SERVERINFO | CVAR_LATCH);
-
+	chile = ptrgi->cvar("chile", "0", CVAR_LATCH);
 }
+
 /* this is the clean up function - if there were global data structures
  that you had allocated, this is where you get rid of them */
 void
