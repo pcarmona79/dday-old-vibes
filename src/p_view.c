@@ -1687,8 +1687,8 @@ newanim:
 		}
 		else
 		{
-			ent->s.frame = FRAME_run1;
-			client->anim_end = FRAME_run6;
+			//ent->s.frame = FRAME_run1;
+			//client->anim_end = FRAME_run6;
 
 			//faf:  for Parts' sidestep animations
 			if (client->sidestep_anim == MOVE_RIGHT)
@@ -1696,7 +1696,7 @@ newanim:
 				if (client->aim)
 				{
 				ent->s.frame = FRAME_stepleftaim01;
-				client->anim_end = FRAME_stepleftaim06;
+				client->anim_end = FRAME_stepleftaim05;//6;
 				}
 				else
 				{
@@ -1709,7 +1709,7 @@ newanim:
 				if (client->aim)
 				{
 					ent->s.frame = FRAME_steprightaim01;
-					client->anim_end = FRAME_steprightaim06;
+					client->anim_end = FRAME_steprightaim05;//6;
 				}
 				else
 				{
@@ -1739,13 +1739,33 @@ newanim:
 			{
 				if (client->aim)
 				{
-					ent->s.frame = FRAME_walkaim01;
-					client->anim_end = FRAME_walkaim06;
+					//forward walk looks better starting on frame4
+					if (ent->s.frame >= FRAME_walkaim01 && ent->s.frame <= FRAME_walkaim06)
+						ent->s.frame = FRAME_walkaim01;
+					else
+						ent->s.frame = FRAME_walkaim04;
+					
+					if (ent->wound_location == LEG_WOUND)
+						client->anim_end = FRAME_walkaim04;
+					else
+						client->anim_end = FRAME_walkaim06;
 				}
 				else
 				{
-					ent->s.frame = FRAME_run1;
+					//forward run looks better starting on frame4
+					if (ent->s.frame >= FRAME_run1 && ent->s.frame <= FRAME_run6)
+						ent->s.frame = FRAME_run1;
+					else
+						ent->s.frame = FRAME_run4;
+
 					client->anim_end = FRAME_run6;
+
+					//faf:  for limping:
+					if (ent->wound_location == LEG_WOUND)
+						client->anim_end = FRAME_run4;
+					else
+						client->anim_end = FRAME_run6;
+
 				}
 			}
 
@@ -1754,7 +1774,12 @@ newanim:
 			if (extra_anims->value != 1)
 			{
 				ent->s.frame = FRAME_run1;
-				client->anim_end = FRAME_run6;
+				if (ent->wound_location == LEG_WOUND)
+				{
+					client->anim_end = FRAME_run4;
+				}
+				else
+					client->anim_end = FRAME_run6;
 			}
 			client->last_sidestep_anim = client->sidestep_anim;
 
@@ -1766,13 +1791,28 @@ newanim:
 	{	// standing
 		if (duck)
 		{
+			if (ent->client->aim) 
+			{ // Nick
+			ent->s.frame = FRAME_crattak1;
+			client->anim_end = FRAME_crattak1;
+			}
+			else
+			{
 			ent->s.frame = FRAME_crstnd01;
 			client->anim_end = FRAME_crstnd19;
-		}
+			}
+		} // End Nick
 		else if(ent->stanceflags == STANCE_CRAWL)
 		{
+			if (ent->client->aim) { // Nick
+			ent->s.frame = FRAME_crawlattck01;
+			client->anim_end = FRAME_crawlattck01;
+			}
+			else
+			{
 			ent->s.frame =FRAME_crawlidle01;
 			client->anim_end = FRAME_crawlidle15;
+			} //End Nick
 		}
 		else
 		{
