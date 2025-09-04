@@ -48,7 +48,6 @@ void weapon_grenade_fire (edict_t *ent);
 //bcass start - TNT
 void weapon_tnt_fire (edict_t *ent);
 //bcass end
-void ifchangewep(edict_t *ent);
 edict_t *ApplyFirstAid (edict_t *ent);
 void Play_WepSound(edict_t *ent, char *sound);
 void Use_Weapon (edict_t *ent, gitem_t *item);
@@ -1954,7 +1953,6 @@ void weapon_flame_fire (edict_t *ent)
 		 }
 //Make the user change weapons MANUALLY!
 	
-		//ifchangewep(ent);
 		return;
 	}
 

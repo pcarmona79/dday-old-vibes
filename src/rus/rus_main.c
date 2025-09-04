@@ -73,8 +73,7 @@ void InitFunctions(void)
 	//this is where you would acquire any needed function pointers
 	fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
 				   PlayerFindFunction("fire_bullet");
-	ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
-	
+
 	Weapon_Generic = (void (*)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent)))
 				   PlayerFindFunction("Weapon_Generic");
 	FindItem = (gitem_t * (*)(char *))

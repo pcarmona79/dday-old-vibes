@@ -758,11 +758,3 @@ skip_anim:
 		
 	}
 }
-  
-  
-
-void ifchangewep(edict_t *ent)
-{
-//	if(auto_weapon_change->value) NoAmmoWeaponChange (ent);
-	return;
-}

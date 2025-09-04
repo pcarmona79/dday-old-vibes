@@ -78,8 +78,7 @@ void InitFunctions(void)
 /*
     fire_bullet = (void (*) (edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
                    PlayerFindFunction("fire_bullet");
-    ifchangewep = (void (*)(edict_t *)) PlayerFindFunction("ifchangewep");
-	
+
 	AngleVectors=(void(*)(vec3_t , vec3_t, vec3_t, vec3_t)) PlayerFindFunction("AngleVectors");
 	P_ProjectSource=(void(*)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t))
 					PlayerFindFunction("P_ProjectSource");
