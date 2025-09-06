@@ -1,8 +1,20 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.5k-3
+--------------------
+
+ - In turret_breach_die() and turret_base_die() of g_turret.c, adds
+   check for freed entity before try to work in other entities of the
+   current turret.
+ - Adds some extra animations from source version 5.x to
+   Weapon_Generic() of p_generic_wep.c and G_SetClientFrame() of
+   p_view.c.
+ - Removes empty function ifchangewep() from p_generic_wep.c.
+
 What's new in 4.5k-2
 --------------------
+
  - Fixes door_blocked() of g_func.c to avoid invoke door_go_up() when
    there is no activator.
  - Fixes undefined cvar "chile" in ita_main.c which was crashing maps
@@ -10,6 +22,7 @@ What's new in 4.5k-2
 
 What's new in 4.5k-1
 --------------------
+
  - Adds Svcmd_TimeLeft_f() to implement new server command "sv timeleft"
    that will broadcast the time left if a countdown is running.
  - Adds DDay_LoadTextFile() and DDay_LoadMOTD() to g_maps.c to load
