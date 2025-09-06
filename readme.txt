@@ -11,6 +11,8 @@ What's new in 4.5k-3
    Weapon_Generic() of p_generic_wep.c and G_SetClientFrame() of
    p_view.c.
  - Removes empty function ifchangewep() from p_generic_wep.c.
+ - Gives visual recoil to Gewehr K43 in Weapon_K43_Fire() in
+   ita_weapon.c.
 
 What's new in 4.5k-2
 --------------------
