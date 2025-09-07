@@ -1,8 +1,8 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
-What's new in 4.5k-3
---------------------
+What's new in 4.6k
+------------------
 
  - In turret_breach_die() and turret_base_die() of g_turret.c, adds
    check for freed entity before try to work in other entities of the
@@ -11,7 +11,7 @@ What's new in 4.5k-3
    Weapon_Generic() of p_generic_wep.c and G_SetClientFrame() of
    p_view.c.
  - Removes empty function ifchangewep() from p_generic_wep.c.
- - Gives visual recoil to Gewehr K43 in Weapon_K43_Fire() in
+ - Gives visual recoil to Gewehr K43 in Weapon_K43_Fire() of
    ita_weapon.c.
 
 What's new in 4.5k-2
