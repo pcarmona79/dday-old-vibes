@@ -13,6 +13,10 @@ What's new in 4.6k
  - Removes empty function ifchangewep() from p_generic_wep.c.
  - Gives visual recoil to Gewehr K43 in Weapon_K43_Fire() of
    ita_weapon.c.
+ - Fixes scoreboards in p_hud.c when there are too many players to be
+   displayed.
+ - Adds score to player id in chasing mode for better streaming
+   experience.
 
 What's new in 4.5k-2
 --------------------
