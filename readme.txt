@@ -17,6 +17,9 @@ What's new in 4.6k
    displayed.
  - Adds score to player id in chasing mode for better streaming
    experience.
+ - Modifies Touch_Spawn_Protect() of g_func.c to not allow damage for
+   rockets and airstrikes inside spawn areas when cvar "chile" is
+   enabled.
 
 What's new in 4.5k-2
 --------------------
