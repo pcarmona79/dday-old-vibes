@@ -20,6 +20,8 @@ What's new in 4.6k
  - Modifies Touch_Spawn_Protect() of g_func.c to not allow damage for
    rockets and airstrikes inside spawn areas when cvar "chile" is
    enabled.
+ - Fixes some calls to FindItemInTeam() to use pers.weapon struct
+   instead of resp.team_on when getting the team DLL's name.
 
 What's new in 4.5k-2
 --------------------
