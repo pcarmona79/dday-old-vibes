@@ -1247,7 +1247,7 @@ void Cmd_Drop_f (edict_t *ent)
 			(!strcmp(ent->client->pers.weapon->classname, "weapon_fists")) ||		 //Wheaty: Use 'Classname' instead of 'Pickupname'
 			(ent->client->pers.weapon->position == LOC_SPECIAL) ||
 			(ent->client->pers.weapon->position == LOC_FLAME) ||
-			(ent->client->pers.weapon->position == LOC_TNT) ||
+			ent->client->tnt || // kernel: live TNT can not be dropped
 			ent->client->grenade ||	!it->drop) // check and see if it *can* drop in the first place
 			return;
 
@@ -1318,7 +1318,7 @@ void Cmd_Drop_f (edict_t *ent)
 			(!strcmp(ent->client->pers.weapon->classname, "weapon_fists")) ||		 //Wheaty: Use 'Classname' instead of 'Pickupname'
 			(ent->client->pers.weapon->position == LOC_SPECIAL) ||
 			(ent->client->pers.weapon->position == LOC_FLAME) ||
-			(ent->client->pers.weapon->position == LOC_TNT) ||
+			ent->client->tnt || // kernel: live TNT can not be dropped
 			ent->client->grenade ||	!it->drop) // check and see if it *can* drop in the first place
 			return;
 

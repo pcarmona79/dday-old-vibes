@@ -2069,12 +2069,10 @@ void weapon_tnt_prime (edict_t *ent, int team)
 //	int		speed;
 //	int		team;
 	float	radius;
-	float	timer;
-	
+
 	edict_t	*tnt;
 
 	damage = 1500;
-	timer  =  level.time + TNT_TIMER + abs((int)random());
 	radius = 550;
 
 	tnt = G_Spawn();
