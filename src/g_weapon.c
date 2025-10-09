@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include "q_shared.h"
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 //qboolean (*Pickup_Weapon)(edict_t *, edict_t *);
@@ -37,7 +38,8 @@ void check_unscope (edict_t *ent)
 {
 	if (ent->client &&
 		ent->client->pers.weapon &&
-		ent->client->pers.weapon->position != LOC_SNIPER)
+		ent->client->pers.weapon->position != LOC_SNIPER &&
+		Q_strcasecmp(ent->client->pers.weapon->classname, "weapon_binoculars"))
 		return;
 
 	if (ent->client->ps.fov == SCOPE_FOV)
