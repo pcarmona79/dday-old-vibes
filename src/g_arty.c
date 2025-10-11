@@ -374,22 +374,31 @@ void Think_Arty (edict_t *ent)
     */
 
 	// kernel: spread out and empower the airstrike
-	fire_airstrike(ent, start, targetdir, 700, 250, 400, 550);
-	VectorSet(tempvec, 32, 32, 0);
+	fire_airstrike(ent, start, targetdir, 700, 500, 400, 550);
+	VectorSet(tempvec, -44, 44, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 450, 300, 530);
-	VectorSet(tempvec, 64, 64, 0);
+    fire_airstrike(ent, tempvec, targetdir, 600, 700, 300, 530);
+	VectorSet(tempvec, 44, -44, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 400, 150, 500, 600);
-	VectorSet(tempvec, 96, 96, 0);
+    fire_airstrike(ent, tempvec, targetdir, 400, 400, 500, 600);
+	VectorSet(tempvec, -44, -44, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 210, 350, 600);
-	VectorSet(tempvec, 128, 128, 0);
+    fire_airstrike(ent, tempvec, targetdir, 600, 460, 350, 600);
+	VectorSet(tempvec, 44, 44, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 300, 430, 300, 550);
-	VectorSet(tempvec, 160, 160, 0);
+    fire_airstrike(ent, tempvec, targetdir, 300, 680, 300, 550);
+	VectorSet(tempvec, 84, -84, 0);
 	VectorAdd(tempvec, start, tempvec);
-    fire_airstrike(ent, tempvec, targetdir, 600, 240, 420, 580);
+    fire_airstrike(ent, tempvec, targetdir, 300, 490, 240, 380);
+	VectorSet(tempvec, -84, 84, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 250, 640, 220, 440);
+	VectorSet(tempvec, 84, 84, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 220, 420, 220, 340);
+	VectorSet(tempvec, -84, -84, 0);
+	VectorAdd(tempvec, start, tempvec);
+    fire_airstrike(ent, tempvec, targetdir, 210, 340, 210, 350);
 
 	//fire_shell(ent, start, targetdir, 250, ((rand()%500)+900), 300, 75); 	
 	
