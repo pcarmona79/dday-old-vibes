@@ -994,7 +994,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			randnum=rand()%100;
 
 				// wheaty: Don't let drop shot affect Morphine/Flamethrower/Fists/Binocs
-				if(randnum > DROP_SHOT && IsValidPlayer(targ) && 
+				if(randnum >= DROP_SHOT && IsValidPlayer(targ) && 
 					targ->client->pers.weapon && targ->client->pers.weapon->classname &&
 					(strcmp(targ->client->pers.weapon->classname, "weapon_fists") && 
 					strcmp(targ->client->pers.weapon->classname, "weapon_morphine") && 
