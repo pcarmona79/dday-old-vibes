@@ -93,6 +93,30 @@ void Weapon_Generic (edict_t *ent,
 			ent->client->ps.fov = STANDARD_FOV;
 	}
 
+	//faf: add player anims for mauser bolting
+	if (ent->oldstance == ent->stanceflags //faf: not changing stances
+		&& ent->client->pers.weapon && !ent->deadflag &&
+		!strcmp(ent->client->pers.weapon->classname, "weapon_mauser98k") &&
+		ent->client->ps.gunframe == 11)
+	{
+		ent->client->anim_priority = ANIM_REVERSE;
+		if (ent->stanceflags == STANCE_STAND)
+        {
+			ent->s.frame = FRAME_pain304+1;
+			ent->client->anim_end = FRAME_pain301;
+		}
+		else if (ent->stanceflags == STANCE_DUCK)
+		{
+			ent->s.frame = FRAME_crpain4+1;
+			ent->client->anim_end = FRAME_crpain1;
+		}
+		else if (ent->stanceflags == STANCE_CRAWL)
+		{
+			ent->s.frame = FRAME_crawlpain04+1;
+			ent->client->anim_end = FRAME_crawlpain01;
+		}
+	}
+
 	
 	if( ent->client->weaponstate == WEAPON_RELOADING)
 	{
@@ -122,22 +146,44 @@ void Weapon_Generic (edict_t *ent,
                 ent->client->anim_end = FRAME_crawlpain01;
             }
 		}
-            
-		if (ent->client->aim) 
+
+		// faf: show finish of reloading
+		if (ent->client->ps.gunframe == FRAME_RELOAD_LAST -1
+		&& ent->oldstance == ent->stanceflags) //faf:  not changing stances
+		{
+			ent->client->anim_priority = ANIM_REVERSE;
+			if (ent->stanceflags == STANCE_STAND)
+			{
+				ent->s.frame = FRAME_pain304+1;
+				ent->client->anim_end = FRAME_pain301;
+			}
+			else if (ent->stanceflags == STANCE_DUCK)
+			{
+				ent->s.frame = FRAME_crpain4+1;
+				ent->client->anim_end = FRAME_crpain1;
+			}
+			else if (ent->stanceflags == STANCE_CRAWL)
+			{
+				ent->s.frame = FRAME_crawlpain04+1;
+				ent->client->anim_end = FRAME_crawlpain01;
+			}
+		}//faf: end
+
+		if (ent->client->aim)
 		{
 			if(ent->client->ps.gunframe==FRAME_RAISE_FIRST)
 			{
 				ent->client->aim=false;
 				//ent->client->weaponstate=WEAPON_READY;
-			} 
+			}
 			else if (ent->client->ps.gunframe > FRAME_RAISE_LAST || ent->client->ps.gunframe < FRAME_RAISE_FIRST)
 				ent->client->ps.gunframe=FRAME_RAISE_LAST;
-			else  
+			else
 				ent->client->ps.gunframe--;
 
 			return;
 		}
-		
+
 		if (ent->client->ps.gunframe < FRAME_RELOAD_FIRST || ent->client->ps.gunframe > FRAME_RELOAD_LAST)
 			ent->client->ps.gunframe = FRAME_RELOAD_FIRST;
 
@@ -255,30 +301,26 @@ void Weapon_Generic (edict_t *ent,
 			ChangeWeapon (ent);
 			return;
 		}		
-        else if((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4) //pbowens: v_wep
-        {
+		else if((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4) //pbowens: v_wep
+		{
             ent->client->anim_priority = ANIM_REVERSE;
 
-            if (ent->stanceflags == STANCE_STAND)
-            {
-                ent->s.frame = FRAME_pain304+1;
-                ent->client->anim_end = FRAME_pain301;            
-            }
-            else if (ent->stanceflags == STANCE_DUCK)
-            {
-                ent->s.frame = FRAME_crpain4+1;
-                ent->client->anim_end = FRAME_crpain1;
-            }
-            else if (ent->stanceflags == STANCE_CRAWL)
-            {
-                ent->s.frame = FRAME_crawlpain04+1;
-                ent->client->anim_end = FRAME_crawlpain01;
-            }
-
-
-			
-
-        } //end v_wep
+			if (ent->stanceflags == STANCE_STAND)
+			{
+				ent->s.frame = FRAME_pain304+1;
+				ent->client->anim_end = FRAME_pain301;
+			}
+			else if (ent->stanceflags == STANCE_DUCK)
+			{
+				ent->s.frame = FRAME_crpain4+1;
+				ent->client->anim_end = FRAME_crpain1;
+			}
+			else if (ent->stanceflags == STANCE_CRAWL)
+			{
+				ent->s.frame = FRAME_crawlpain04+1;
+				ent->client->anim_end = FRAME_crawlpain01;
+			}
+		} //end v_wep
 
 		ent->client->ps.gunframe++;
 		return;
@@ -495,42 +537,56 @@ no_fire:
 		// start the animation
 
 			ent->client->anim_priority = ANIM_ATTACK;
-			if (ent->stanceflags == STANCE_DUCK)
+			if (!(ent->client->pers.weapon && !strcmp(ent->client->pers.weapon->classname, "weapon_fists")))
 			{
-				ent->s.frame = FRAME_crattak1 + (ent->client->ps.gunframe % 2);
-				ent->client->anim_end = FRAME_crattak3;
-			}
-			else if (ent->stanceflags == STANCE_CRAWL)
-			{
-				ent->s.frame = FRAME_crawlattck01 + (ent->client->ps.gunframe % 2);
-				ent->client->anim_end = FRAME_crawlattck03;
-			}
-			else
-			{
-
-				if (extra_anims->value != 1)
+				if (ent->stanceflags == STANCE_DUCK)
 				{
-					if (ent->client->movement && !ent->client->aim) { // dont play attack animation when running
-						if (ent->s.frame >= FRAME_attack1 && ent->s.frame <= FRAME_attack8)
-							ent->client->anim_end = ent->s.frame;
-						goto skip_anim;
-					}
+					ent->s.frame = FRAME_crattak1 + (ent->client->ps.gunframe % 2);
+					ent->client->anim_end = FRAME_crattak9;//faf3;
+				}
+				else if (ent->stanceflags == STANCE_CRAWL)
+				{
+					ent->s.frame = FRAME_crawlattck01 + (ent->client->ps.gunframe % 2);
+					ent->client->anim_end = FRAME_crawlattck09;//faf3;
 				}
 				else
 				{
-					if (ent->client->movement)
+					if (extra_anims->value != 1)
 					{
-						if (ent->s.frame >= FRAME_attack1 && ent->s.frame <= FRAME_attack8)
-							ent->client->anim_end = ent->s.frame;
-						goto skip_anim;
+						if (ent->client->movement && !ent->client->aim) 
+						{ // dont play attack animation when running
+							if (ent->s.frame >= FRAME_attack1 && ent->s.frame <= FRAME_attack8)
+								ent->client->anim_end = ent->s.frame;
+							goto skip_anim;
+						}
 					}
+					else
+					{
+						if (ent->client->movement)
+						{
+							if (ent->s.frame >= FRAME_attack1 && ent->s.frame <= FRAME_attack8)
+								ent->client->anim_end = ent->s.frame;
+							goto skip_anim;
+						}
+					}
+
+					if (ent->client->aim ||
+						extra_anims->value != 1)
+					{
+						ent->s.frame = FRAME_attack1 + (ent->client->ps.gunframe % 2);
+
+						if (ent->client->p_rnd && *ent->client->p_rnd <= 0)//faf
+							ent->client->anim_end = FRAME_attack4;
+						else
+							ent->client->anim_end = FRAME_attack8;
+					}
+					else //faf:  Parts' new hip firing anims
+					{
+						ent->s.frame = FRAME_hipattack1 + (ent->client->ps.gunframe % 2);
+						ent->client->anim_end = FRAME_hipattack5;
+					}
+
 				}
-
-
-				//ent->s.frame = FRAME_attack1 - (int) (random()+0.25);
-				ent->s.frame = FRAME_attack1 + (ent->client->ps.gunframe % 2);
-			 	//ent->s.frame = FRAME_attack1-1;
-				ent->client->anim_end = FRAME_attack3;
 			}
 		}
 skip_anim:
@@ -574,9 +630,35 @@ skip_anim:
 				// if not finished with bolt animation, continue
 				if (ent->client->ps.gunframe < guninfo->AFO[2])
 				{
-					if (ent->client->ps.gunframe == ent->client->pers.weapon->guninfo->sniper_bolt_frame ) 
-	 					gi.sound(ent, CHAN_WEAPON, gi.soundindex(ent->client->pers.weapon->guninfo->sniper_bolt_wav), 1, ATTN_NORM, 0);
+					// if the bolt is at the end of the animation, play the sound
+					if (ent->client->ps.gunframe == guninfo->AFO[2] - 6)
+						gi.sound(ent, CHAN_WEAPON, gi.soundindex(ent->client->pers.weapon->guninfo->sniper_bolt_wav), 1, ATTN_NORM, 0);
 
+					if (ent->client->ps.gunframe == ent->client->pers.weapon->guninfo->sniper_bolt_frame ) 
+					{
+	 					//gi.sound(ent, CHAN_WEAPON, gi.soundindex(ent->client->pers.weapon->guninfo->sniper_bolt_wav), 1, ATTN_NORM, 0);
+
+						// faf: show player bolting rifle
+						if (ent->oldstance == ent->stanceflags) //faf:  not changing stances
+						{
+							ent->client->anim_priority = ANIM_REVERSE;
+							if (ent->stanceflags == STANCE_STAND)
+							{
+								ent->s.frame = FRAME_pain304+1;
+								ent->client->anim_end = FRAME_pain301;
+							}
+							else if (ent->stanceflags == STANCE_DUCK)
+							{
+								ent->s.frame = FRAME_crpain4+1;
+								ent->client->anim_end = FRAME_crpain1;
+							}
+							else if (ent->stanceflags == STANCE_CRAWL)
+							{
+								ent->s.frame = FRAME_crawlpain04+1;
+								ent->client->anim_end = FRAME_crawlpain01;
+							}
+						}//faf: end
+					}
 					ent->client->ps.gunframe++;
 				}
 				else // else un-TS and set back to WEAPON_READY
@@ -675,12 +757,4 @@ skip_anim:
 		}
 		
 	}
-}
-  
-  
-
-void ifchangewep(edict_t *ent)
-{
-//	if(auto_weapon_change->value) NoAmmoWeaponChange (ent);
-	return;
 }

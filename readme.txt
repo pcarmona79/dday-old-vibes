@@ -1,8 +1,42 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.6k
+------------------
+
+ - Adds some extra animations from source version 5.x to
+   Weapon_Generic() of p_generic_wep.c and G_SetClientFrame() of
+   p_view.c.
+ - Gives visual recoil to Gewehr K43 in Weapon_K43_Fire() of
+   ita_weapon.c.
+ - Fixes scoreboards in p_hud.c when there are too many players to be
+   displayed.
+ - Fixes ClientEndServerFrame() of p_view.c to only show original
+   scoreboard when in intermision or not in observer mode.
+ - Adds score to player id in chasing mode for better streaming
+   experience.
+ - Modifies Touch_Spawn_Protect() of g_func.c to not allow damage for
+   rockets and airstrikes inside spawn areas when cvar "chile" is
+   enabled.
+ - Speed up and spread the airstrike around the target.
+ - Enables TNT dropping.
+ - Enable usage of function Drop_Flamed() from g_combat.c to drop weapon
+   when player is burning.
+ - Adds check for binoculars in function check_unscope() of g_weapon.c.
+   This should fix bug of scoped view when changing too fast the
+   binoculars.
+ - Fixes comparison of probability of drop shot in T_Damage() of
+   g_combat.c.
+ - In turret_breach_die() and turret_base_die() of g_turret.c, adds
+   check for freed entity before try to work in other entities of the
+   current turret. Also fixes potential SIGSEGV in turret_base_die().
+ - Fixes some calls to FindItemInTeam() to use pers.weapon struct
+   instead of resp.team_on when getting the team DLL's name.
+ - Removes empty function ifchangewep() from p_generic_wep.c.
+
 What's new in 4.5k-2
 --------------------
+
  - Fixes door_blocked() of g_func.c to avoid invoke door_go_up() when
    there is no activator.
  - Fixes undefined cvar "chile" in ita_main.c which was crashing maps
@@ -10,6 +44,7 @@ What's new in 4.5k-2
 
 What's new in 4.5k-1
 --------------------
+
  - Adds Svcmd_TimeLeft_f() to implement new server command "sv timeleft"
    that will broadcast the time left if a countdown is running.
  - Adds DDay_LoadTextFile() and DDay_LoadMOTD() to g_maps.c to load

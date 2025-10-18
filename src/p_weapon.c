@@ -48,7 +48,6 @@ void weapon_grenade_fire (edict_t *ent);
 //bcass start - TNT
 void weapon_tnt_fire (edict_t *ent);
 //bcass end
-void ifchangewep(edict_t *ent);
 edict_t *ApplyFirstAid (edict_t *ent);
 void Play_WepSound(edict_t *ent, char *sound);
 void Use_Weapon (edict_t *ent, gitem_t *item);
@@ -481,7 +480,7 @@ void ChangeWeapon (edict_t *ent)
 		//ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
 		// kernel: this will force to search in team's items first
 		gitem_t* item = FindItemInTeam(ent->client->pers.weapon->ammo,
-				ent->client->resp.team_on->teamid);
+				ent->client->pers.weapon->dllname);
 
 		if (item)
 			ent->client->ammo_index = ITEM_INDEX(item);
@@ -1954,7 +1953,6 @@ void weapon_flame_fire (edict_t *ent)
 		 }
 //Make the user change weapons MANUALLY!
 	
-		//ifchangewep(ent);
 		return;
 	}
 
@@ -2071,12 +2069,10 @@ void weapon_tnt_prime (edict_t *ent, int team)
 //	int		speed;
 //	int		team;
 	float	radius;
-	float	timer;
-	
+
 	edict_t	*tnt;
 
 	damage = 1500;
-	timer  =  level.time + TNT_TIMER + abs((int)random());
 	radius = 550;
 
 	tnt = G_Spawn();

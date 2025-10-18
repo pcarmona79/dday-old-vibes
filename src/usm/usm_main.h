@@ -70,9 +70,7 @@ gitem_t *(*FindItemByClassnameInTeam)(char *, char *);
 // p_weapon.c
 void (*Weapon_Generic)(edict_t *, int, int, int, int,int, int,int,int,int,int*, int*, void (*fire)(edict_t *ent));
 /*
-void (*ifchangewep)(edict_t *ent);
 void (*fire_bullet)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean);
-void (*ifchangewep)(edict_t *); 
 void (*AngleVectors)(vec3_t , vec3_t, vec3_t, vec3_t);
 void (*P_ProjectSource)(gclient_t *, vec3_t, vec3_t, vec3_t, vec3_t, vec3_t);
 void (*PlayerNoise)(edict_t *, vec3_t, int);

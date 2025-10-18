@@ -78,7 +78,6 @@ void InitFunctions(void)
 			PlayerFindFunction("fire_gun");
 	fire_bullet = (void (*)(edict_t *, vec3_t, vec3_t, int, int, int, int, int, qboolean))
 			PlayerFindFunction("fire_bullet");
-	ifchangewep = (void (*)(edict_t *))PlayerFindFunction("ifchangewep");
 
 	Weapon_Generic = (void (*)(edict_t *, int, int, int, int, int, int, int, int, int, int *, int *, void (*fire)(edict_t *ent)))
 			PlayerFindFunction("Weapon_Generic");

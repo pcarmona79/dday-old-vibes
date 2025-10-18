@@ -571,6 +571,7 @@ void PBM_Burn (edict_t *self)
 	self->nextthink  = level.time + FRAMETIME;
 }
 
+void Drop_Flamed (edict_t *ent);
 /*------------------------------------------------------/ New Code /--------
 //  This sets the victim on fire.
 //------------------------------------------------------------------------*/
@@ -594,14 +595,31 @@ void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point)
                 victim->burner->master  = attacker;
                 return;
         }
+		
+		//kernel: now using this hehe
+		if(victim->client)
+			Drop_Flamed(victim);
 
 /* Entity will burn for a period of time. */
 	victim->burnout = level.time + BURN_TIME;
+	
+	
+	//stop cheaters
+	if (victim->client)
+	{
+		stuffcmd (victim, "set gl_polyblend 1");
+	}
+
+
 
 /* Create the fire. */
 	PBM_FireSpot(spot, victim);
 
 	fire = G_Spawn();
+
+	fire->s.renderfx   = RF_FULLBRIGHT;
+
+
 	fire->s.modelindex = MD2_FIRE;
         fire->s.frame      = FRAME_FIRST_LARGEIGNITE;
         fire->s.skinnum    = SKIN_FIRE_RED;
@@ -625,6 +643,12 @@ void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point)
 	fire->think        = PBM_Burn;
 	VectorCopy (burn_damage, fire->pos1);
 	VectorCopy (radius_damage, fire->pos2);
+
+
+	//faf:
+	fire->s.sound = gi.soundindex("inland/fire.wav");
+
+
 
         gi.linkentity (fire);
 

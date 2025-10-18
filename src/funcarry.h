@@ -709,7 +709,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 "gib_touch", (void (*))gib_touch,   // void gib_touch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_misc.c:85
 "hurt_touch", (void (*))hurt_touch,   // void hurt_touch(edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf )  \dday\source/g_trigger.c:449
 "hurt_use", (void (*))hurt_use,   // void hurt_use(edict_t * self , edict_t * other , edict_t * activator )  \dday\source/g_trigger.c:436
-"ifchangewep", (void (*))ifchangewep,   // void ifchangewep(edict_t * ent )  \dday\source/p_generic_wep.c:305
 "infront", (void (*))infront,   // qboolean infront(edict_t * self , edict_t * other )  \dday\source/g_ai.c:293
 "insane_checkdown", (void (*))insane_checkdown,   // void insane_checkdown(edict_t * self )  \dday\source/m_insane.c:505
 "insane_checkup", (void (*))insane_checkup,   // void insane_checkup(edict_t * self )  \dday\source/m_insane.c:517
@@ -836,6 +835,6 @@ struct FuncArrayStruct GlobalGameFunctionArray[] =
 };
 
 // kernel: you can count lines with: grep '^"' funcarry.h | wc -l
-#define  FUNARRAYLEN   733
+#define  FUNARRAYLEN   732
 
 #endif /* __FUNCARRY_H__ */

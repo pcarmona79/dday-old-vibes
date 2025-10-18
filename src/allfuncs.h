@@ -724,7 +724,6 @@ void InitMOS_List(TeamS_t * team , SMos_t * mos_list  );   // found @ line:79
 
 // File : \dday\source/p_generic_wep.c
 void Weapon_Generic(edict_t * ent , int FRAME_ACTIVATE_LAST , int FRAME_LFIRE_LAST , int FRAME_LIDLE_LAST ,  int FRAME_RELOAD_LAST , int FRAME_LASTRD_LAST , int FRAME_DEACTIVATE_LAST ,  int FRAME_RAISE_LAST , int FRAME_AFIRE_LAST , int FRAME_AIDLE_LAST ,  int * pause_frames , int * fire_frames , void ( * fire ) ( edict_t * ent ) );   // found @ line:29
-void ifchangewep(edict_t * ent );   // found @ line:305
 
 // File : \dday\source/p_hud.c
 void MoveClientToIntermission(edict_t * ent );   // found @ line:13

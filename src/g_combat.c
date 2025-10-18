@@ -742,9 +742,67 @@ void Drop_Shot (edict_t *ent, gitem_t *item)
 
 		gi.sound (ent, CHAN_BODY, gi.soundindex ("misc/drop.wav"), 1, ATTN_NORM, 0);
 		gi.centerprintf(ent, "SHIT! YOU DROPPED YOUR WEAPON!!\n");
+
+		ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
 	}
 }
 //bcass end
+
+
+//kernel: now using this hehe
+void Drop_Flamed (edict_t *ent)
+{
+	int		index;
+	gitem_t *item;
+
+	item = 	ent->client->pers.weapon;
+
+
+	if (item == FindItem("Fists") ||
+		item == FindItem("Flamethrower") ||
+		item == FindItem("TNT") ||
+		item == FindItem("Binoculars") ||
+		item == FindItem("Morphine"))
+		return;
+
+
+	if (item && ent->client->pers.weapon->position== LOC_GRENADES)
+	{
+		index = ITEM_INDEX(item);
+
+		if (ent->client->pers.inventory[index])
+		{
+			Drop_Item (ent, item);
+			//ent->client->pers.inventory[index] = 0;
+
+			//ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
+		}
+	}
+	else if (item)
+	{
+
+		index = ITEM_INDEX(item);
+
+		//pbowens: stop firing
+		ent->client->buttons &= ~BUTTON_ATTACK;
+		ent->client->latched_buttons &= ~BUTTON_ATTACK;
+		ent->client->weaponstate = WEAPON_READY;
+	
+		// wheaty: fix for drop-shot spam bug
+		if (ent->client->pers.inventory[index])
+		{
+			Drop_Item (ent, item);
+			ent->client->pers.inventory[index] = 0;
+
+			ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
+		}
+	}
+//	ent->client->newweapon = FindItem ("fists");
+	Use_Weapon (ent, FindItem("Fists"));
+}
+
+
+
 
 void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
 {
@@ -936,7 +994,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			randnum=rand()%100;
 
 				// wheaty: Don't let drop shot affect Morphine/Flamethrower/Fists/Binocs
-				if(randnum > DROP_SHOT && IsValidPlayer(targ) && 
+				if(randnum >= DROP_SHOT && IsValidPlayer(targ) && 
 					targ->client->pers.weapon && targ->client->pers.weapon->classname &&
 					(strcmp(targ->client->pers.weapon->classname, "weapon_fists") && 
 					strcmp(targ->client->pers.weapon->classname, "weapon_morphine") && 

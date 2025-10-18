@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
+#include "q_shared.h"
 
 //bcass start - flamer sound thing
 #define FLAMER1		0
@@ -1006,12 +1007,11 @@ void P_ShowID (edict_t *ent)
 		ent->client->ps.stats[STAT_IDENT_PLAYER] = CS_PLAYERSKINS + (ent->client->chasetarget - g_edicts - 1);
 		ent->client->ps.stats[STAT_IDENT_ICON] = 0;
 //		ent->client->last_id_time = level.time;  //faf:  to put delay on player id
-	
-		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health: %i", ent->client->chasetarget->health));
-		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
 
-//		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), "Chase Mode.");
-//		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
+		// kernel: show score for streaming
+		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health:%4d  Score: %d", ent->client->chasetarget->health,
+															  ent->client->chasetarget->client->resp.score));
+		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
 	}
 	else if (tr.ent->client)
 	{
@@ -1687,8 +1687,8 @@ newanim:
 		}
 		else
 		{
-			ent->s.frame = FRAME_run1;
-			client->anim_end = FRAME_run6;
+			//ent->s.frame = FRAME_run1;
+			//client->anim_end = FRAME_run6;
 
 			//faf:  for Parts' sidestep animations
 			if (client->sidestep_anim == MOVE_RIGHT)
@@ -1696,7 +1696,7 @@ newanim:
 				if (client->aim)
 				{
 				ent->s.frame = FRAME_stepleftaim01;
-				client->anim_end = FRAME_stepleftaim06;
+				client->anim_end = FRAME_stepleftaim05;//6;
 				}
 				else
 				{
@@ -1709,7 +1709,7 @@ newanim:
 				if (client->aim)
 				{
 					ent->s.frame = FRAME_steprightaim01;
-					client->anim_end = FRAME_steprightaim06;
+					client->anim_end = FRAME_steprightaim05;//6;
 				}
 				else
 				{
@@ -1739,13 +1739,33 @@ newanim:
 			{
 				if (client->aim)
 				{
-					ent->s.frame = FRAME_walkaim01;
-					client->anim_end = FRAME_walkaim06;
+					//forward walk looks better starting on frame4
+					if (ent->s.frame >= FRAME_walkaim01 && ent->s.frame <= FRAME_walkaim06)
+						ent->s.frame = FRAME_walkaim01;
+					else
+						ent->s.frame = FRAME_walkaim04;
+					
+					if (ent->wound_location == LEG_WOUND)
+						client->anim_end = FRAME_walkaim04;
+					else
+						client->anim_end = FRAME_walkaim06;
 				}
 				else
 				{
-					ent->s.frame = FRAME_run1;
+					//forward run looks better starting on frame4
+					if (ent->s.frame >= FRAME_run1 && ent->s.frame <= FRAME_run6)
+						ent->s.frame = FRAME_run1;
+					else
+						ent->s.frame = FRAME_run4;
+
 					client->anim_end = FRAME_run6;
+
+					//faf:  for limping:
+					if (ent->wound_location == LEG_WOUND)
+						client->anim_end = FRAME_run4;
+					else
+						client->anim_end = FRAME_run6;
+
 				}
 			}
 
@@ -1754,7 +1774,12 @@ newanim:
 			if (extra_anims->value != 1)
 			{
 				ent->s.frame = FRAME_run1;
-				client->anim_end = FRAME_run6;
+				if (ent->wound_location == LEG_WOUND)
+				{
+					client->anim_end = FRAME_run4;
+				}
+				else
+					client->anim_end = FRAME_run6;
 			}
 			client->last_sidestep_anim = client->sidestep_anim;
 
@@ -1766,13 +1791,28 @@ newanim:
 	{	// standing
 		if (duck)
 		{
+			if (ent->client->aim) 
+			{ // Nick
+			ent->s.frame = FRAME_crattak1;
+			client->anim_end = FRAME_crattak1;
+			}
+			else
+			{
 			ent->s.frame = FRAME_crstnd01;
 			client->anim_end = FRAME_crstnd19;
-		}
+			}
+		} // End Nick
 		else if(ent->stanceflags == STANCE_CRAWL)
 		{
+			if (ent->client->aim) { // Nick
+			ent->s.frame = FRAME_crawlattck01;
+			client->anim_end = FRAME_crawlattck01;
+			}
+			else
+			{
 			ent->s.frame =FRAME_crawlidle01;
 			client->anim_end = FRAME_crawlidle15;
+			} //End Nick
 		}
 		else
 		{
@@ -2007,7 +2047,8 @@ void ClientEndServerFrame (edict_t *ent)
 			PMenu_Update(ent);
 		else
 		{
-			if (!ent->flyingnun)
+			// kernel: show original scoreboard when in intermision or not in observer mode
+			if (level.intermissiontime || !ent->flyingnun)
 				A_ScoreboardMessage(ent);
 			else
 				DDayScoreboardMessage(ent);

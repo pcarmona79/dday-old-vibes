@@ -328,7 +328,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define FRAME_kneeltoprone04		292
 #define FRAME_kneeltoprone05		293
 #define FRAME_kneeltoprone06		294
-
+#define FRAME_hipattack1			295
+#define FRAME_hipattack2			296
+#define FRAME_hipattack3			297
+#define FRAME_hipattack4			298
+#define FRAME_hipattack5			299
+#define FRAME_hipattack6			300
+#define FRAME_hipattack7			301
 
 #define MODEL_SCALE		1.000000
 
