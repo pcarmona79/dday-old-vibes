@@ -1,6 +1,17 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.6k-1
+--------------------
+
+ - Fixes Drop_Flamed() of g_combat.c to allow TNT dropping. Functions
+   weapon_grenade_fire() and weapon_tnt_fire() will drop the item if the
+   player is burning and the "touch" functions will prevent burning
+   players to pickup live tnt or grenades.
+ - Fixes TossClientWeapon() of p_client.c to allow drop the TNT when the
+   player has died. Also the call of this function is made after firing
+   any live tnt or grenade in player_die().
+
 What's new in 4.6k
 ------------------
 
