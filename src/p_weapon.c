@@ -849,7 +849,8 @@ void weapon_grenade_fire (edict_t *ent)
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-	if (ent->client->ps.pmove.pm_type == PM_DEAD)
+	if (ent->client->ps.pmove.pm_type == PM_DEAD ||
+		ent->burnout > level.time) // kernel: drop if player is burning
 		speed = 5; // drop the grenade
 	else {
 		//speed = GRENADE_MINSPEED + (int)(-(ent->client->grenade->nextthink - level.time) + 2.75) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
@@ -2043,7 +2044,8 @@ void weapon_tnt_fire (edict_t *ent)
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-	if (ent->client->ps.pmove.pm_type == PM_DEAD)
+	if (ent->client->ps.pmove.pm_type == PM_DEAD ||
+		ent->burnout > level.time) // kernel: drop if player is burning
 		speed = 5; // drop the grenade
 	else
 		speed = TNT_MINSPEED + (int)(-(ent->client->tnt->nextthink - level.time) + 2.75) * ((TNT_MAXSPEED - TNT_MINSPEED) / TNT_TIMER);
