@@ -582,6 +582,12 @@ void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point)
         vec3_t  burn_damage = {10, 5, 0};
 	vec3_t	radius_damage = {0, 5, 50};
 
+
+	if (victim->client)
+	{
+		if (level.time < victim->client->spawntime + invuln_spawn->value)
+			return;
+	}
 /* Some entities vulnerable to fire damage can resist burning. */
         if (PBM_FireResistant(victim, point))  return;
 
@@ -595,14 +601,13 @@ void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point)
                 victim->burner->master  = attacker;
                 return;
         }
-		
-		//kernel: now using this hehe
-		if(victim->client)
-			Drop_Flamed(victim);
 
 /* Entity will burn for a period of time. */
 	victim->burnout = level.time + BURN_TIME;
-	
+
+	// kernel: now using this hehe
+	if (victim->client)
+		Drop_Flamed(victim);
 	
 	//stop cheaters
 	if (victim->client)
