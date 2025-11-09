@@ -185,7 +185,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 //			else
 //				Add_Ammo (other, ammo, ammo->quantity);
 			if (ent->item->guninfo && ent->item->guninfo->rnd_count)
-			ent->item->guninfo->rnd_count = ammo->quantity;
+				ent->item->guninfo->rnd_count = ammo->quantity;
 
 
 			//faf: put bullets in map spawned guns
@@ -676,13 +676,7 @@ void Drop_Weapon(edict_t *ent, gitem_t *item)
 
 	// faf:  changed a bit for team dll support:
 
-	// faf:  gonna leave this in for grm mauser/sniper using same ammo
-	if (!strcmp(item->ammo, "mauser98k_mag")) // Both Rifle and Sniper ammo
-	{
-		item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
-		ent->client->mags[1].rifle_rnd = ent->client->mags[1].sniper_rnd = 0;
-	}
-	else if (!strcmp(item->dllname, team_list[1]->teamid)) // faf: if team 1 weap... usually axis
+	if (!strcmp(item->dllname, team_list[1]->teamid)) // faf: if team 1 weap... usually axis
 	{
 		if (item->position == LOC_PISTOL)
 		{
@@ -692,12 +686,12 @@ void Drop_Weapon(edict_t *ent, gitem_t *item)
 		// faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use the same ammo)
 		else if (item->position == LOC_RIFLE)
 		{
-			item_rounds = ent->client->mags[1].rifle_rnd + ent->client->mags[1].sniper_rnd;
+			item_rounds = ent->client->mags[1].rifle_rnd;
 			ent->client->mags[1].rifle_rnd = 0;
 		}
 		else if (item->position == LOC_SNIPER)
 		{
-			item_rounds = ent->client->mags[1].sniper_rnd + ent->client->mags[1].rifle_rnd;
+			item_rounds = ent->client->mags[1].sniper_rnd;
 			ent->client->mags[1].sniper_rnd = 0;
 		}
 		else if (item->position == LOC_SUBMACHINEGUN)
@@ -762,12 +756,12 @@ void Drop_Weapon(edict_t *ent, gitem_t *item)
 		// faf:  small bug below here:  Sniper ammo will work properly, rifle wont... (if they use same ammo)
 		else if (item->position == LOC_SNIPER)
 		{
-			item_rounds = ent->client->mags[0].sniper_rnd + ent->client->mags[0].rifle_rnd;
+			item_rounds = ent->client->mags[0].sniper_rnd;
 			ent->client->mags[0].sniper_rnd = 0;
 		}
 		else if (item->position == LOC_RIFLE)
 		{
-			item_rounds = ent->client->mags[0].rifle_rnd + ent->client->mags[0].sniper_rnd;
+			item_rounds = ent->client->mags[0].rifle_rnd;
 			ent->client->mags[0].rifle_rnd = 0;
 		}
 		else if (item->position == LOC_SHOTGUN)
