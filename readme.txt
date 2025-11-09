@@ -1,6 +1,19 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.6k-2
+--------------------
+
+ - Removes code blocks from Load_Weapon() of p_classes.c and
+   Drop_Weapon() of p_weapon.c that was searching for specific
+   "mauser98k_mag" ammo item. Also Drop_Weapon() will no longer sum
+   bullets from the infantry and sniper rifles. This will fix bug of
+   dropping an infantry rifle with more bullets than it can load.
+
+ - Fixes player_die() of p_client.c to do not call TossClientWeapon() if
+   the player was carrying a live TNT. This will fix bug when player was
+   killed carrying a live TNT and leave a non-activated one.
+
 What's new in 4.6k-1
 --------------------
 
