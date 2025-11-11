@@ -1,6 +1,12 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.6k-3
+--------------------
+
+- An active grenade or TNT will not be dropped away if the probability
+  for the weapon to be drop is met.
+
 What's new in 4.6k-2
 --------------------
 
