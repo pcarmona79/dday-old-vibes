@@ -1,6 +1,13 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.6k-4
+--------------------
+
+- Fixes EndDMLevel() of g_main.c by initializing ent to NULL and moving
+  block that creates a new "target_changelevel" to the end of function,
+  before calling to BeginIntermission().
+
 What's new in 4.6k-3
 --------------------
 
