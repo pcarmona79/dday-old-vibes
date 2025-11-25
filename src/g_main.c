@@ -296,7 +296,7 @@ The timelimit or fraglimit has been exceeded
 */
 void EndDMLevel (void)
 {
-	edict_t		*ent;
+	edict_t *ent = NULL;
 	int i = 0;
 
 	// kernel: clear countdown vars
@@ -308,6 +308,7 @@ void EndDMLevel (void)
 		ent = G_Spawn ();
 		ent->classname = "target_changelevel";
 		ent->map = level.mapname;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", level.mapname);
 	}
 
 //	else if ((int)dmflags->value & DF_MAP_LIST)  // maplist active? 
@@ -370,14 +371,16 @@ void EndDMLevel (void)
 	else
 	{	// search for a changeleve
 		ent = G_Find (NULL, FOFS(classname), "target_changelevel");
-		if (!ent)
-		{	// the map designer didn't include a changelevel,
-			// so create a fake ent that goes back to the same level
-			ent = G_Spawn ();
-			ent->classname = "target_changelevel";
-			ent->map = level.mapname;
-			gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
-		}
+	}
+
+	if (!ent)
+	{
+		// the map designer didn't include a changelevel,
+		// so create a fake ent that goes back to the same level
+		ent = G_Spawn ();
+		ent->classname = "target_changelevel";
+		ent->map = level.mapname;
+		gi.bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	}
 
 	BeginIntermission (ent);
