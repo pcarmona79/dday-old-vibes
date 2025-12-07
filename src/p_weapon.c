@@ -1716,9 +1716,9 @@ void Weapon_Binoculars(edict_t *ent)
 				&& 	(ent->client->last_fire_time < level.time -.5))
 		{
 			ent->client->last_fire_time = level.time;
-			if ( ent->client->arty_called )
+			if ( ent->client->resp.arty_called )
 			{
-				if (ent->client->arty_fired)
+				if (ent->client->resp.arty_fired)
 				{
 					gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
 					return;
@@ -1726,8 +1726,8 @@ void Weapon_Binoculars(edict_t *ent)
 				else
 				{
 					gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
-					ent->client->arty_called = 0;
-					ent->client->arty_num--;
+					ent->client->resp.arty_called = 0;
+					ent->client->resp.arty_num--;
 					check_unscope(ent);
 					return;
 				}

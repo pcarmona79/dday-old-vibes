@@ -3069,24 +3069,25 @@ you can get the motd by typing MOTD at the console too
 //bcass end
 		
 // CCH: Check to see if artillary has arrived
-		if ( client->arty_called  )
+		if ( client->resp.arty_called  )
 		{
 			// planes come before bombs
-			if ((client->arty_time_fire - 3) < level.time && !client->arty_sound)
+			if ((client->resp.arty_time_fire - 3) < level.time && !client->resp.arty_sound)
 			{
-				client->arty_sound = true;
-			    gi.sound(ent, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav",  ent->client->resp.team_on->teamid)), 1, ATTN_NONE, 0);
+				client->resp.arty_sound = true;
+			    gi.sound(ent, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav",
+														  ent->client->resp.team_on->teamid)), 1, ATTN_NONE, 0);
 			}
-			if (client->arty_time_fire < level.time) 
+			if (client->resp.arty_time_fire < level.time)
 			{
-				client->arty_called = false;
-				client->arty_sound = false;
+				client->resp.arty_called = false;
+				client->resp.arty_sound = false;
 
 				Think_Arty (ent);
 			}
 		}
 		else
-			client->arty_sound = false;
+			client->resp.arty_sound = false;
 		
 		if (ent->waterlevel > 1)
 		{

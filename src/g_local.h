@@ -1278,6 +1278,18 @@ typedef struct
 	int		teamkills;		//kernel: for team kills check
 	float		first_teamkill;		//        time of first teammate killed
 
+	// kernel: airstrike moved here
+	qboolean	arty_called;
+	qboolean	arty_fired;
+	qboolean	arty_sound;
+	int			arty_num;
+	int			arty_location;
+	vec3_t		arty_entry;
+	vec3_t		arty_target;
+	float		arty_time_position;
+	float		arty_time_fire;
+	float		arty_time_restrict;
+
 } client_respawn_t;
 
 
@@ -1451,6 +1463,7 @@ struct gclient_s
 	int			penalty;				// penalty type
 //	int			lastcmd;
 
+	/* kernel: airstrike moved to resp struct
 	qboolean	arty_called;
 	qboolean	arty_fired;
 	qboolean	arty_sound;
@@ -1460,7 +1473,7 @@ struct gclient_s
 	vec3_t		arty_target;
 	float		arty_time_position;
 	float		arty_time_fire;
-	float		arty_time_restrict;
+	float		arty_time_restrict; */
 
 	float		jump_stamina;
 	qboolean	jump_push;

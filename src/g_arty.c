@@ -194,10 +194,10 @@ void Cmd_Arty_f (edict_t *ent)
 
 	//faf:  moving this up so you dont have to look through binocs to cancel arty
 	// make sure artillary hasn't already been called
-	if (ent->client->arty_called && (ent->client->last_fire_time < level.time -.5))
+	if (ent->client->resp.arty_called && (ent->client->last_fire_time < level.time -.5))
 	{
 		ent->client->last_fire_time = level.time;
-		if (ent->client->arty_fired)
+		if (ent->client->resp.arty_fired)
 		{
 			gi.cprintf(ent, PRINT_HIGH, "Artillery has already been fired, sir!\n");
 			return;
@@ -205,8 +205,8 @@ void Cmd_Arty_f (edict_t *ent)
 		else
 		{
 			gi.cprintf(ent, PRINT_HIGH, "Holding fire sir!\n");
-			ent->client->arty_called = 0;
-			ent->client->arty_num--;
+			ent->client->resp.arty_called = 0;
+			ent->client->resp.arty_num--;
 			return;
 		}
 	}
@@ -247,11 +247,11 @@ void Cmd_Arty_f (edict_t *ent)
 
 
 
-	if ( ent->client->arty_time_restrict > level.time && ent->client->arty_num >= (int)arty_max->value)
+	if ( ent->client->resp.arty_time_restrict > level.time && ent->client->resp.arty_num >= (int)arty_max->value)
 	{
 		float delay;
 
-		delay = ent->client->arty_time_restrict - level.time;
+		delay = ent->client->resp.arty_time_restrict - level.time;
 
 		if (delay > 60)
 			gi.cprintf(ent, PRINT_HIGH, "Can not fire for another %i minutes, sir!\n", (int)delay/60);
@@ -262,8 +262,8 @@ void Cmd_Arty_f (edict_t *ent)
 	}
 
 	// reset the fired counter if past restrict time
-	if ( ent->client->arty_time_restrict <= level.time && ent->client->arty_num >= (int)arty_max->value )
-		ent->client->arty_num = 0;
+	if ( ent->client->resp.arty_time_restrict <= level.time && ent->client->resp.arty_num >= (int)arty_max->value )
+		ent->client->resp.arty_num = 0;
 
 	VectorCopy(ent->s.origin, start);
 	start[2] += ent->viewheight;
@@ -275,11 +275,11 @@ void Cmd_Arty_f (edict_t *ent)
 	if ( tr.surface && !(tr.surface->flags & SURF_SKY) )
 	{ // We hit something but it wasn't sky, so let's see if there is sky above it
 
-		VectorCopy(tr.endpos,ent->client->arty_target); //assign target to Arty
+		VectorCopy(tr.endpos,ent->client->resp.arty_target); //assign target to Arty
 		VectorSet(world_up, 0, 0, 1);
 		VectorMA(start, 8192, world_up, end);
 
-		tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+		tr = gi.trace(ent->client->resp.arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 		if ( tr.surface && !(tr.surface->flags & SURF_SKY))  // No sky above it either
 		{
@@ -295,24 +295,24 @@ void Cmd_Arty_f (edict_t *ent)
 
 
 	// set up for the arty strike
-	VectorCopy(tr.endpos, ent->client->arty_entry);
-	ent->client->arty_called = true;
+	VectorCopy(tr.endpos, ent->client->resp.arty_entry);
+	ent->client->resp.arty_called = true;
 	
 
 	//srand( (unsigned)time( NULL ) );
 	
-	ent->client->arty_fired = false;
+	ent->client->resp.arty_fired = false;
 			
 	//randnum = ((rand() % ARTILLARY_WAIT) + 5);  //generate random number for eta
 		if (ent)
 			gi.cprintf(ent, PRINT_HIGH, "Ok, give us %d seconds to position the guns!\n", (int)arty_delay->value);
 
-	ent->client->arty_num++;
-	ent->client->arty_time_fire = level.time + arty_delay->value;
+	ent->client->resp.arty_num++;
+	ent->client->resp.arty_time_fire = level.time + arty_delay->value;
 
-	ent->client->arty_location = 1;//(rand() % 4) + 1;
+	ent->client->resp.arty_location = 1;//(rand() % 4) + 1;
 	gi.sound(ent, CHAN_ITEM, gi.soundindex(va("%s/arty/target%i.wav", 
-		ent->client->resp.team_on->teamid, ent->client->arty_location)), 1, ATTN_NORM, 0);
+		ent->client->resp.team_on->teamid, ent->client->resp.arty_location)), 1, ATTN_NORM, 0);
 
 }
 
@@ -344,12 +344,12 @@ void Think_Arty (edict_t *ent)
 	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 	// find the direction from the entry point to the target
-    VectorSubtract(ent->client->arty_target, ent->client->arty_entry, targetdir);
+    VectorSubtract(ent->client->resp.arty_target, ent->client->resp.arty_entry, targetdir);
     VectorNormalize(targetdir);
-    VectorAdd(ent->client->arty_entry, targetdir, start);
+    VectorAdd(ent->client->resp.arty_entry, targetdir, start);
 	
    // check we have a clear line of fire
-    tr_2 = gi.trace(start, NULL, NULL, ent->client->arty_target, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+    tr_2 = gi.trace(start, NULL, NULL, ent->client->resp.arty_target, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 	// check to make sure we're not materializing in a solid
 	if ( gi.pointcontents(start) == CONTENTS_SOLID || tr_2.fraction < 1.0 )
@@ -359,7 +359,8 @@ void Think_Arty (edict_t *ent)
 	}
 
 	
-    gi.sound(ent, CHAN_AUTO, gi.soundindex(va("%s/arty/hit%i.wav", ent->client->resp.team_on->teamid, ent->client->arty_location)), 1, ATTN_NORM, 0);
+    gi.sound(ent, CHAN_AUTO, gi.soundindex(va("%s/arty/hit%i.wav", ent->client->resp.team_on->teamid,
+											  ent->client->resp.arty_location)), 1, ATTN_NORM, 0);
        
 
 	// fire away!
@@ -404,7 +405,7 @@ void Think_Arty (edict_t *ent)
 	
 	gi.cprintf(ent, PRINT_HIGH, "Artillery fire confirmed, sir!\n");
 
-	ent->client->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
+	ent->client->resp.arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
 
 }
 
