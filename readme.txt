@@ -1,6 +1,14 @@
 This is a modification of original D-Day: Normandy by Vipersoft and the
 SHAEF team.
 
+What's new in 4.6k-5
+--------------------
+
+- Moves properties "arty_*" from gclient_s struct to client_respawn_t
+  type to maintain airstrike information between respawns. This allow
+  the airstrikes to be fired even if the officer is killed after call
+  it.
+
 What's new in 4.6k-4
 --------------------
 
