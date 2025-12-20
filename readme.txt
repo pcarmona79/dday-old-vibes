@@ -9,6 +9,15 @@ What's new in 4.6k-5
   the airstrikes to be fired even if the officer is killed after call
   it.
 
+- Fixes bug of not considering view angles made by the mapper to the
+  spawn points. EndObserverMode() of p_observer.c now uses the
+  spawn_angles getted from fixed Find_Mission_Start_Point() of
+  p_client.c to set the delta_angles of ps.pmove structure.
+
+- Fixes ClientThink() that was clearing ucmd->angles when the player is
+  in limbo mode. This was causing the limbo view to lost the user view
+  movement when saving a demo and when the player was in observer mode.
+
 What's new in 4.6k-4
 --------------------
 

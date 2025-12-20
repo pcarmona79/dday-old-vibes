@@ -1522,11 +1522,7 @@ void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles)
 	VectorCopy (spot->s.origin, origin);
 	origin[2] += 9;
 
-	VectorCopy (spot->s.angles, ent->s.angles);
-	VectorCopy (spot->s.angles, ent->client->ps.viewangles);
-	VectorCopy (spot->s.angles, ent->client->v_angle);
-
-
+	VectorCopy (spot->s.angles, angles);
 }
 
 void InitBodyQue (void)
@@ -1829,7 +1825,6 @@ void PutClientInServer (edict_t *ent)
 	// set the delta angle
 
 	for (i=0 ; i<3 ; i++)
-
 		client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - client->resp.cmd_angles[i]);
 
 	ent->s.angles[PITCH] = 0;
@@ -1850,7 +1845,7 @@ void PutClientInServer (edict_t *ent)
 	}
 */
 	//if (!client->resp.team_on)
-		gi.linkentity (ent);
+	gi.linkentity (ent);
 
 	// force the current weapon up
 	//client->newweapon = client->pers.weapon;
@@ -2558,7 +2553,8 @@ you can get the motd by typing MOTD at the console too
 	}
 	else if (client->limbo_mode)
 	{
-		VectorSet(ucmd->angles,0,0,0);
+		// kernel: this causes troubles in limbo view
+		//VectorSet(ucmd->angles,0,0,0);
 
 		ucmd->forwardmove	 = 0;
 		ucmd->sidemove		 = 0;
