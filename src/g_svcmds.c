@@ -159,10 +159,8 @@ void Svcmd_ResetScore_f(void)
 	{
 		if (team_list[i])
 		{
-			if (team_list[i]->kills > 0)
-				team_list[i]->kills = 0;
-			if (team_list[i]->score > 0)
-				team_list[i]->score = 0;
+			team_list[i]->kills = 0;
+			team_list[i]->score = 0;
 		}
 	}
 

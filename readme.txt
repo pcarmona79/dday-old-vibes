@@ -18,6 +18,8 @@ What's new in 4.6k-5
   in limbo mode. This was causing the limbo view to lost the user view
   movement when saving a demo and when the player was in observer mode.
 
+- Removes kills and points checks in Svcmd_ResetScore_f() of g_svcmds.c
+
 What's new in 4.6k-4
 --------------------
 
