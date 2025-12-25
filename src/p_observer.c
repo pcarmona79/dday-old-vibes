@@ -636,9 +636,12 @@ void M_ChooseMOS(edict_t *ent)
 {
 	int i;
 	char* theText = NULL;
+	char mosname[13];
 	int taken;
 	int maxSlots;
 	int index;
+
+	memset(mosname, 0, sizeof(mosname));
 
 	//pmenu = (ent->client->resp.team_on->index) ? menu_classes_grm : menu_classes_usa;
 	//memcpy(ent->client->menu_cur, menu_classes, sizeof(pmenu_t));
@@ -762,7 +765,14 @@ void M_ChooseMOS(edict_t *ent)
 
 		// Setup text variable
 		theText = gi.TagMalloc(sizeof("123456789012 [00/00]"), TAG_GAME);
-		strcpy(theText, va("%12s [%i/%i]", ent->client->resp.team_on->mos[i]->name, taken, maxSlots));
+
+		// kernel: truncate mos name to 12 chars max
+		strncpy(mosname, ent->client->resp.team_on->mos[i]->name, 12);
+		if (strlen(ent->client->resp.team_on->mos[i]->name) > 12)
+			mosname[12] = '\0';
+
+		if (snprintf(theText, 21, "%12s [%i/%i]", mosname, taken, maxSlots) >= 21)
+			gi.dprintf("M_ChooseMOS: text truncated\n");
 
 		ent->client->menu_cur[i+4].text  = (class_limits->value)?(char *)theText:ent->client->resp.team_on->mos[i]->name;
 		ent->client->menu_cur[i+4].align = PMENU_ALIGN_LEFT;
@@ -916,7 +926,10 @@ void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 void ChooseTeam(edict_t *ent) {
 	int i;//,j;
 	char* theText = NULL;
+	char teamname[17];
 	int max_clients;
+
+	memset(teamname, 0, sizeof(teamname));
 
 	PMenu_Close(ent);
 
@@ -988,8 +1001,15 @@ void ChooseTeam(edict_t *ent) {
 
 			max_clients = maxclients->value;
 			// Make the text look good
-			theText = gi.TagMalloc(sizeof("123456789012 [00/00]"), TAG_GAME);
-			strcat(theText, va("%12s [%i/%i]", team_list[i]->teamname, PlayerCountForTeam(i), max_clients));//faf: removed "team_list[i]->total,"
+			theText = gi.TagMalloc(sizeof("1234567890123456 [00/00]"), TAG_GAME);
+
+			// kernel: truncate team name to 16 chars max
+			strncpy(teamname, team_list[i]->teamname, 16);
+			if (strlen(team_list[i]->teamname) > 16)
+				teamname[16] = '\0';
+
+			if (snprintf(theText, 25, "%12s [%i/%i]", teamname, PlayerCountForTeam(i), max_clients) >= 25)
+				gi.dprintf("ChooseTeam: text truncated\n");
 
 			// Put it on the menu
 			client_menu(ent, (i + 5), theText, PMENU_ALIGN_LEFT, NULL, M_Team_Join );

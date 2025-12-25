@@ -20,6 +20,9 @@ What's new in 4.6k-5
 
 - Removes kills and points checks in Svcmd_ResetScore_f() of g_svcmds.c
 
+- Fixes M_ChooseMOS(), ChooseTeam() and MapVote() to truncate the
+  strings used to build the menu items.
+
 What's new in 4.6k-4
 --------------------
 
